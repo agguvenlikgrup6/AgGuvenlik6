@@ -1,15 +1,11 @@
 package org.uludag.bmb4016;
+import com.dropbox.core.*;
 
-/**
- * Hello world!
- *
- */
 public class App 
 {
     public static void main( String[] args )
     {
 
-        System.out.println( "Hello World!" );
-        System.out.println("batuhan");
+        System.err.println("fsadfasdf");
     }
 }
