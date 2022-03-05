@@ -7,5 +7,6 @@ public class App
     {
         System.out.println("abc");
         System.err.println("fsadfasdf");
+        System.err.println("fsadfasdf");
     }
 }
