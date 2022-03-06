@@ -16,7 +16,7 @@ public class AuthLogin {
         
         //TODO KEY VE SECRET BİLGİSİ GÜVENLİ BİR ŞEKİLDE OTOMATİZE EDİLECEK 
 
-        String argAppInfoFile = "/home/oguz/Documents/DropboxEncryption/grup6/src/main/java/org/uludag/bmb4016/auth/app.json";
+        String argAppInfoFile = "C:\\Users\\batuh\\OneDrive\\Belgeler\\AgGuvenligi\\AgGuvenlik6\\src\\main\\java\\org\\uludag\\bmb4016\\auth\\app.json";
 
         DbxAppInfo appInfo;
         try {
