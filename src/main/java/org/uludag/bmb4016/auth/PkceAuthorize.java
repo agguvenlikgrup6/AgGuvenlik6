@@ -25,7 +25,7 @@ public class PkceAuthorize {
 
         DbxWebAuth.Request webAuthRequest =  DbxWebAuth.newRequestBuilder()
             .withNoRedirect()
-            .withTokenAccessType(TokenAccessType.OFFLINE)
+            .withTokenAccessType(TokenAccessType.ONLINE)
             .build();
 
         String authorizeUrl = pkceWebAuth.authorize(webAuthRequest);
