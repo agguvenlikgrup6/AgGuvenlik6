@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb.gui/org.uludag.bmb.Main",
+            "projectName": "grup6"
+        },
+        {
+            "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb/org.uludag.bmb.Main",
+            "projectName": "grup6"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"
@@ -22,7 +36,7 @@
             "name": "Launch App",
             "request": "launch",
             "mainClass": "org.uludag.bmb4016.gui.App",
-            "vmArgs": "--module-path /usr/lib/jvm/javafx-sdk-17.0.2/lib --add-modules javafx.controls,javafx.fxml",
+            "vmArgs": "--module-path /usr/lib/jvm/javafx-sdk-17.0.2/lib --add-modules javafx.controls,javafx.fxml"
         }
     ]
 }
