@@ -8,13 +8,14 @@ import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame{
     final private Font mainFont = new Font("Segoe print", Font.BOLD, 18);
-    JTextField tfEmail, tfSifre;
+    public JTextField tfEmail, tfSifre;
     JLabel lbWelcome;
-    SecondFrame secondFrame1 = new SecondFrame();
+    public String email;
 
 
     public void initialize(){
         /* FORM PANEL*/
+        SecondFrame secondFrame1 = new SecondFrame();
         JLabel lbEmail = new JLabel("E-mail");
         lbEmail.setFont(mainFont);
         tfEmail = new JTextField();
@@ -44,7 +45,7 @@ public class MainFrame extends JFrame{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String email = tfEmail.getText();
+                email = tfEmail.getText();
                 String sifre = tfSifre.getText();
                 lbWelcome.setText("Hello " + email + " " + sifre);
                 secondFrame1.initialize();
@@ -88,11 +89,11 @@ public class MainFrame extends JFrame{
         setVisible(true);
     }
     public String getEmail(){
-        String email = tfEmail.getText();
+        email = "qq";
         return email;
     }
     public String getSifre(){
-        String sifre = tfSifre.getText();
+        String sifre = this.tfSifre.getText();
         return sifre;
     }
 }

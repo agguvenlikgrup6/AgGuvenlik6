@@ -12,6 +12,7 @@ public class SecondFrame extends JFrame {
     JLabel lbWelcome;
     
     public void initialize(){
+        MainFrame abc = new MainFrame();
         /* FORM PANEL*/
         JLabel lbEmail = new JLabel("E-mail");
         lbEmail.setFont(mainFont);
@@ -46,7 +47,8 @@ public class SecondFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                lbWelcome.setText("");   
+                String email = abc.getEmail();
+                lbWelcome.setText("aaaaaa  " + email);   
             }
 
         });
@@ -56,7 +58,6 @@ public class SecondFrame extends JFrame {
         buttonsPanel.setOpaque(false);
         buttonsPanel.add(btnOK);
         buttonsPanel.add(btnClear);
-
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
