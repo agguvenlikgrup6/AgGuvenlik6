@@ -10,7 +10,19 @@ public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
         //MainFrame myFrame = new MainFrame();
         // myFrame.initialize();
-        Encrypt erc = new Encrypt();
-        erc.abc();
+        // Encrypt erc = new Encrypt();
+        // erc.abc();
+        try{
+            Encrypt abc = new Encrypt();
+            abc.init();
+            String encryptedMessage = abc.encrypt("Hello World!");
+            String decryptedMessage = abc.decrypt(encryptedMessage);
+
+            System.out.println("Encrypted Message  --> "+encryptedMessage);
+            System.out.println("Decrypted Message  --> "+decryptedMessage);
+        }
+        catch(Exception ignored){
+            
+        }
     }
 }
