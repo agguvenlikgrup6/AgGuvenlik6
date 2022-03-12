@@ -6,6 +6,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb/org.uludag.bmb.gui.App",
+            "projectName": "dbproject"
+        },
+        {
+            "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb/org.uludag.bmb.Main",
+            "projectName": "dbproject"
+        },
+        {
+            "type": "java",
+            "name": "Launch OAuthLogin",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb.gui/org.uludag.bmb.oauth.OAuthLogin",
+            "projectName": "dbproject"
+        },
+        {
+            "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb.gui/org.uludag.bmb.Main",
+            "projectName": "dbproject"
+        },
+        {
+            "type": "java",
             "name": "Launch Main",
             "request": "launch",
             "mainClass": "org.uludag.bmb.gui/org.uludag.bmb.Main",

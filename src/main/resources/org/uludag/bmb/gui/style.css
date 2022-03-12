@@ -1,0 +1,121 @@
+/*
+	[color palatte]
+
+	universal gray: DEDEDE
+	highlight gray: C6C9CE - darker, still lighter than grey
+	instagram pink: FF6582
+	twitter blue: 00ACEE
+	google blue: 4285F5 - darker
+	google green: FF6582
+	google yellow: F4B400
+	instagram purple: 8839B6
+*/
+
+#anchorPaneRoot {
+	-fx-font-family: consolas;
+	-fx-background-color: #DEDEDE;
+}
+
+#labelLogo {
+	-fx-background-color: black;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-font-size: 30;
+}
+.label {
+	-fx-font-size: 15;
+}
+
+.text-field {
+	-fx-background-color: #DEDEDE;
+	-fx-border-color: black;
+}
+
+.button {
+	-fx-background-color: green;
+	-fx-text-fill: white;
+	-fx-font-size: 20;
+}
+
+.button:hover {
+	-fx-background-color: #FF6582;
+}
+
+.button:pressed {
+	-fx-scale-x: 0.9;
+	-fx-scale-y: 0.9;
+}
+
+.list-view {
+	-fx-background-color: #DEDEDE;
+	-fx-border-color: black;
+}
+
+.list-view .list-cell {
+	-fx-background-color: #DEDEDE;
+}
+
+.list-view .list-cell:hover {
+	-fx-background-color: #FF6582;
+	-fx-text-fill: white;
+}
+
+.list-view .list-cell:selected {
+	-fx-background-color: #C6C9CE;
+	-fx-text-fill: black;
+}
+
+/* individule style */
+
+#htmlEditorHtml .button{
+	-fx-background-color: #DEDEDE;
+}
+
+#htmlEditorHtml .tool-bar {
+	-fx-background-color: #DEDEDE;
+}
+
+#btnPlus {
+	-fx-scale-x: 0.8;
+	-fx-scale-y: 0.8;
+	-fx-background-color: green;
+}
+
+#btnPlus:hover {
+	-fx-background-color: #FF6582;
+}
+
+#btnMinus {
+	-fx-scale-x: 0.8;
+	-fx-scale-y: 0.8;
+	-fx-background-color: #F4B400;
+}
+
+#btnMinus:hover {
+	-fx-background-color: #FF6582;
+}
+
+#btnFollow {
+	-fx-background-color: #00ACEE;
+}
+
+#btnFollow:hover {
+	-fx-background-color: #FF6582;
+}
+
+#btnDelete {
+	-fx-background-color: black;
+}
+
+#btnDelete:hover {
+	-fx-background-color: #FF6582;
+}
+
+#textFieldID {
+	-fx-background-color: #C6C9CE;
+}
+
+#textFieldFolder {
+	-fx-background-color: #C6C9CE;
+}
+
