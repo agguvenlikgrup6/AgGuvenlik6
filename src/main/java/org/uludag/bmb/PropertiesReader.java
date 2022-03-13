@@ -7,7 +7,8 @@ import java.util.Properties;
 public class PropertiesReader {
     /**
      *
-     * resources/org/uludag/bmb/application.properties dosyası içerisinde bulunan verilere doğrudan erişim
+     * resources/org/uludag/bmb/application.properties dosyası içerisinde bulunan
+     * verilere doğrudan erişim
      *
      * @param propertyName değeri okunacak property
      */
