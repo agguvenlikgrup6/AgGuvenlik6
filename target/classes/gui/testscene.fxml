@@ -108,7 +108,7 @@
             <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
               <children>
                 <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                        <Button fx:id="loginBtn" layoutX="20.0" layoutY="92.0" mnemonicParsing="false" onAction="#loginToDropbox" text="Giriş Yap" />
+                        <Button fx:id="loginBtn" layoutX="20.0" layoutY="92.0" mnemonicParsing="false" onAction="#loginToDropbox" text="Giriş Yap" textFill="RED" />
                         <Label fx:id="lbl1" layoutX="29.0" layoutY="217.0" text="Label" />
               </children>
             </AnchorPane>
