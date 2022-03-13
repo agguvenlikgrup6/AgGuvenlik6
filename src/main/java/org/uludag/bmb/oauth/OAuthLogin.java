@@ -1,39 +1,44 @@
 package org.uludag.bmb.oauth;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 import com.dropbox.core.DbxAppInfo;
 import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.json.JsonReader;
-import java.net.URL;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
+import com.dropbox.core.oauth.DbxCredential;
 
 public class OAuthLogin {
-    public static void login() throws IOException, URISyntaxException {      
-        URL file = OAuthLogin.class.getResource("/app.json");
+    public static void login() throws IOException {
+        URL argAppInfoFile = OAuthLogin.class.getResource("/app.json");
+        String argAuthFileOutput = "authinfo.json";
 
         DbxAppInfo appInfo;
         try {
-            appInfo = DbxAppInfo.Reader.readFromFile(file.getPath());
+            appInfo = DbxAppInfo.Reader.readFromFile(argAppInfoFile.getPath());
         } catch (JsonReader.FileLoadException ex) {
-            System.err.println("Dosya okuma hatası: " + ex.getMessage());
-            System.exit(1); return;
+            System.err.println("Error reading <app-info-file>: " + ex.getMessage());
+            System.exit(1);
+            return;
         }
 
         DbxAuthFinish authFinish = null;
-
         authFinish = new Pkce().authorize(appInfo);
 
-        System.out.println("Giriş başarılı.");
-        System.out.println("- Kullanıcı ID: " + authFinish.getUserId());
-        System.out.println("- Hesap ID: " + authFinish.getAccountId());
-        System.out.println("- Access Token: " + authFinish.getAccessToken());
-        System.out.println("- Refresh Token: " + authFinish.getRefreshToken());
-        System.out.println("- Yetki Kapsamı: " + authFinish.getScope());
+        DbxCredential credential = new DbxCredential(authFinish.getAccessToken(), authFinish
+                .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey(), appInfo.getSecret());
 
-    }
-
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        login();
+        File output = new File(argAuthFileOutput);
+        try {
+            DbxCredential.Writer.writeToFile(credential, output);
+            System.out.println("Saved authorization information to \"" + output.getCanonicalPath() + "\".");
+        } catch (IOException ex) {
+            System.err.println("Error saving to <auth-file-out>: " + ex.getMessage());
+            System.err.println("Dumping to stderr instead:");
+            DbxCredential.Writer.writeToStream(credential, System.err);
+            System.exit(1);
+            return;
+        }
     }
 }

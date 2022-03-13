@@ -6,6 +6,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch OAuthLogin",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb/org.uludag.bmb.test.OAuthLogin",
+            "projectName": "dbproject"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestMain",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb/org.uludag.bmb.test.TestMain",
+            "projectName": "dbproject"
+        },
+        {
+            "type": "java",
+            "name": "Launch OAuthLogin",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb/org.uludag.bmb.oauth.OAuthLogin",
+            "projectName": "dbproject"
+        },
+        {
+            "type": "java",
             "name": "Launch TestAuth",
             "request": "launch",
             "mainClass": "org.uludag.bmb/org.uludag.bmb.oauth.TestAuth",
