@@ -5,6 +5,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -15,18 +16,34 @@ public class Encrypt {
     public String textDosya = "";
     private SecretKey key;
     private int KEY_SIZE = 128;
-    private Cipher encryptionCipher;
     private int T_LEN = 128;
+    private byte[] IV;
     public void init() throws Exception{
         KeyGenerator generator = KeyGenerator.getInstance("AES");
         generator.init(KEY_SIZE);
         key = generator.generateKey();
     }
 
+    public void initFromStrings(String secretKey, String IV){
+        key = new SecretKeySpec(decode(secretKey),"AES");
+        this.IV = decode(IV);
+    }
+
+    public String encryptOld(String message) throws Exception{
+        byte[] messageInBytes = message.getBytes();
+        Cipher encryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
+        encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
+        IV = encryptionCipher.getIV();
+        byte[] encrptedBytes = encryptionCipher.doFinal(messageInBytes);
+        return encode(encrptedBytes);
+    }
+
+
     public String encrypt(String message) throws Exception{
         byte[] messageInBytes = message.getBytes();
-        encryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
-        encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
+        Cipher encryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
+        GCMParameterSpec spec = new GCMParameterSpec(T_LEN, IV);
+        encryptionCipher.init(Cipher.ENCRYPT_MODE, key,spec);
         byte[] encrptedBytes = encryptionCipher.doFinal(messageInBytes);
         return encode(encrptedBytes);
     }
@@ -34,7 +51,7 @@ public class Encrypt {
     public String decrypt(String encryptedMessage) throws Exception{
         byte[] messageInBytes = decode(encryptedMessage);
         Cipher decryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
-        GCMParameterSpec spec = new GCMParameterSpec(T_LEN,encryptionCipher.getIV());
+        GCMParameterSpec spec = new GCMParameterSpec(T_LEN,IV);
         decryptionCipher.init(Cipher.DECRYPT_MODE,key,spec);
         byte[] decryptedBytes = decryptionCipher.doFinal(messageInBytes);
         return new String(decryptedBytes);
@@ -44,6 +61,10 @@ public class Encrypt {
     }
     private byte[] decode(String data){
         return Base64.getDecoder().decode(data);
+    }
+    public void exportKeys(){
+        System.out.println("SecretKey  --> "+encode(key.getEncoded()));
+        System.out.println("IV  --> "+encode(IV));
     }
 
     // public void abc(){

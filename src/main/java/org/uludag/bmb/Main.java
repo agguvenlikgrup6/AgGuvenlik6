@@ -14,12 +14,13 @@ public class Main {
         // erc.abc();
         try{
             Encrypt abc = new Encrypt();
-            abc.init();
+            abc.initFromStrings("wQmDGWk65sinlKJXiBp8vw==","lrVjjTIGrOE5G4vf");
             String encryptedMessage = abc.encrypt("Hello World!");
             String decryptedMessage = abc.decrypt(encryptedMessage);
 
             System.out.println("Encrypted Message  --> "+encryptedMessage);
             System.out.println("Decrypted Message  --> "+decryptedMessage);
+            //abc.exportKeys();
         }
         catch(Exception ignored){
             
