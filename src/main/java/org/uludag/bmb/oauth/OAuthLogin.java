@@ -22,9 +22,8 @@ public class OAuthLogin {
             System.exit(1);
             return;
         }
-
-        DbxAuthFinish authFinish = null;
-        authFinish = new Pkce().authorize(appInfo);
+        
+        DbxAuthFinish authFinish = new Pkce().authorize(appInfo);
 
         DbxCredential credential = new DbxCredential(authFinish.getAccessToken(), authFinish
                 .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey(), appInfo.getSecret());

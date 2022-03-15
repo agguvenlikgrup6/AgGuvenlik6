@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Test",
+            "request": "launch",
+            "mainClass": "org.uludag.bmb/org.uludag.bmb.httpserver.Test",
+            "projectName": "dbproject"
+        },
+        {
+            "type": "java",
             "name": "Launch OAuthLogin",
             "request": "launch",
             "mainClass": "org.uludag.bmb/org.uludag.bmb.test.OAuthLogin",
