@@ -15,9 +15,10 @@ public class Main {
         try{
             Encrypt abc = new Encrypt();
             abc.initFromStrings("wQmDGWk65sinlKJXiBp8vw==","lrVjjTIGrOE5G4vf");
-            String encryptedMessage = abc.encrypt("Hello World!");
+            String encryptedMessage = abc.encrypt("merhaba batuhan yazici.");
             String decryptedMessage = abc.decrypt(encryptedMessage);
-
+            abc.dosyaSifreleme();
+            abc.dosyaSifreCozme();
             System.out.println("Encrypted Message  --> "+encryptedMessage);
             System.out.println("Decrypted Message  --> "+decryptedMessage);
             //abc.exportKeys();

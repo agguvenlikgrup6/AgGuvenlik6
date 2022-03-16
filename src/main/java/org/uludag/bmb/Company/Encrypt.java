@@ -1,6 +1,9 @@
 package org.uludag.bmb.Company;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -13,6 +16,43 @@ import java.util.Base64;
 import java.util.Scanner;
 
 public class Encrypt {
+    public void dosyaSifreleme(){
+        File f = new File("deneme.txt");
+        try{
+            Scanner fr = new Scanner(f);
+            while(fr.hasNextLine()){
+                textDosya = fr.nextLine();
+            }
+            fr.close();
+            File new_f = new File("tt.txt");
+            new_f.createNewFile();
+            FileWriter myWriter = new FileWriter(new_f);
+            myWriter.write(encrypt(textDosya));
+            myWriter.close();
+        }
+        catch(Exception e){
+
+        }
+    }
+
+    public void dosyaSifreCozme(){
+        File f = new File("tt.txt");
+        try{
+            Scanner fr = new Scanner(f);
+            while(fr.hasNextLine()){
+                textDosya =fr.nextLine();
+            }
+            fr.close();
+            File new_f = new File("tt3.txt");
+            new_f.createNewFile();
+            FileWriter myWriter = new FileWriter(new_f);
+            myWriter.write(decrypt(textDosya));
+            myWriter.close();
+        }
+        catch(Exception e){
+
+        }
+    }
     public String textDosya = "";
     private SecretKey key;
     private int KEY_SIZE = 128;
