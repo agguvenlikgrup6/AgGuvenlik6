@@ -10,7 +10,7 @@ public class AuthCommand {
         this.authHttpServer = authHttpServer;
     }
 
-    public String getCode() {
-        return authHttpServer.getCode();
+    public void httpServerHandler() {
+        authHttpServer.start();
     }
 }

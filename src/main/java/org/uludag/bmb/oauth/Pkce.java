@@ -15,6 +15,8 @@ import org.uludag.bmb.httpserver.AuthHttpServer;
 import org.uludag.bmb.httpserver.ServerConfiguration;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Pkce {
     public DbxAuthFinish authorize(DbxAppInfo appInfo) throws IOException {
@@ -43,18 +45,21 @@ public class Pkce {
                 .withForceReapprove(false)
                 .build();
 
+        Map<String, String[]> crsrf = new HashMap<>();
         String authorizeUrl = pkceWebAuth.authorize(webAuthRequest);
         System.out.println("LINK: " + authorizeUrl);
-
+        
         ServerConfiguration config = new ServerConfiguration();
         AuthHttpServer authHttpServer = new AuthHttpServer(config);
         AuthCommand authCommand = new AuthCommand(authHttpServer);
-
-        String code = authCommand.getCode();
-        System.out.println("s");
+        
+        authCommand.httpServerHandler();
+        crsrf.put("state", );
 
         try {
-            return pkceWebAuth.finishFromCode(code);
+            // return pkceWebAuth.finishFromCode(authHttpServer.getCode());
+            return pkceWebAuth.finishFromRedirect(PropertiesReader.getProperty("redirectUri"), sessionStore, params)
+
         } catch (DbxException ex) {
             System.err.println(ex.getMessage());
             System.exit(1);

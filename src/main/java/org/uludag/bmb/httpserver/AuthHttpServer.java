@@ -14,7 +14,7 @@ import org.uludag.bmb.oauth.Response;
 
 public class AuthHttpServer {
     final ServerConfiguration config;
-    public Response response;
+    public String code;
 
 
     @Inject
@@ -22,14 +22,14 @@ public class AuthHttpServer {
         this.config = config;
     }
 
-    String getCode(){
+    void start(){
         try {
             var latch = new CountDownLatch(1);
             var server = HttpServer.create(new InetSocketAddress(config.getHost(), config.getPort()), 0);
             server.createContext(config.getContext(), exchange -> {
-                this.response.setCode(exchange.getRequestURI().toString().split("&")[0].split("=")[1]);
-                System.out.println("code = " + this.response);
-
+                this.code = exchange.getRequestURI().toString().split("&")[0].split("=")[1];
+                    System.out.println("code = " + this.code);
+                
                 var response = "";
                 exchange.sendResponseHeaders(200, response.length());
                 exchange.getResponseBody().write(response.getBytes(StandardCharsets.UTF_8));
@@ -41,11 +41,13 @@ public class AuthHttpServer {
             // auth işlemi bitene kadar 60 saniye bekler
             latch.await(config.getTimeout(), TimeUnit.SECONDS);
             server.stop(0);
-            return this.response.code;
-            
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getCode(){
+        return this.code;
     }
 
 }

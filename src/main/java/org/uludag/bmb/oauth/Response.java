@@ -1,6 +1,5 @@
 package org.uludag.bmb.oauth;
 
-import java.util.Map;
 
 public class Response {
     public String code;
