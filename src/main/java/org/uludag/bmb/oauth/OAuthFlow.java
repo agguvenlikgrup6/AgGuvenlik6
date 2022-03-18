@@ -1,4 +1,4 @@
-package org.uludag.bmb.httpserver;
+package org.uludag.bmb.oauth;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,6 @@ import com.dropbox.core.DbxWebAuth.ProviderException;
 import com.dropbox.core.json.JsonReader;
 import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.util.IOUtil;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.uludag.bmb.DbQueryParamOps;
 import org.uludag.bmb.PropertiesReader;
@@ -41,10 +40,10 @@ public class OAuthFlow extends HttpServlet {
 
     private static DbxPKCEWebAuth pkceWebAuth;
     private static String redirectUri;
-    private static DbxSessionStore sessionStore;
+    private static DbxSessionStore session;
     private static String authorizeUrl;
     private static DbxAppInfo appInfo;
-    String argAuthFileOutput = "authinfo.json";
+    private String argAuthFileOutput = "authinfo.json";
 
     public OAuthFlow() {
 
@@ -53,34 +52,30 @@ public class OAuthFlow extends HttpServlet {
     public OAuthFlow(boolean X) throws IOException {
         if (X) {
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setServerName("localhost:8000");
-
-            URL argAppInfoFile = OAuthStart.class.getResource("/app.json");
-
+            URL appInfoFile = OAuthFlow.class.getResource("/app.json");
             try {
-                assert argAppInfoFile != null;
-                appInfo = DbxAppInfo.Reader.readFromFile(argAppInfoFile.getPath());
+                assert appInfoFile != null;
+                appInfo = DbxAppInfo.Reader.readFromFile(appInfoFile.getPath());
             } catch (JsonReader.FileLoadException ex) {
                 System.err.println("Error reading <app-info-file>: " + ex.getMessage());
                 System.exit(1);
                 return;
             }
 
-            HttpSession session = request.getSession(true);
-            String state = "test-state";
-            sessionStore = new DbxStandardSessionStore(session, state);
+            String sessionKey = "dropbox-auth-csrf-token";
+
+            session = new DbxStandardSessionStore(request.getSession(), sessionKey);
             redirectUri = PropertiesReader.getProperty("redirectUri");
 
             DbxRequestConfig requestConfig = new DbxRequestConfig(PropertiesReader.getProperty("clientIdentifier"));
             DbxAppInfo appInfoWithoutSecret = new DbxAppInfo(appInfo.getKey());
 
             DbxWebAuth.Request webAuthRequest = DbxWebAuth.newRequestBuilder()
-                    .withRedirectUri(redirectUri, sessionStore)
+                    .withRedirectUri(redirectUri, session)
                     .withTokenAccessType(TokenAccessType.OFFLINE)
                     .withForceReapprove(false)
-                    .withState(state)
                     .build();
-
+            
             pkceWebAuth = new DbxPKCEWebAuth(requestConfig, appInfoWithoutSecret);
             authorizeUrl = pkceWebAuth.authorize(webAuthRequest);
 
@@ -96,7 +91,7 @@ public class OAuthFlow extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            DbxAuthFinish authFinish = pkceWebAuth.finishFromRedirect(redirectUri, sessionStore,
+            DbxAuthFinish authFinish = pkceWebAuth.finishFromRedirect(redirectUri, session,
                     DbQueryParamOps.params("code",
                             DbQueryParamOps.extractQueryParam(request.getQueryString(), "code"), "state",
                             DbQueryParamOps.extractQueryParam(authorizeUrl, "state")));

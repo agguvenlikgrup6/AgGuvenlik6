@@ -1,8 +1,7 @@
 package org.uludag.bmb;
 
-import org.uludag.bmb.httpserver.OAuthHttpServer;
-import org.uludag.bmb.httpserver.OAuthStart;
-import org.uludag.bmb.httpserver.OAuthFlow;
+import org.uludag.bmb.oauth.OAuthFlow;
+import org.uludag.bmb.oauth.OAuthHttpServer;
 
 public class Main {
     public static void main(String[] args) throws Exception {

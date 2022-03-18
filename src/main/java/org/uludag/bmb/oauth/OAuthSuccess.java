@@ -1,4 +1,4 @@
-package org.uludag.bmb.httpserver;
+package org.uludag.bmb.oauth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.dropbox.core.util.IOUtil;
-import org.eclipse.jetty.server.Server;
 
 public class OAuthSuccess extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -19,7 +18,7 @@ public class OAuthSuccess extends HttpServlet {
         response.setCharacterEncoding("utf-8");
         out.println("<html>");
         out.println("<head><title>" + "Dropbox Auth" + "</title></head>");
-        out.println("<body>");
+        // out.println("<body onLoad=\"window.close()\">");
         out.println("<h>Giriş İşlemi Başarılı, Sayfayı Kapatabilirsiniz!</h>");
         out.println("</body>");
         out.println("</html>");
