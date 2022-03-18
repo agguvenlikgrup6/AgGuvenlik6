@@ -21,7 +21,7 @@ public class OAuthHttpServer {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);  
         context.setServer(server);
         context.addServlet(OAuthFlow.class, "/oauth");
-        context.addServlet(OAuthSuccess.class, "/success"); 
+        context.addServlet(OAuthSuccess.class, "/success");
         
         ShutdownHandler shutdownHandler = new ShutdownHandler("true");
 

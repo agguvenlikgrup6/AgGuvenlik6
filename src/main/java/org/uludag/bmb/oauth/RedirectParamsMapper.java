@@ -1,4 +1,4 @@
-package org.uludag.bmb;
+package org.uludag.bmb.oauth;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DbQueryParamOps {
+public class RedirectParamsMapper {
     public static String extractQueryParam(String query, String param) {
         Map<String, List<String>> params = toParamsMap(query);
 

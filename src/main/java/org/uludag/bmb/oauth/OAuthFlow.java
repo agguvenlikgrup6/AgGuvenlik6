@@ -33,7 +33,6 @@ import com.dropbox.core.json.JsonReader;
 import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.util.IOUtil;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.uludag.bmb.DbQueryParamOps;
 import org.uludag.bmb.PropertiesReader;
 
 public class OAuthFlow extends HttpServlet {
@@ -92,9 +91,9 @@ public class OAuthFlow extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             DbxAuthFinish authFinish = pkceWebAuth.finishFromRedirect(redirectUri, session,
-                    DbQueryParamOps.params("code",
-                            DbQueryParamOps.extractQueryParam(request.getQueryString(), "code"), "state",
-                            DbQueryParamOps.extractQueryParam(authorizeUrl, "state")));
+                    RedirectParamsMapper.params("code",
+                            RedirectParamsMapper.extractQueryParam(request.getQueryString(), "code"), "state",
+                            RedirectParamsMapper.extractQueryParam(authorizeUrl, "state")));
 
             DbxCredential credential = new DbxCredential(authFinish.getAccessToken(), authFinish
                     .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey(), appInfo.getSecret());
