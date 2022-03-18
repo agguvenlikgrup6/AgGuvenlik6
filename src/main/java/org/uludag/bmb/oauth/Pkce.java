@@ -1,70 +1,58 @@
 package org.uludag.bmb.oauth;
 
-import com.dropbox.core.DbxAppInfo;
-import com.dropbox.core.DbxAuthFinish;
-import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxPKCEWebAuth;
-import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.DbxSessionStore;
-import com.dropbox.core.DbxWebAuth;
-import com.dropbox.core.TokenAccessType;
+import com.dropbox.core.*;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.httpserver.AuthCommand;
-import org.uludag.bmb.httpserver.AuthHttpServer;
-import org.uludag.bmb.httpserver.ServerConfiguration;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public class Pkce {
+    public final HttpServletRequest request;
+
+    public Pkce(HttpServletRequest request) {
+        this.request = request;
+    }
+
     public DbxAuthFinish authorize(DbxAppInfo appInfo) throws IOException {
+        HttpSession session = request.getSession(true);
+        String state = "dropbox-auth-csrf-token";
+        DbxSessionStore sessionStore = new DbxStandardSessionStore(session, state);
+        String redirectUri = PropertiesReader.getProperty("redirectUri");
+
         DbxRequestConfig requestConfig = new DbxRequestConfig(PropertiesReader.getProperty("clientIdentifier"));
         DbxAppInfo appInfoWithoutSecret = new DbxAppInfo(appInfo.getKey());
-        DbxPKCEWebAuth pkceWebAuth = new DbxPKCEWebAuth(requestConfig, appInfoWithoutSecret);
-        
-        DbxSessionStore sessionStore = new DbxSessionStore() {
-            @Override
-            public String get() {
-                return null;
-            }
-
-            @Override
-            public void set(String value) {
-            }
-
-            @Override
-            public void clear() {
-            }
-        };
 
         DbxWebAuth.Request webAuthRequest = DbxWebAuth.newRequestBuilder()
-                .withRedirectUri(PropertiesReader.getProperty("redirectUri"), sessionStore)
-                .withTokenAccessType(TokenAccessType.OFFLINE)
-                .withForceReapprove(false)
+                .withRedirectUri(redirectUri, sessionStore)
+                // .withTokenAccessType(TokenAccessType.OFFLINE)
+                // .withForceReapprove(false)
+                .withState(state)
                 .build();
 
-        Map<String, String[]> crsrf = new HashMap<>();
+        DbxPKCEWebAuth pkceWebAuth = new DbxPKCEWebAuth(requestConfig, appInfoWithoutSecret);
+
         String authorizeUrl = pkceWebAuth.authorize(webAuthRequest);
         System.out.println("LINK: " + authorizeUrl);
-        
-        ServerConfiguration config = new ServerConfiguration();
-        AuthHttpServer authHttpServer = new AuthHttpServer(config);
-        AuthCommand authCommand = new AuthCommand(authHttpServer);
-        
-        authCommand.httpServerHandler();
-        crsrf.put("state", );
 
         try {
-            // return pkceWebAuth.finishFromCode(authHttpServer.getCode());
-            return pkceWebAuth.finishFromRedirect(PropertiesReader.getProperty("redirectUri"), sessionStore, params)
-
+            return pkceWebAuth.finishFromRedirect(redirectUri, sessionStore,SimpleSessionStore.params("state", SimpleSessionStore.extractQueryParam(authorizeUrl, "state")));
         } catch (DbxException ex) {
             System.err.println(ex.getMessage());
             System.exit(1);
-            return null;
+        } catch (DbxWebAuth.ProviderException e) {
+            e.printStackTrace();
+        } catch (DbxWebAuth.NotApprovedException e) {
+            e.printStackTrace();
+        } catch (DbxWebAuth.BadRequestException e) {
+            e.printStackTrace();
+        } catch (DbxWebAuth.BadStateException e) {
+            e.printStackTrace();
+        } catch (DbxWebAuth.CsrfException e) {
+            e.printStackTrace();
         }
+        return null;
     }
-
 }
