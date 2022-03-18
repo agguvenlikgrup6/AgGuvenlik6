@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SimpleSessionStore {
-    protected static String extractQueryParam(String query, String param) {
+    public static String extractQueryParam(String query, String param) {
         Map<String, List<String>> params = toParamsMap(query);
 
         if (!params.containsKey(param)) {
@@ -47,7 +47,7 @@ public class SimpleSessionStore {
         }
     }
 
-    protected static Map<String, String[]> params(String ... pairs) {
+    public static Map<String, String[]> params(String ... pairs) {
         if ((pairs.length % 2) != 0) {
             System.out.println("pairs must be a multiple of 2.");
         }

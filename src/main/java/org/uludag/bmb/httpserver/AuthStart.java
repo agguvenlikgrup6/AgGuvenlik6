@@ -7,9 +7,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.dropbox.core.DbxAppInfo;
@@ -27,7 +24,7 @@ import org.uludag.bmb.PropertiesReader;
 public class AuthStart {
     public void startOauthFlow() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("localhost:8001");
+        request.setServerName("localhost:8000");
         
         URL argAppInfoFile = AuthStart.class.getResource("/app.json");
 
@@ -40,8 +37,7 @@ public class AuthStart {
             System.exit(1);
             return;
         }
-        //response ile bağlantıyı tarayıcıda aç  ve yönlendir
-
+        
         HttpSession session = request.getSession(true);
         String state = "test-state";
         DbxSessionStore sessionStore = new DbxStandardSessionStore(session, state);
@@ -54,7 +50,7 @@ public class AuthStart {
                 .withRedirectUri(redirectUri, sessionStore)
                 .withTokenAccessType(TokenAccessType.OFFLINE)
                 .withForceReapprove(false)
-                .withState(state)
+                // .withState(state)
                 .build();
 
         DbxPKCEWebAuth pkceWebAuth = new DbxPKCEWebAuth(requestConfig, appInfoWithoutSecret);
@@ -68,5 +64,7 @@ public class AuthStart {
                 e.printStackTrace();
             }
         }
+
+
     }
 }

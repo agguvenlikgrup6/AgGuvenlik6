@@ -2,6 +2,7 @@ package org.uludag.bmb;
 
 import org.uludag.bmb.httpserver.AuthHttpServer;
 import org.uludag.bmb.httpserver.AuthStart;
+import org.uludag.bmb.httpserver.PKCEAuthFlow;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -9,8 +10,7 @@ public class Main {
         AuthHttpServer server = new AuthHttpServer();
         server.start();
 
-        AuthStart authStart = new AuthStart();
-        authStart.startOauthFlow();
+        PKCEAuthFlow flow = new PKCEAuthFlow(true);
         // org.uludag.bmb.gui.App.main(args);
         // System.out.println(PropertiesReader.getProperty("test123"));
     }
