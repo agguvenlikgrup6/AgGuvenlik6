@@ -8,7 +8,8 @@ module org.uludag.bmb{
     requires transitive javafx.graphics;
     requires transitive org.eclipse.jetty.server;
     requires org.eclipse.jetty.servlet;
-
+    requires spring.test;
+    
     opens org.uludag.bmb.gui to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
     exports org.uludag.bmb.gui;
     exports org.uludag.bmb.httpserver;

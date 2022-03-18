@@ -21,11 +21,14 @@ import com.dropbox.core.DbxWebAuth;
 import com.dropbox.core.TokenAccessType;
 import com.dropbox.core.json.JsonReader;
 
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.uludag.bmb.PropertiesReader;
 
-public class AuthStart extends HttpServlet{
-
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+public class AuthStart {
+    public void startOauthFlow() throws ServletException, IOException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName("localhost:8001");
+        
         URL argAppInfoFile = AuthStart.class.getResource("/app.json");
 
         DbxAppInfo appInfo;

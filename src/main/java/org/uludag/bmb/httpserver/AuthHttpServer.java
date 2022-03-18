@@ -20,7 +20,7 @@ public class AuthHttpServer {
         context.setServer(server);
         
         context.addServlet(AuthFinish.class, "/oauth");  
-        context.addServlet(AuthStart.class, "/start");
+        // context.addServlet(AuthStart.class, "/start");
         server.setHandler(context);
         server.start();
     }
