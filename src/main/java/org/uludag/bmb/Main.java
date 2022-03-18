@@ -1,16 +1,16 @@
 package org.uludag.bmb;
 
-import org.uludag.bmb.httpserver.AuthHttpServer;
-import org.uludag.bmb.httpserver.AuthStart;
-import org.uludag.bmb.httpserver.PKCEAuthFlow;
+import org.uludag.bmb.httpserver.OAuthHttpServer;
+import org.uludag.bmb.httpserver.OAuthStart;
+import org.uludag.bmb.httpserver.OAuthFlow;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         // org.uludag.bmb.oauth.OAuthLogin.login();
-        AuthHttpServer server = new AuthHttpServer();
+        OAuthHttpServer server = new OAuthHttpServer();
         server.start();
 
-        PKCEAuthFlow flow = new PKCEAuthFlow(true);
+        OAuthFlow flow = new OAuthFlow(true);
         // org.uludag.bmb.gui.App.main(args);
         // System.out.println(PropertiesReader.getProperty("test123"));
     }

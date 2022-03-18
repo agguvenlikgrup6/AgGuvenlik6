@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.dropbox.core.util.IOUtil;
 import org.eclipse.jetty.server.Server;
 
-public class AuthSuccess extends HttpServlet {
+public class OAuthSuccess extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter out = new PrintWriter(IOUtil.utf8Writer(response.getOutputStream()));
         response.setContentType("text/html");

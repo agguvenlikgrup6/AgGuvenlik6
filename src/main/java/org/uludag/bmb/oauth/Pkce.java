@@ -2,6 +2,7 @@ package org.uludag.bmb.oauth;
 
 import com.dropbox.core.*;
 
+import org.uludag.bmb.DbQueryParamOps;
 import org.uludag.bmb.PropertiesReader;
 
 import java.io.IOException;
@@ -27,8 +28,8 @@ public class Pkce {
 
         DbxWebAuth.Request webAuthRequest = DbxWebAuth.newRequestBuilder()
                 .withRedirectUri(redirectUri, sessionStore)
-                // .withTokenAccessType(TokenAccessType.OFFLINE)
-                // .withForceReapprove(false)
+                .withTokenAccessType(TokenAccessType.OFFLINE)
+                .withForceReapprove(false)
                 .withState(state)
                 .build();
 
@@ -38,7 +39,7 @@ public class Pkce {
         System.out.println("LINK: " + authorizeUrl);
 
         try {
-            return pkceWebAuth.finishFromRedirect(redirectUri, sessionStore,SimpleSessionStore.params("state", SimpleSessionStore.extractQueryParam(authorizeUrl, "state")));
+            return pkceWebAuth.finishFromRedirect(redirectUri, sessionStore,DbQueryParamOps.params("state", DbQueryParamOps.extractQueryParam(authorizeUrl, "state")));
         } catch (DbxException ex) {
             System.err.println(ex.getMessage());
             System.exit(1);

@@ -1,4 +1,4 @@
-package org.uludag.bmb.oauth;
+package org.uludag.bmb;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleSessionStore {
+public class DbQueryParamOps {
     public static String extractQueryParam(String query, String param) {
         Map<String, List<String>> params = toParamsMap(query);
 

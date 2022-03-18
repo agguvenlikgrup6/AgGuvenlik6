@@ -21,12 +21,12 @@ import com.dropbox.core.json.JsonReader;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.uludag.bmb.PropertiesReader;
 
-public class AuthStart {
+public class OAuthStart {
     public void startOauthFlow() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServerName("localhost:8000");
         
-        URL argAppInfoFile = AuthStart.class.getResource("/app.json");
+        URL argAppInfoFile = OAuthStart.class.getResource("/app.json");
 
         DbxAppInfo appInfo;
         try {

@@ -1,5 +1,6 @@
 package org.uludag.bmb.httpserver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -29,31 +30,33 @@ import com.dropbox.core.DbxWebAuth.CsrfException;
 import com.dropbox.core.DbxWebAuth.NotApprovedException;
 import com.dropbox.core.DbxWebAuth.ProviderException;
 import com.dropbox.core.json.JsonReader;
+import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.util.IOUtil;
 
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.uludag.bmb.DbQueryParamOps;
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.oauth.SimpleSessionStore;
 
-public class PKCEAuthFlow extends HttpServlet {
+public class OAuthFlow extends HttpServlet {
 
     private static DbxPKCEWebAuth pkceWebAuth;
     private static String redirectUri;
     private static DbxSessionStore sessionStore;
     private static String authorizeUrl;
+    private static DbxAppInfo appInfo;
+    String argAuthFileOutput = "authinfo.json";
 
-    public PKCEAuthFlow() {
+    public OAuthFlow() {
 
     }
 
-    public PKCEAuthFlow(boolean X) throws IOException {
+    public OAuthFlow(boolean X) throws IOException {
         if (X) {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setServerName("localhost:8000");
 
-            URL argAppInfoFile = AuthStart.class.getResource("/app.json");
+            URL argAppInfoFile = OAuthStart.class.getResource("/app.json");
 
-            DbxAppInfo appInfo;
             try {
                 assert argAppInfoFile != null;
                 appInfo = DbxAppInfo.Reader.readFromFile(argAppInfoFile.getPath());
@@ -93,24 +96,25 @@ public class PKCEAuthFlow extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            DbxAuthFinish s = pkceWebAuth.finishFromRedirect(redirectUri, sessionStore,
-                    SimpleSessionStore.params("code",
-                            SimpleSessionStore.extractQueryParam(request.getQueryString(), "code"), "state",
-                            SimpleSessionStore.extractQueryParam(authorizeUrl, "state")));
-            String dropboxAccessToken = s.getAccessToken();
-            System.out.println(dropboxAccessToken);
-            
-            PrintWriter out = new PrintWriter(IOUtil.utf8Writer(response.getOutputStream()));
-            response.sendRedirect("http://localhost:8000/success");
-            response.setContentType("text/html");
-            response.setCharacterEncoding("utf-8");
-            out.println("<html>");
-            out.println("<head><title>" + "Dropbox Auth" + "</title></head>");
-            out.println("<body>");
-            out.println("<h>Giriş İşlemi Başarılı, Sayfayı Kapatabilirsiniz!</h>");
-            out.println("</body>");
-            out.println("</html>");
-            out.flush();
+            DbxAuthFinish authFinish = pkceWebAuth.finishFromRedirect(redirectUri, sessionStore,
+                    DbQueryParamOps.params("code",
+                            DbQueryParamOps.extractQueryParam(request.getQueryString(), "code"), "state",
+                            DbQueryParamOps.extractQueryParam(authorizeUrl, "state")));
+
+            DbxCredential credential = new DbxCredential(authFinish.getAccessToken(), authFinish
+                    .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey(), appInfo.getSecret());
+
+            File output = new File(argAuthFileOutput);
+            try {
+                DbxCredential.Writer.writeToFile(credential, output);
+                System.out.println("Saved authorization information to \"" + output.getCanonicalPath() + "\".");
+            } catch (IOException ex) {
+                System.err.println("Error saving to <auth-file-out>: " + ex.getMessage());
+                System.err.println("Dumping to stderr instead:");
+                DbxCredential.Writer.writeToStream(credential, System.err);
+                System.exit(1);
+            }
+        response.sendRedirect("http://localhost:8000/success");
         } catch (BadRequestException | BadStateException | CsrfException | NotApprovedException | ProviderException
                 | DbxException e) {
             e.printStackTrace();

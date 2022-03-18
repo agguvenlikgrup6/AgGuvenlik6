@@ -10,7 +10,7 @@ import org.eclipse.jetty.server.handler.ShutdownHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.uludag.bmb.PropertiesReader;
 
-public class AuthHttpServer {
+public class OAuthHttpServer {
 
     private Server server;
 
@@ -22,17 +22,16 @@ public class AuthHttpServer {
  
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS); 
         context.setServer(server);
-        context.addServlet(PKCEAuthFlow.class, "/oauth");
-        context.addServlet(AuthSuccess.class, "/success"); 
+        context.addServlet(OAuthFlow.class, "/oauth");
+        context.addServlet(OAuthSuccess.class, "/success"); 
         
-        ShutdownHandler sd = new ShutdownHandler("true");
+        ShutdownHandler shutdownHandler = new ShutdownHandler("true");
 
         HandlerCollection collection = new HandlerCollection();
         collection.addHandler(context);
-        collection.addHandler(sd);
+        collection.addHandler(shutdownHandler);
         server.setHandler(collection);
+
         server.start();
     }
 }
-
-
