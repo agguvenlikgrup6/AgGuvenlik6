@@ -1,5 +1,7 @@
 package org.uludag.bmb.oauth;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -81,9 +83,27 @@ public class OAuthFlow {
                                         "state", RedirectParamsMapper.extractQueryParam(redirectQuery, "state")));
 
                         String response = "";
-                        exchange.sendResponseHeaders(200, response.length());
-                        exchange.getResponseBody().write(response.getBytes(StandardCharsets.UTF_8));
 
+                        
+                        response += "<html>";
+                        response += "<head><title>" + "Dropbox Auth" + "</title></head>";
+                        response += "<h1>Giriş İşlemi Başarılı, Sayfayı Kapatabilirsiniz</h1>";
+                        response += "</body>";
+                        response += "</html>";
+
+                        exchange.sendResponseHeaders(200, 0);
+                        BufferedOutputStream out = new BufferedOutputStream(exchange.getResponseBody());
+                        byte[] bs = response.getBytes(StandardCharsets.UTF_8); 
+                        try (ByteArrayInputStream bis = new ByteArrayInputStream(bs)) {
+                            byte[] buffer = new byte[bs.length];
+                            int count;
+                            while ((count = bis.read(buffer)) != -1) {
+                                out.write(buffer, 0, count);
+                            }
+                            out.close();
+                        }
+
+                        // exchange.getResponseBody().write(response.getBytes(StandardCharsets.UTF_8));
                         DbxCredential credential = new DbxCredential(authFinish.getAccessToken(), authFinish
                                 .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey(), appInfo.getSecret());
 
@@ -98,7 +118,7 @@ public class OAuthFlow {
                 });
                 server.start();
 
-                // TODO #10 FXML İÇERİSİNDE ACCESS TOKEN BEKLENDİĞİNE DAİR BİLGİLENDİRME YAP
+                // TODO #11 FXML İÇERİSİNDE ACCESS TOKEN BEKLENDİĞİNE DAİR BİLGİLENDİRME YAP
                 // System.out.println("Waiting for code");
 
                 latch.await(Integer.parseInt(PropertiesReader.getProperty("timeout")), TimeUnit.SECONDS);

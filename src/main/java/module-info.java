@@ -6,10 +6,11 @@ module org.uludag.bmb{
     requires dropbox.core.sdk;
     requires javafx.web;
     requires transitive javafx.graphics;
-    requires transitive org.eclipse.jetty.server;
-    requires org.eclipse.jetty.servlet;
+    // requires transitive org.eclipse.jetty.server;
+    // requires org.eclipse.jetty.servlet;
     requires spring.test;
-    requires jdk.httpserver;
+    requires transitive jdk.httpserver;
+    requires transitive javax.servlet.api;
 
     opens org.uludag.bmb.gui to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
     exports org.uludag.bmb.gui;
