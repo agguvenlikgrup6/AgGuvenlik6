@@ -1,15 +1,11 @@
 package org.uludag.bmb.oauth;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +32,7 @@ import org.uludag.bmb.PropertiesReader;
 import com.sun.net.httpserver.HttpServer;
 
 public class OAuthFlow {
-    
+
     private DbxAppInfo appInfo;
 
     public void startFlow() throws IOException {
