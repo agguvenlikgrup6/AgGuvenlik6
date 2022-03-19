@@ -69,9 +69,6 @@
             <resource>
                 <directory>src/main/resources/org/uludag/bmb/oauth/</directory>
             </resource>
-            <resource>
-                <directory>src/main/resources/org/uludag/bmb/httpserver/</directory>
-            </resource>
         </resources>
         <plugins>
             <plugin>

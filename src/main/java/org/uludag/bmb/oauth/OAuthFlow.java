@@ -35,7 +35,11 @@ public class OAuthFlow {
 
     private DbxAppInfo appInfo;
 
-    public void startFlow() throws IOException {
+    public void startWithCode(){
+        // TODO #12 .finishFromCode seçeneği eklenebilir
+    }
+
+    public void startWithRedirect() throws IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String sessionKey = "dropbox-auth-csrf-token";
 

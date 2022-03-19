@@ -14,7 +14,7 @@ public class Main {
         // // org.uludag.bmb.oauth.OAuthLogin.login();
 
         OAuthFlow flow = new OAuthFlow();
-        flow.startFlow();
+        flow.startWithRedirect();
 
         // org.uludag.bmb.gui.App.main(args);
         // System.out.println(PropertiesReader.getProperty("test123"));
