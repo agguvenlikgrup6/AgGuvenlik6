@@ -36,7 +36,7 @@ public class OAuthFlow {
     private DbxAppInfo appInfo;
 
     public void startWithCode(){
-        // TODO #12 .finishFromCode seçeneği eklenebilir
+        // TODO .finishFromCode seçeneği eklenebilir
     }
 
     public void startWithRedirect() throws IOException {
