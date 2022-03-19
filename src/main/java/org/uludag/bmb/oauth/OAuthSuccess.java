@@ -46,5 +46,6 @@ public class OAuthSuccess implements HttpHandler {
         os.close();
 
         latch.countDown();
+        latch.countDown();
     }
 }

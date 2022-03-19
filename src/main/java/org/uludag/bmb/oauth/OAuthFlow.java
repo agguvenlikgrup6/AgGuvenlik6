@@ -36,10 +36,15 @@ import org.uludag.bmb.PropertiesReader;
 import com.sun.net.httpserver.HttpServer;
 
 public class OAuthFlow {
+    
     private DbxAppInfo appInfo;
 
     public void startFlow() throws IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
+        String sessionKey = "dropbox-auth-csrf-token";
+
+        DbxSessionStore session = new DbxStandardSessionStore(request.getSession(), sessionKey);
+        String redirectUri = PropertiesReader.getProperty("redirectUri");
 
         URL appInfoFile = OAuthFlow.class.getResource("/app.json");
         try {
@@ -47,14 +52,7 @@ public class OAuthFlow {
             appInfo = DbxAppInfo.Reader.readFromFile(appInfoFile.getPath());
         } catch (JsonReader.FileLoadException ex) {
             System.err.println("Error reading <app-info-file>: " + ex.getMessage());
-            System.exit(1);
-            return;
         }
-
-        String sessionKey = "dropbox-auth-csrf-token";
-
-        DbxSessionStore session = new DbxStandardSessionStore(request.getSession(), sessionKey);
-        String redirectUri = PropertiesReader.getProperty("redirectUri");
 
         DbxRequestConfig requestConfig = new DbxRequestConfig(PropertiesReader.getProperty("clientIdentifier"));
         DbxAppInfo appInfoWithoutSecret = new DbxAppInfo(appInfo.getKey());
@@ -72,14 +70,12 @@ public class OAuthFlow {
             try {
                 Desktop.getDesktop().browse(new URI(authorizeUrl));
 
-                var latch = new CountDownLatch(2);
-                var server = HttpServer.create(new InetSocketAddress(PropertiesReader.getProperty("host"),
+                CountDownLatch latch = new CountDownLatch(2);
+                HttpServer server = HttpServer.create(new InetSocketAddress(PropertiesReader.getProperty("host"),
                         Integer.parseInt(PropertiesReader.getProperty("port"))), 0);
 
-                // Access token alındıktan sonra başarılı sonuç yönlendirmesi yapılır
                 server.createContext("/success", new OAuthSuccess(latch));
 
-                // Dropbox PKCE Web Auth RedirectUri, redirectUri işlemlerini yapar
                 server.createContext(PropertiesReader.getProperty("context"), exchange -> {
                     try {
                         String redirectQuery = exchange.getRequestURI().getQuery();
