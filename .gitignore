@@ -4,7 +4,7 @@
 # Directory
 target/*
 
-/authfile.json
+/authinfo.json
 
 # Log file
 *.log
