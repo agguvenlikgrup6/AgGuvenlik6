@@ -3,7 +3,7 @@ module org.uludag.bmb{
     requires javafx.fxml;
     requires java.logging;
     requires java.desktop;
-    requires dropbox.core.sdk;
+    requires transitive dropbox.core.sdk;
     requires javafx.web;
     requires transitive javafx.graphics;
     // requires transitive org.eclipse.jetty.server;

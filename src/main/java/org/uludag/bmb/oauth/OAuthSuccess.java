@@ -1,30 +1,50 @@
 package org.uludag.bmb.oauth;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.concurrent.CountDownLatch;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public class OAuthSuccess implements HttpHandler {
+    private final CountDownLatch latch;
 
-    public void handle(HttpExchange t) throws IOException, IOException {
-
+    public OAuthSuccess(CountDownLatch latch) {
+        this.latch = latch;    
     }
 
-    // public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    //     PrintWriter out = new PrintWriter(IOUtil.utf8Writer(response.getOutputStream()));
-    //     response.setContentType("text/html");
-    //     response.setCharacterEncoding("utf-8");
-    //     out.println("<html>");
-    //     out.println("<head><title>" + "Dropbox Auth" + "</title></head>");
-    //     out.println("<h>Giriş İşlemi Başarılı, Sayfayı Kapatabilirsiniz!</h>");
-    //     out.println("</body>");
-    //     out.println("</html>");
-    //     out.flush();
+    public void handle(HttpExchange t) throws IOException, IOException {
+        InputStream is = t.getRequestBody();
+        InputStreamReader isReader = new InputStreamReader(is);
+        BufferedReader reader = new BufferedReader(isReader);
+        StringBuffer sb = new StringBuffer();
+        String str;
 
-    //     URL url = new URL("http://localhost:8000/shutdown?token=true");
-    //     HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-    //     connection.setRequestMethod("POST");
-    //     connection.getResponseCode();
-    // }
+        while((str = reader.readLine())!= null){
+            sb.append(str);
+        }
+
+        String response = "<html>\n" +
+                "\n" +
+                "<head>\n" +
+                "    <title>Auth Success</title>\n" +
+                "</head>\n" +
+                "\n" +
+                "<body>\n" +
+                "    <h2>Giriş Başarılı, Sayfayı Kapatabilirsiniz!</h2>\n" +
+                "</body>\n" +
+                "\n" +
+                "</html>";
+
+        t.sendResponseHeaders(200, response.length());
+        OutputStream os = t.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+
+        latch.countDown();
+    }
 }
