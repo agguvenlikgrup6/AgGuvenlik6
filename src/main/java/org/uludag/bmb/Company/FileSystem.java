@@ -10,7 +10,6 @@ import org.uludag.bmb.Company.Encrypt;
 public class FileSystem {
     private String textDosya;
     EncryptNew crypt = new EncryptNew();
-    Encrypt aab = new Encrypt();
     public void dosyaSifreleme(String old_file, String new_file){
         File f = new File(old_file);
         try{
@@ -21,24 +20,28 @@ public class FileSystem {
             fr.close();
             File new_f = new File(new_file);
             if (new_f.createNewFile()){
-                aab.init();
-                aab.exportKeys();
+                crypt.init();
                 FileWriter myWriter = new FileWriter(new_f);
-                myWriter.write(aab.encrypt(textDosya));
+                myWriter.write(crypt.encryptForNew(textDosya));
                 myWriter.close();
+                System.out.println("Don't Forget These Keys !!!");
+                System.out.println("Secret Key  --> " + crypt.s_keyCall());
+                System.out.println("IV --> " + crypt.ivCall());
             }
             else{
                 Scanner myObj = new Scanner(System.in);
-                System.out.println("aaaa");
-                String aaa = myObj.nextLine();
-                System.out.println(aaa);
+                System.out.println("Secret Key -->>  ");
+                String s_key = myObj.nextLine();
+                Scanner myObj2 = new Scanner(System.in);
+                System.out.println("IV -->>  ");
+                String IV = myObj2.nextLine();
+                FileWriter myWriter = new FileWriter(new_f);
+                crypt.initFromStrings(s_key, IV);
+                myWriter.write(crypt.encryptForExist(textDosya));
+                myWriter.close();
             }
-            // FileWriter myWriter = new FileWriter(new_f);
-            // myWriter.write(aab.encrypt(textDosya));
-            // myWriter.close();
         }
         catch(Exception e){
-
         }
     }
     public void dosyaSifreCozme(String old_file, String new_file){
@@ -50,15 +53,33 @@ public class FileSystem {
             }
             fr.close();
             File new_f = new File(new_file);
-            if (new_f.createNewFile()){
-                
+            if (new_f.exists()){
+                Scanner myObj = new Scanner(System.in);
+                System.out.println("Secret Key -->>  ");
+                String s_key = myObj.nextLine();
+                Scanner myObj2 = new Scanner(System.in);
+                System.out.println("IV -->>  ");
+                String IV = myObj2.nextLine();
+                FileWriter myWriter = new FileWriter(new_f);
+                crypt.initFromStrings(s_key, IV);
+                myWriter.write(crypt.decrypt(textDosya));
+                myWriter.close();
             }
-            FileWriter myWriter = new FileWriter(new_f);
-            myWriter.write(aab.decrypt(textDosya));
-            myWriter.close();
+            else{
+                new_f.createNewFile();
+                Scanner myObj = new Scanner(System.in);
+                System.out.println("Secret Key -->>  ");
+                String s_key = myObj.nextLine();
+                Scanner myObj2 = new Scanner(System.in);
+                System.out.println("IV -->>  ");
+                String IV = myObj2.nextLine();
+                FileWriter myWriter = new FileWriter(new_f);
+                crypt.initFromStrings(s_key, IV);
+                myWriter.write(crypt.decrypt(textDosya));
+                myWriter.close();
+            }
         }
         catch(Exception e){
-
         }
     }
 }

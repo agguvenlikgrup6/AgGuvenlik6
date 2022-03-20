@@ -14,13 +14,19 @@ public class EncryptNew {
     private int T_LEN = 128;
     private byte[] IV;
     
-    public String keyGenerate() throws Exception{
+
+    public void init() throws Exception{
         KeyGenerator generator = KeyGenerator.getInstance("AES");
         generator.init(KEY_SIZE);
         key = generator.generateKey();
-        String key_st = Base64.getEncoder().encodeToString(key.getEncoded());
-        return key_st;
     }
+    // public String keyGenerate() throws Exception{
+    //     KeyGenerator generator = KeyGenerator.getInstance("AES");
+    //     generator.init(KEY_SIZE);
+    //     key = generator.generateKey();
+    //     String key_st = Base64.getEncoder().encodeToString(key.getEncoded());
+    //     return key_st;
+    // }
     private String encode(byte[] data){
         return Base64.getEncoder().encodeToString(data);
     }
@@ -31,13 +37,21 @@ public class EncryptNew {
     private byte[] decode(String data){
         return Base64.getDecoder().decode(data);
     }
-    public String encrypt(String message) throws Exception{
+    public String encryptForExist(String message) throws Exception{
         byte[] messageInBytes = message.getBytes();
         Cipher encryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
         GCMParameterSpec spec = new GCMParameterSpec(T_LEN, IV);
         encryptionCipher.init(Cipher.ENCRYPT_MODE, key,spec);
         byte[] encrptedBytes = encryptionCipher.doFinal(messageInBytes);
         return encode(encrptedBytes);
+    }
+    public String encryptForNew(String message) throws Exception{
+        byte[] messageInBytes = message.getBytes();
+        Cipher encryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");
+        encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
+        IV = encryptionCipher.getIV();
+        byte[] encryptedBytes = encryptionCipher.doFinal(messageInBytes);
+        return encode(encryptedBytes);
     }
     public String decrypt(String encryptedMessage) throws Exception{
         byte[] messageInBytes = decode(encryptedMessage);
@@ -47,4 +61,6 @@ public class EncryptNew {
         byte[] decryptedBytes = decryptionCipher.doFinal(messageInBytes);
         return new String(decryptedBytes);
     }
+    public String s_keyCall(){ return encode(key.getEncoded());}
+    public String ivCall(){ return encode(IV);}
 }
