@@ -1,10 +1,23 @@
 package org.uludag.bmb;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
+import org.uludag.bmb.oauth.OAuthFlow;
 
 public class Main {
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        org.uludag.bmb.gui.App.main(args);
+    private static final Object LOCK = new Object();
+    
+    public static void main(String[] args) throws Exception {
+        // // org.uludag.bmb.oauth.OAuthLogin.login();
+
+        OAuthFlow flow = new OAuthFlow();
+        flow.startWithRedirect();
+
+        // org.uludag.bmb.gui.App.main(args);
+        // System.out.println(PropertiesReader.getProperty("test123"));
     }
+
 }

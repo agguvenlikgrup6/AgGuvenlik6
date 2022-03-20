@@ -29,7 +29,6 @@ public class TestSceneController {
     @FXML
     void loginToDropbox(ActionEvent event) throws IOException, URISyntaxException {
         lbl1.setText("value");
-        org.uludag.bmb.oauth.OAuthLogin.login();
     }
 
 }

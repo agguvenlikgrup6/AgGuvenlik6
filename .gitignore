@@ -1,11 +1,20 @@
 # Compiled class file
 *.class
 
+# Directory
+target/*
+
+/authinfo.json
+
 # Log file
 *.log
 
-target/*
-target/**
+.vscode
+.idea
+
+/dependency-reduced-pom.xml
+
+/target/**
 
 # BlueJ files
 *.ctxt
