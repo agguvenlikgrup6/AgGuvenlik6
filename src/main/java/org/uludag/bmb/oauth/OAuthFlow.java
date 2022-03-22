@@ -35,7 +35,7 @@ public class OAuthFlow {
 
     private DbxAppInfo appInfo;
 
-    public void startWithCode(){
+    public void startWithCode() {
         // TODO .finishFromCode seçeneği eklenebilir
     }
 
@@ -87,7 +87,7 @@ public class OAuthFlow {
                                         "state", extractQueryParam(redirectQuery, "state")));
 
                         DbxCredential credential = new DbxCredential(authFinish.getAccessToken(), authFinish
-                                .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey(), appInfo.getSecret());
+                                .getExpiresAt(), authFinish.getRefreshToken(), appInfo.getKey());
 
                         File output = new File("authinfo.json");
                         DbxCredential.Writer.writeToFile(credential, output);
