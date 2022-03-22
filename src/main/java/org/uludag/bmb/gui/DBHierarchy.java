@@ -1,5 +1,6 @@
 package org.uludag.bmb.gui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dropbox.core.DbxException;
@@ -7,7 +8,6 @@ import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.json.JsonReader;
 import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
-import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
@@ -30,18 +30,19 @@ public class DBHierarchy {
                     .withRecursive(true)
                     .start();
 
-            // while (true) {
             List<Metadata> entries = result.getEntries();
-            int idx = 0;
+            ArrayList<String> slist = new ArrayList<>();
 
             for (Metadata metadata : entries) {
                 if (metadata instanceof FolderMetadata) {
-                    System.out.println("" + ++idx + ": FOLDER = " + metadata.getPathDisplay());
-
-                } else if (metadata instanceof FileMetadata) {
-                    System.out.println("" + ++idx + ": File = " + metadata.getPathDisplay());
+                    slist.add(metadata.getPathDisplay());
                 }
+            }
 
+            MXMTree tree = new MXMTree(new MXMNode("root", "/dropbox"));
+
+            for (String data : slist) {
+                tree.addElement(data);
             }
 
         } catch (DbxException exception) {

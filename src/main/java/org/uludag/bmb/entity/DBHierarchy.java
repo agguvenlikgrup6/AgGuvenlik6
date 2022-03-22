@@ -1,6 +1,4 @@
-package org.uludag.bmb.gui;
-
-import org.junit.Test;
+package org.uludag.bmb.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +12,14 @@ import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-public class DBHierarchyTest {
-
-    @Test
-    public void listFolderAndFiles() {
-        DbxCredential credential;
+public class DBHierarchy {
+    private DbxCredential credential;
+    
+    public MXMTree listFolderAndFiles() {
         try {
             credential = DbxCredential.Reader.readFromFile("authinfo.json");
         } catch (JsonReader.FileLoadException e) {
-            return;
+            System.exit(1);
         }
 
         DbxRequestConfig requestConfig = new DbxRequestConfig("dbproject/1.0-SNAPSHOT");
@@ -49,10 +46,12 @@ public class DBHierarchyTest {
                 tree.addElement(data);
             }
 
-            tree.printTree();
+            return tree;
 
         } catch (DbxException exception) {
             System.err.println(exception.getMessage());
+            System.exit(1);
+            return null;
         }
 
     }
