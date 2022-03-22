@@ -59,7 +59,8 @@ public class MXMNode {
         for( MXMNode n: childs)
             n.printNode(increment+2);
         for( MXMNode n: leafs)
-            n.printNode(increment+2);
+            if(n.childs.size() == 0)
+                n.printNode(increment+2);
     }
 
     @Override

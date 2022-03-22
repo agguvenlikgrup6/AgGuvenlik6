@@ -1,8 +1,27 @@
 package org.uludag.bmb.gui;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.json.JsonReader;
+import com.dropbox.core.oauth.DbxCredential;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.FolderMetadata;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
+
+import org.uludag.bmb.entity.DBHierarchy;
+import org.uludag.bmb.entity.MXMNode;
+import org.uludag.bmb.entity.MXMTree;
+import org.uludag.bmb.oauth.DbxClientLogin;
+
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -15,32 +34,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class mainSceneController implements Initializable{
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
-        TreeItem<String> rootItem = new TreeItem<>("Files");
-        
-        TreeItem<String> branchItem1 = new TreeItem<>("aaa");
-        TreeItem<String> branchItem2 = new TreeItem<>("bbb");
-        TreeItem<String> branchItem3 = new TreeItem<>("ccc");
-
-
-        TreeItem<String> leafItem1 = new TreeItem<>("aa");
-        TreeItem<String> leafItem2 = new TreeItem<>("bb");
-        TreeItem<String> leafItem3 = new TreeItem<>("cc");
-        
-        branchItem1.getChildren().add(leafItem1);
-        branchItem2.getChildren().add(leafItem2);
-        branchItem3.getChildren().add(leafItem3);
-       
-        rootItem.getChildren().addAll(branchItem1,branchItem2,branchItem3);
-
-        treeView.setRoot(rootItem);
-
-    }
-        
+public class mainSceneController extends DbxClientLogin implements Initializable {
     @FXML
     private Button btnDownload;
 
@@ -49,6 +43,9 @@ public class mainSceneController implements Initializable{
 
     @FXML
     private TreeView treeView;
+
+    @FXML
+    private TreeView showFiles;
 
     @FXML
     private Font x1;
@@ -62,12 +59,84 @@ public class mainSceneController implements Initializable{
     @FXML
     private Color x4;
 
-    @FXML
-    void selectItem(MouseEvent event) {
-        TreeItem<String> item =(TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
-        if(item.getValue()!=null){
-            System.out.println(item.getValue());
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // TODO Auto-generated method stub
+        MXMTree hierarchy = new DBHierarchy().getHierarchy();
+        MXMNode hierarchyRoot = hierarchy.root;
+
+        TreeItem<String> rootItem = new TreeItem<>(hierarchyRoot.data);
+
+        treeView.setRoot(rootItem);
+
+        addtotree(rootItem, hierarchyRoot);
+
+    }
+
+    private void addtotree(TreeItem<String> rootItem, MXMNode hierarchyRoot) {
+        if (hierarchyRoot.childs.size() != 0) {
+            int i = 0;
+            for (MXMNode c : hierarchyRoot.childs) {
+                hierarchyRoot = c;
+                rootItem.getChildren().add(new TreeItem<>(hierarchyRoot.data));
+                addtotree(rootItem.getChildren().get(i++), hierarchyRoot);
+            }
+        } else {
+            for (MXMNode c : hierarchyRoot.leafs) {
+                rootItem.getChildren().add(new TreeItem<>(c.data));
+            }
         }
     }
 
+    @FXML
+    void downloadFile(MouseEvent event) {
+
+    }
+
+    @FXML
+    void selectItem(MouseEvent event) {
+        TreeItem<String> item = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
+
+        try {
+            ArrayList<String> pathList = new ArrayList<>();
+            String path = "";
+            var fake = item;
+
+            if (item.getParent() == null) {
+                path += "/";
+            } else {
+
+                while (fake.getParent() != null) {
+                    pathList.add("/");
+                    pathList.add(fake.getValue());
+                    fake = fake.getParent();
+                }
+
+                pathList.add("/");
+                Collections.reverse(pathList);
+            }
+
+            for (String p : pathList) {
+                path += p;
+            }
+
+            // ekran yenilenecek
+
+            ListFolderResult result = client.files().listFolder(path);
+
+            List<Metadata> entries = result.getEntries();
+
+            TreeItem<String> treeitem = new TreeItem<>("AAAA");
+            showFiles.setRoot(treeitem);
+
+            for (Metadata metadata : entries) {
+                if (metadata instanceof FileMetadata) {
+                    treeitem.getChildren().add(new TreeItem<>(metadata.getName()));
+                }
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
 }

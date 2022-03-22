@@ -83,7 +83,7 @@
                 <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <TreeView fx:id="treeView" layoutX="11.0" layoutY="56.0" onContextMenuRequested="#selectItem" onMouseClicked="#selectItem" prefHeight="200.0" prefWidth="200.0" />
+                  <TreeView fx:id="treeView" layoutX="11.0" layoutY="76.0" onMouseClicked="#selectItem" prefHeight="200.0" prefWidth="200.0" />
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
@@ -92,6 +92,7 @@
               <children>
                         <Button fx:id="btnUpload" layoutX="14.0" layoutY="22.0" mnemonicParsing="false" style="-fx-background-color: cyan; -fx-border-color: black;" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" />
                         <Button fx:id="btnDownload" layoutX="94.0" layoutY="23.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="94.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text=" Download" textFill="WHITE" />
+                        <TreeView fx:id="showFiles" layoutX="14.0" layoutY="73.0" onMouseClicked="#downloadFile" prefHeight="462.0" prefWidth="407.0" />
               </children>
             </AnchorPane>
           </content>
