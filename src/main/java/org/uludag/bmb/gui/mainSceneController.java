@@ -1,5 +1,6 @@
 package org.uludag.bmb.gui;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
 
+import com.dropbox.core.DbxDownloader;
+import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
@@ -32,6 +35,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class mainSceneController extends DbxClientLogin implements Initializable {
+    String path;
+
     @FXML
     private Button btnDownload;
 
@@ -98,7 +103,7 @@ public class mainSceneController extends DbxClientLogin implements Initializable
 
         try {
             ArrayList<String> pathList = new ArrayList<>();
-            String path = "";
+            path = "";
             var fake = item;
 
             if (item.getParent() == null) {
@@ -139,10 +144,20 @@ public class mainSceneController extends DbxClientLogin implements Initializable
     }
     @FXML
     void downloadItem(ActionEvent event) {
-     
-        System.out.println("aasas");
-        // Download download=new Download();
+        TreeItem<String> item = (TreeItem<String>) showFiles.getSelectionModel().getSelectedItem();
+        
+        try {
+            path += item.getValue();
 
+            DbxDownloader<FileMetadata> downloader = client.files().download(path);
+
+            FileOutputStream out = new FileOutputStream(item.getValue());
+            downloader.download(out);
+            out.close();
+
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
     }
 
    
