@@ -2,8 +2,8 @@ package org.uludag.bmb.entity;
 
 public class MXMTree {
 
-    MXMNode root;
-    MXMNode commonRoot;
+    public MXMNode root;
+    public MXMNode commonRoot;
 
     public MXMTree(MXMNode root) {
         this.root = root;
@@ -21,7 +21,7 @@ public class MXMTree {
         commonRoot.printNode(0);
     }
 
-    public void getCommonRoot() {
+    private void getCommonRoot() {
         if (commonRoot == null) {
             MXMNode current = root;
             while (current.leafs.size() <= 0) {
