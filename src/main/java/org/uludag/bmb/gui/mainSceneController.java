@@ -1,8 +1,12 @@
 package org.uludag.bmb.gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javax.swing.JFileChooser;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -14,6 +18,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class mainSceneController implements Initializable{
 
@@ -49,6 +54,9 @@ public class mainSceneController implements Initializable{
 
     @FXML
     private TreeView treeView;
+    
+    @FXML
+    private Text files;
 
     @FXML
     private Font x1;
@@ -68,6 +76,33 @@ public class mainSceneController implements Initializable{
         if(item.getValue()!=null){
             System.out.println(item.getValue());
         }
+    }
+    @FXML
+    void downloadItem(ActionEvent event) {
+     
+        System.out.println("aasas");
+        // Download download=new Download();
+
+    }
+
+   
+
+    @FXML
+    void uploadItem(ActionEvent event) throws IOException {
+        JFileChooser fileChooser=new JFileChooser();
+        fileChooser.showOpenDialog(null);
+        
+        System.out.println(fileChooser.getSelectedFile().toPath().toString());
+        String path=fileChooser.getSelectedFile().toPath().toString();
+        UploadFile uploadFile=new UploadFile();
+        uploadFile.uploadFileFunc(path);
+    }
+    
+    @FXML
+    void getPath(MouseEvent event) throws IOException {
+        System.out.println(files.getText());
+       
+        // download.downloadFile(files.getText());
     }
 
 }
