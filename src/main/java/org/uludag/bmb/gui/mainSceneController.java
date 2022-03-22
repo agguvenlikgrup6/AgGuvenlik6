@@ -119,7 +119,6 @@ public class mainSceneController extends DbxClientLogin implements Initializable
                 path += p;
             }
 
-            // ekran yenilenecek
 
             ListFolderResult result = client.files().listFolder(path);
 

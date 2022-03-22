@@ -48,7 +48,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.uludag.bmb.gui.mainSceneController">
   <children>
@@ -96,7 +95,6 @@
                         <TreeView fx:id="showFiles" layoutX="14.0" layoutY="73.0" onMouseClicked="#downloadFile" prefHeight="462.0" prefWidth="407.0" />
                         <Button fx:id="btnUpload" layoutX="14.0" layoutY="22.0" mnemonicParsing="false" onAction="#uploadItem" style="-fx-background-color: cyan; -fx-border-color: black;" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" />
                         <Button fx:id="btnDownload" layoutX="94.0" layoutY="23.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="94.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text=" Download" textFill="WHITE" />
-                        <Text fx:id="files" layoutX="59.0" layoutY="103.0" onMouseClicked="#getPath" strokeType="OUTSIDE" strokeWidth="0.0" text="/Test_1/test2.txt" wrappingWidth="101.2109375" />
               </children>
             </AnchorPane>
           </content>
