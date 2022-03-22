@@ -7,7 +7,7 @@ public class Main {
         OAuthFlow flow = new OAuthFlow();
         flow.startWithRedirect();
 
-        // org.uludag.bmb.gui.App.main(args);
+        System.out.println("ASDASDASD");
     }
 
 }

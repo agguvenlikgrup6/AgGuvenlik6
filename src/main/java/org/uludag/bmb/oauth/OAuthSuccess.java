@@ -23,7 +23,7 @@ public class OAuthSuccess implements HttpHandler {
                 "</head>\n" +
                 "\n" +
                 "<body>\n" +
-                "    <h2>Giriş Basarili</h2>\n" +
+                "    <h2>Giriş Başarılı, Sayfayı Kapatıp Uygulamaya Dönebilirsiniz!</h2>\n" +
                 "</body>\n" +
                 "\n" +
                 "</html>";
