@@ -6,8 +6,8 @@ public class Main {
     public static void main(String[] args) throws Exception {
         OAuthFlow flow = new OAuthFlow();
         flow.startWithRedirect();
-
-        System.out.println("ASDASDASD");
+        
+        org.uludag.bmb.gui.App.main(args);
     }
 
 }
