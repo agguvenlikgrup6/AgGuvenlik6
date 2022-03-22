@@ -1,7 +1,10 @@
 package org.uludag.bmb.gui;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +48,7 @@ public class mainSceneController extends DbxClientLogin implements Initializable
 
     @FXML
     private TreeView treeView;
-    
+
     @FXML
     private Text files;
 
@@ -124,7 +127,6 @@ public class mainSceneController extends DbxClientLogin implements Initializable
                 path += p;
             }
 
-
             ListFolderResult result = client.files().listFolder(path);
 
             List<Metadata> entries = result.getEntries();
@@ -142,10 +144,11 @@ public class mainSceneController extends DbxClientLogin implements Initializable
 
         }
     }
+
     @FXML
     void downloadItem(ActionEvent event) {
         TreeItem<String> item = (TreeItem<String>) showFiles.getSelectionModel().getSelectedItem();
-        
+
         try {
             path += item.getValue();
 
@@ -156,27 +159,35 @@ public class mainSceneController extends DbxClientLogin implements Initializable
             out.close();
 
         } catch (Exception e) {
-            //TODO: handle exception
+            // TODO: handle exception
         }
     }
 
-   
-
     @FXML
     void uploadItem(ActionEvent event) throws IOException {
-        JFileChooser fileChooser=new JFileChooser();
+        JFileChooser fileChooser = new JFileChooser();
         fileChooser.showOpenDialog(null);
-        
+
         System.out.println(fileChooser.getSelectedFile().toPath().toString());
-        String path=fileChooser.getSelectedFile().toPath().toString();
-        UploadFile uploadFile=new UploadFile();
-        uploadFile.uploadFileFunc(path);
+        String fileName = fileChooser.getSelectedFile().getName();
+        System.out.println(fileName);
+        String uploadFilePath = fileChooser.getSelectedFile().toPath().toString();
+        // UploadFile uploadFile = new UploadFile();
+        // uploadFile.uploadFileFunc(uploadFilePath);
+
+        try {
+            try (InputStream in = new FileInputStream(uploadFilePath)) {
+                client.files().uploadBuilder(path + fileName).uploadAndFinish(in);
+            }
+        } catch (DbxException exception) {
+            System.err.println(exception.getMessage());
+        }
     }
-    
+
     @FXML
     void getPath(MouseEvent event) throws IOException {
         System.out.println(files.getText());
-       
+
         // download.downloadFile(files.getText());
     }
 
