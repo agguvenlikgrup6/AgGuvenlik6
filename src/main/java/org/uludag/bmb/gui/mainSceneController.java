@@ -35,7 +35,7 @@ public class mainSceneController implements Initializable{
         TreeItem<String> leafItem1 = new TreeItem<>("aa");
         TreeItem<String> leafItem2 = new TreeItem<>("bb");
         TreeItem<String> leafItem3 = new TreeItem<>("cc");
-
+        
         branchItem1.getChildren().add(leafItem1);
         branchItem2.getChildren().add(leafItem2);
         branchItem3.getChildren().add(leafItem3);
