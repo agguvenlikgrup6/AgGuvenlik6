@@ -23,7 +23,6 @@ public class OAuthFlowTest {
 
         DbxRequestConfig requestConfig = new DbxRequestConfig("dbproject/1.0-SNAPSHOT");
         DbxClientV2 dbxClient = new DbxClientV2(requestConfig, credential); 
-        dbxClient.check();
 
         FullAccount dbxAccountInfo = null;
         try {

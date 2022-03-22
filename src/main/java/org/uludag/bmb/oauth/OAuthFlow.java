@@ -120,7 +120,7 @@ public class OAuthFlow {
                 }
             }
         }
-
+        
     }
 
     protected String extractQueryParam(String query, String param) {
