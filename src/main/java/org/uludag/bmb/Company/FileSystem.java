@@ -18,9 +18,10 @@ public class FileSystem {
                 textDosya = fr.nextLine();
             }
             fr.close();
+            crypt.init();
             File new_f = new File(new_file);
             if (new_f.createNewFile()){
-                crypt.init();
+                // crypt.init();
                 FileWriter myWriter = new FileWriter(new_f);
                 myWriter.write(crypt.encryptForNew(textDosya));
                 myWriter.close();

@@ -11,9 +11,9 @@ public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
         try{
             FileSystem tt = new FileSystem();
-            // tt.dosyaSifreleme("deneme.txt", "aa.txt");
-            // tt.dosyaSifreCozme("aa.txt", "ddd.txt");
-
+            EncryptNew aa = new EncryptNew();
+            tt.dosyaSifreleme("deneme.txt", "aa.txt");
+            tt.dosyaSifreCozme("aa.txt","dd.txt");
         }
         catch(Exception ignored){
             
