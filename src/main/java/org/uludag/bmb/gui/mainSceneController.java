@@ -1,5 +1,6 @@
 package org.uludag.bmb.gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,21 +8,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.json.JsonReader;
-import com.dropbox.core.oauth.DbxCredential;
-import com.dropbox.core.v2.DbxClientV2;
+import javax.swing.JFileChooser;
+
 import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-import org.uludag.bmb.entity.DBHierarchy;
-import org.uludag.bmb.entity.MXMNode;
-import org.uludag.bmb.entity.MXMTree;
+import org.uludag.bmb.entity.*;
 import org.uludag.bmb.oauth.DbxClientLogin;
 
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -33,6 +29,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class mainSceneController extends DbxClientLogin implements Initializable {
     @FXML
@@ -43,6 +40,9 @@ public class mainSceneController extends DbxClientLogin implements Initializable
 
     @FXML
     private TreeView treeView;
+    
+    @FXML
+    private Text files;
 
     @FXML
     private TreeView showFiles;
@@ -61,7 +61,6 @@ public class mainSceneController extends DbxClientLogin implements Initializable
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO Auto-generated method stub
         MXMTree hierarchy = new DBHierarchy().getHierarchy();
         MXMNode hierarchyRoot = hierarchy.root;
 
@@ -139,4 +138,32 @@ public class mainSceneController extends DbxClientLogin implements Initializable
 
         }
     }
+    @FXML
+    void downloadItem(ActionEvent event) {
+     
+        System.out.println("aasas");
+        // Download download=new Download();
+
+    }
+
+   
+
+    @FXML
+    void uploadItem(ActionEvent event) throws IOException {
+        JFileChooser fileChooser=new JFileChooser();
+        fileChooser.showOpenDialog(null);
+        
+        System.out.println(fileChooser.getSelectedFile().toPath().toString());
+        String path=fileChooser.getSelectedFile().toPath().toString();
+        UploadFile uploadFile=new UploadFile();
+        uploadFile.uploadFileFunc(path);
+    }
+    
+    @FXML
+    void getPath(MouseEvent event) throws IOException {
+        System.out.println(files.getText());
+       
+        // download.downloadFile(files.getText());
+    }
+
 }
