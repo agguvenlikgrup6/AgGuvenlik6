@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +20,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.util.*;
 
 public class mainSceneController implements Initializable{
 
@@ -79,8 +84,31 @@ public class mainSceneController implements Initializable{
     }
     @FXML
     void downloadItem(ActionEvent event) {
-     
-        System.out.println("aasas");
+        JFileChooser chooser ;
+        
+        chooser = new JFileChooser(); 
+        chooser.showSaveDialog(null);
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("choosertitle");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        //
+        // disable the "All files" option.
+        //
+        chooser.setAcceptAllFileFilterUsed(false);
+        System.out.println(chooser.getCurrentDirectory());
+        // JFrame frame = new JFrame("");
+        // DemoJFileChooser panel = new DemoJFileChooser();
+        // frame.addWindowListener(
+        //   new WindowAdapter() {
+        //     public void windowClosing(WindowEvent e) {
+        //       System.exit(0);
+        //       }
+        //     }
+        //   );
+        // frame.getContentPane().add(panel,"Center");
+        // frame.setSize(panel.getPreferredSize());
+        // frame.setVisible(true);
+        // System.out.println("aasas");
         // Download download=new Download();
 
     }
