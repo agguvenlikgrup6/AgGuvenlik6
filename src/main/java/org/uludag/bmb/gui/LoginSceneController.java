@@ -20,8 +20,6 @@ public class LoginSceneController {
 
     @FXML
     void loginToDropbox(MouseEvent event) throws IOException {
-        OAuthFlow flow = new OAuthFlow();
-        flow.startWithRedirect();
         App.setRoot("mainScene");
         System.out.println(123);
     }
