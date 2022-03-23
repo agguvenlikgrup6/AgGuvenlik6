@@ -1,4 +1,4 @@
-package org.uludag.bmb.gui;
+package org.uludag.bmb.controller;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
