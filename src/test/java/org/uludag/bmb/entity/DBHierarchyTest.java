@@ -46,13 +46,6 @@ public class DBHierarchyTest {
                 }
             }
             slist = new ArrayList<>();
-            slist.add("/A");
-            slist.add("/A/BAAAAAAAAAAAAAAAAA");
-            slist.add("/A/C");
-            slist.add("/A/A/A/A/A/A/A/A/A/A/A");
-            slist.add("/A/A/A/A/A/A/A/A/A/B");
-            slist.add("/A/C/A_1");
-            slist.add("/A/A/A_2");
             slist.add("/A/B/A");
             slist.add("/A/A/A_1");
 
@@ -70,22 +63,16 @@ public class DBHierarchyTest {
         @Override
         public int compare(String o1, String o2) {         
             long o1PathCount = o1.chars().filter(ch -> ch == '/').count();
-            long o2PathCount = o1.chars().filter(ch -> ch == '/').count();
+            long o2PathCount = o2.chars().filter(ch -> ch == '/').count();
 
             if(o1PathCount == o2PathCount)
-                return 0;
+                return o1.compareTo(o2);
             else{
                 if(o1PathCount < o2PathCount)
                     return -1;
                 else
                     return +1;
             }
-            // return o1PathCount < o2PathCount ? 1 : 0;
-            // if (o1PathCount == o2PathCount){
-            //     return o1.compareTo(o2);
-            // }else{
-            //     return o1PathCount < o2PathCount ? 0 : 1;
-            // }
         }
     }
 }
