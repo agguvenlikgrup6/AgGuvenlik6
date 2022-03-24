@@ -1,16 +1,16 @@
-package org.uludag.bmb.entity;
+package org.uludag.bmb.entity.gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PathNode {
-    public List<PathNode> childs;
+public class HieararchyNode {
+    public List<HieararchyNode> childs;
     public String data;
     public String incrementalPath;
 
-    public PathNode(String nodeValue, String incrementalPath) {
-        childs = new ArrayList<PathNode>();
+    public HieararchyNode(String nodeValue, String incrementalPath) {
+        childs = new ArrayList<HieararchyNode>();
         data = nodeValue;
         this.incrementalPath = incrementalPath;
     }
@@ -19,7 +19,7 @@ public class PathNode {
         if (list[0] == null || list[0].equals(""))
             list = Arrays.copyOfRange(list, 1, list.length);
 
-        PathNode currentChild = new PathNode(list[0], currentPath + "/" + list[0]);
+        HieararchyNode currentChild = new HieararchyNode(list[0], currentPath + "/" + list[0]);
         if (list.length == 1) {
             childs.add(currentChild);
             return;
@@ -29,7 +29,7 @@ public class PathNode {
                 childs.add(currentChild);
                 currentChild.addElement(currentChild.incrementalPath, Arrays.copyOfRange(list, 1, list.length));
             } else {
-                PathNode nextChild = childs.get(index);
+                HieararchyNode nextChild = childs.get(index);
                 nextChild.addElement(currentChild.incrementalPath, Arrays.copyOfRange(list, 1, list.length));
             }
         }
@@ -37,7 +37,7 @@ public class PathNode {
 
     @Override
     public boolean equals(Object obj) {
-        PathNode cmpObj = (PathNode) obj;
+        HieararchyNode cmpObj = (HieararchyNode) obj;
         return incrementalPath.equals(cmpObj.incrementalPath) && data.equals(cmpObj.data);
     }
 

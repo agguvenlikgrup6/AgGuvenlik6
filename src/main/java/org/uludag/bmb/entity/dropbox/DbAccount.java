@@ -1,4 +1,4 @@
-package org.uludag.bmb.operations.dropbox;
+package org.uludag.bmb.entity.dropbox;
 
 import java.io.IOException;
 

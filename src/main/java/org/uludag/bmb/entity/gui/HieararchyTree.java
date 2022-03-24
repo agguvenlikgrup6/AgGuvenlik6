@@ -1,10 +1,10 @@
-package org.uludag.bmb.entity;
+package org.uludag.bmb.entity.gui;
 
-public class PathTree {
+public class HieararchyTree {
 
-    public PathNode root;
+    public HieararchyNode root;
 
-    public PathTree(PathNode root) {
+    public HieararchyTree(HieararchyNode root) {
         this.root = root;
     }
 

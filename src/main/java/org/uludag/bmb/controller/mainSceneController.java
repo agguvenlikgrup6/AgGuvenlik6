@@ -2,12 +2,10 @@ package org.uludag.bmb.controller;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -20,8 +18,7 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-import org.uludag.bmb.entity.*;
-import org.uludag.bmb.oauth.DbxClientLogin;
+import org.uludag.bmb.entity.gui.DropboxFilePath;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,15 +26,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class mainSceneController extends DbxClientLogin implements Initializable {
+public class mainSceneController extends Controller implements Initializable {
     String path;
 
     @FXML
@@ -69,25 +63,8 @@ public class mainSceneController extends DbxClientLogin implements Initializable
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        PathTree hierarchy = new PathHierarchy().getHierarchy();
-        PathNode hierarchyRoot = hierarchy.root;
+        treeView.setRoot(new DropboxFilePath(client).getTree());
 
-        TreeItem<String> rootItem = new TreeItem<>(hierarchyRoot.data);
-        
-        addtotree(rootItem, hierarchyRoot);
-
-        
-        treeView.setRoot(rootItem);
-
-    }
-
-    private void addtotree(TreeItem<String> rootItem, PathNode hierarchyRoot) {
-        int i = 0;
-        for (PathNode c : hierarchyRoot.childs) {
-            hierarchyRoot = c;
-            rootItem.getChildren().add(new TreeItem<>(hierarchyRoot.data));
-            addtotree(rootItem.getChildren().get(i++), hierarchyRoot);
-        }
     }
 
     @FXML
@@ -122,7 +99,7 @@ public class mainSceneController extends DbxClientLogin implements Initializable
                 path += p;
             }
 
-            ListFolderResult result = client.files().listFolder(path);
+            ListFolderResult result = client.getClient().files().listFolder(path);
 
             List<Metadata> entries = result.getEntries();
 
@@ -147,7 +124,7 @@ public class mainSceneController extends DbxClientLogin implements Initializable
         try {
             path += item.getValue();
 
-            DbxDownloader<FileMetadata> downloader = client.files().download(path);
+            DbxDownloader<FileMetadata> downloader = client.getClient().files().download(path);
 
             FileOutputStream out = new FileOutputStream(item.getValue());
             downloader.download(out);
@@ -172,7 +149,7 @@ public class mainSceneController extends DbxClientLogin implements Initializable
 
         try {
             try (InputStream in = new FileInputStream(uploadFilePath)) {
-                client.files().uploadBuilder(path + fileName).uploadAndFinish(in);
+                client.getClient().files().uploadBuilder(path + fileName).uploadAndFinish(in);
             }
         } catch (DbxException exception) {
             System.err.println(exception.getMessage());

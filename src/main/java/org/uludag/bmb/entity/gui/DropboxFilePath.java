@@ -1,4 +1,4 @@
-package org.uludag.bmb.entity;
+package org.uludag.bmb.entity.gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,23 +7,24 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
-import org.uludag.bmb.operations.dropbox.DbClient;
-import org.uludag.bmb.operations.dropbox.DbModule;
+import org.uludag.bmb.entity.dropbox.DbClient;
 
-public class PathHierarchy {
+import javafx.scene.control.TreeItem;
 
-    private DbClient client;
-    private Injector injector;
+public class DropboxFilePath extends FilePath implements PathTree {
 
-    public PathHierarchy() {
-        injector = Guice.createInjector(new DbModule());
-        this.client = injector.getInstance(DbClient.class);
+    public DropboxFilePath(DbClient client) {
+        super(client);
     }
 
-    public PathTree getHierarchy() {
+    @Override
+    public TreeItem<String> getTree() {
+        return treeItem;
+    }
+
+    @Override
+    public void setHieararchy() {
         try {
             ListFolderResult result = client.getClient().files().listFolderBuilder("")
                     .withIncludeDeleted(false)
@@ -39,19 +40,25 @@ public class PathHierarchy {
                 }
             }
 
-            PathTree tree = new PathTree(new PathNode("/", ""));
+            hieararchy = new HieararchyTree(new HieararchyNode("/", ""));
 
             for (String data : slist) {
-                tree.addElement(data);
+                hieararchy.addElement(data);
             }
-
-            return tree;
 
         } catch (DbxException exception) {
             System.err.println(exception.getMessage());
-            System.exit(1);
-            return null;
         }
 
+        setTreeItem(this.treeItem, this.hieararchy.root);
+    }
+
+    private void setTreeItem(TreeItem<String> rootItem, HieararchyNode hierarchyRoot) {
+        int i = 0;
+        for (HieararchyNode c : hierarchyRoot.childs) {
+            hierarchyRoot = c;
+            rootItem.getChildren().add(new TreeItem<>(hierarchyRoot.data));
+            setTreeItem(rootItem.getChildren().get(i++), hierarchyRoot);
+        }
     }
 }

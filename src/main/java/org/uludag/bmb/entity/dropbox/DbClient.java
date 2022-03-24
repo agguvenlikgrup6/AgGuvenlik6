@@ -1,17 +1,13 @@
-package org.uludag.bmb.operations.dropbox;
+package org.uludag.bmb.entity.dropbox;
 
 import java.io.IOException;
 
 import com.dropbox.core.v2.DbxClientV2;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
-@Singleton
 public class DbClient {
     private DbxClientV2 client;
     private final DbAccount account;
 
-    @Inject
     public DbClient(DbAccount account) {
         this.account = account;
         login();
