@@ -7,12 +7,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
-public class Client {
+public class DbClient {
     private DbxClientV2 client;
-    private final Account account;
+    private final DbAccount account;
 
     @Inject
-    public Client(Account account) {
+    public DbClient(DbAccount account) {
         this.account = account;
         login();
     }

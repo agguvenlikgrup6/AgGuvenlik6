@@ -2,10 +2,10 @@ package org.uludag.bmb.operations.dropbox;
 
 import com.google.inject.AbstractModule;
 
-public class Module extends AbstractModule{
+public class DbModule extends AbstractModule{
     
     @Override
     protected void configure() {
-        bind(Client.class);
+        bind(DbClient.class);
     }
 }

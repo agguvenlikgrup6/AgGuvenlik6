@@ -4,30 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.json.JsonReader;
-import com.dropbox.core.oauth.DbxCredential;
-import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+import org.uludag.bmb.operations.dropbox.DbClient;
+import org.uludag.bmb.operations.dropbox.DbModule;
 
 public class PathHierarchy {
-    
-    private DbxCredential credential;
+
+    private DbClient client;
+    private Injector injector;
+
+    public PathHierarchy() {
+        injector = Guice.createInjector(new DbModule());
+        this.client = injector.getInstance(DbClient.class);
+    }
 
     public PathTree getHierarchy() {
         try {
-            credential = DbxCredential.Reader.readFromFile("authinfo.json");
-        } catch (JsonReader.FileLoadException e) {
-            System.exit(1);
-        }
-
-        DbxRequestConfig requestConfig = new DbxRequestConfig("dbproject/1.0-SNAPSHOT");
-        DbxClientV2 client = new DbxClientV2(requestConfig, credential);
-
-        try {
-            ListFolderResult result = client.files().listFolderBuilder("")
+            ListFolderResult result = client.getClient().files().listFolderBuilder("")
                     .withIncludeDeleted(false)
                     .withRecursive(true)
                     .start();

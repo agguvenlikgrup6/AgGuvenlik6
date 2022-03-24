@@ -8,11 +8,11 @@ import com.dropbox.core.oauth.DbxCredential;
 
 import org.uludag.bmb.PropertiesReader;
 
-public class Account {
+public class DbAccount {
     private DbxCredential credential;
     private DbxRequestConfig requestConfig;
 
-    public Account() {
+    public DbAccount() {
         try {
             credential = DbxCredential.Reader.readFromFile(PropertiesReader.getProperty("authinfo"));
             requestConfig = new DbxRequestConfig(PropertiesReader.getProperty("clientIdentifier"));

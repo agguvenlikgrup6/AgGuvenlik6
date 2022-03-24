@@ -5,13 +5,13 @@ import com.dropbox.core.DbxException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public class Test {
+public class DbTest {
    public static void main(String[] args) throws DbxApiException, DbxException {
-      Injector injector = Guice.createInjector(new Module());
-      Client client = injector.getInstance(Client.class);
+      Injector injector = Guice.createInjector(new DbModule());
+      DbClient client = injector.getInstance(DbClient.class);
 
       System.out.println(client.hashCode());
-      Client client2 = injector.getInstance(Client.class);
+      DbClient client2 = injector.getInstance(DbClient.class);
       System.out.println(client2.hashCode());
       
    }
