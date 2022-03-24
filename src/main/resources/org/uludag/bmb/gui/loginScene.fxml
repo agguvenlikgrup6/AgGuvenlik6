@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="348.0" prefWidth="616.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.uludag.bmb.gui.LoginSceneController">
+<StackPane prefHeight="348.0" prefWidth="616.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.uludag.bmb.controller.LoginSceneController">
   <children>
     <StackPane prefHeight="326.0" prefWidth="577.0">
          <children>

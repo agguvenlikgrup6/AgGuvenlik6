@@ -69,29 +69,24 @@ public class mainSceneController extends DbxClientLogin implements Initializable
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        MXMTree hierarchy = new DBHierarchy().getHierarchy();
-        MXMNode hierarchyRoot = hierarchy.root;
+        PathTree hierarchy = new PathHierarchy().getHierarchy();
+        PathNode hierarchyRoot = hierarchy.root;
 
         TreeItem<String> rootItem = new TreeItem<>(hierarchyRoot.data);
-
-        treeView.setRoot(rootItem);
-
+        
         addtotree(rootItem, hierarchyRoot);
+
+        
+        treeView.setRoot(rootItem);
 
     }
 
-    private void addtotree(TreeItem<String> rootItem, MXMNode hierarchyRoot) {
-        if (hierarchyRoot.childs.size() != 0) {
-            int i = 0;
-            for (MXMNode c : hierarchyRoot.childs) {
-                hierarchyRoot = c;
-                rootItem.getChildren().add(new TreeItem<>(hierarchyRoot.data));
-                addtotree(rootItem.getChildren().get(i++), hierarchyRoot);
-            }
-        } else {
-            for (MXMNode c : hierarchyRoot.leafs) {
-                rootItem.getChildren().add(new TreeItem<>(c.data));
-            }
+    private void addtotree(TreeItem<String> rootItem, PathNode hierarchyRoot) {
+        int i = 0;
+        for (PathNode c : hierarchyRoot.childs) {
+            hierarchyRoot = c;
+            rootItem.getChildren().add(new TreeItem<>(hierarchyRoot.data));
+            addtotree(rootItem.getChildren().get(i++), hierarchyRoot);
         }
     }
 

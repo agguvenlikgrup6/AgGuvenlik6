@@ -12,10 +12,11 @@ import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-public class DBHierarchy {
+public class PathHierarchy {
+    
     private DbxCredential credential;
 
-    public MXMTree getHierarchy() {
+    public PathTree getHierarchy() {
         try {
             credential = DbxCredential.Reader.readFromFile("authinfo.json");
         } catch (JsonReader.FileLoadException e) {
@@ -40,7 +41,7 @@ public class DBHierarchy {
                 }
             }
 
-            MXMTree tree = new MXMTree(new MXMNode("/", ""));
+            PathTree tree = new PathTree(new PathNode("/", ""));
 
             for (String data : slist) {
                 tree.addElement(data);
