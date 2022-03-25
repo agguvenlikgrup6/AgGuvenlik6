@@ -19,7 +19,7 @@ public class OAuthValidation {
         }
 
         DbxRequestConfig requestConfig = new DbxRequestConfig("dbproject/1.0-SNAPSHOT");
-        DbxClientV2 dbxClient = new DbxClientV2(requestConfig, credential); 
+        DbxClientV2 dbxClient = new DbxClientV2(requestConfig, credential);
 
         try {
             FullAccount dbxAccountInfo = dbxClient.users().getCurrentAccount();

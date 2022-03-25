@@ -43,6 +43,7 @@ public class App extends Application {
         scene = new Scene(loadFXML("startupScene"));
         stage.setScene(scene);
         stage.show();
+        stage.setResizable(false);
     }
 
     public static void setRoot(String fxml) throws IOException {

@@ -34,7 +34,7 @@ import com.sun.net.httpserver.HttpServer;
 public class OAuthFlow {
 
     private DbxAppInfo appInfo;
-    private OAuthValidation authValidation;
+    public OAuthValidation authValidation;
 
     public OAuthFlow(){
         authValidation = new OAuthValidation();
