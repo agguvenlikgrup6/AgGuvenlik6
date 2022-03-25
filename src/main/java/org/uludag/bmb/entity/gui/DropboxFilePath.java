@@ -9,6 +9,8 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.entity.dropbox.DbClient;
+import org.uludag.bmb.entity.gui.treeview.HieararchyNode;
+import org.uludag.bmb.entity.gui.treeview.HieararchyTree;
 
 import javafx.scene.control.TreeItem;
 

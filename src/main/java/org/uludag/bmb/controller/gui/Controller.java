@@ -1,4 +1,4 @@
-package org.uludag.bmb.controller;
+package org.uludag.bmb.controller.gui;
 
 import org.uludag.bmb.entity.dropbox.DbAccount;
 import org.uludag.bmb.entity.dropbox.DbClient;

@@ -1,4 +1,4 @@
-package org.uludag.bmb.entity.gui;
+package org.uludag.bmb.entity.gui.treeview;
 
 import java.util.ArrayList;
 import java.util.Arrays;

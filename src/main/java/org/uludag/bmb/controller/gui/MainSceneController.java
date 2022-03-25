@@ -1,53 +1,55 @@
-package org.uludag.bmb.controller;
+package org.uludag.bmb.controller.gui;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
-import javax.swing.JFileChooser;
 
-import com.dropbox.core.DbxDownloader;
-import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.entity.gui.DropboxFilePath;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 
-public class mainSceneController extends Controller implements Initializable {
+public class MainSceneController extends Controller implements Initializable {
     String path;
 
     @FXML
     private Button btnDownload;
 
     @FXML
+    private ListView<?> fileList;
+    
+    @FXML
     private Button btnUpload;
 
     @FXML
-    private TreeView treeView;
+    private TreeView<String> treeView;
 
     @FXML
     private Text files;
 
-    @FXML
-    private TreeView showFiles;
+    // @FXML
+    // private TreeView<String> showFiles;
 
     @FXML
     private Font x1;
@@ -61,10 +63,17 @@ public class mainSceneController extends Controller implements Initializable {
     @FXML
     private Color x4;
 
+    private Set<String> stringSet;
+    ObservableList observableList = FXCollections.observableArrayList();
+
+    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        treeView.setRoot(new DropboxFilePath(client).getTree());
+        var tree = new DropboxFilePath(client).getTree();
+        treeView.setRoot(tree);
 
+        
     }
 
     @FXML
@@ -104,7 +113,7 @@ public class mainSceneController extends Controller implements Initializable {
             List<Metadata> entries = result.getEntries();
 
             TreeItem<String> treeitem = new TreeItem<>("AAAA");
-            showFiles.setRoot(treeitem);
+            // showFiles.setRoot(treeitem);
 
             for (Metadata metadata : entries) {
                 if (metadata instanceof FileMetadata) {
@@ -119,41 +128,42 @@ public class mainSceneController extends Controller implements Initializable {
 
     @FXML
     void downloadItem(ActionEvent event) {
-        TreeItem<String> item = (TreeItem<String>) showFiles.getSelectionModel().getSelectedItem();
+        // TreeItem<String> item = (TreeItem<String>) showFiles.getSelectionModel().getSelectedItem();
 
-        try {
-            path += item.getValue();
+        // try {
+        //     path += item.getValue();
 
-            DbxDownloader<FileMetadata> downloader = client.getClient().files().download(path);
+        //     DbxDownloader<FileMetadata> downloader = client.getClient().files().download(path);
 
-            FileOutputStream out = new FileOutputStream(item.getValue());
-            downloader.download(out);
-            out.close();
+        //     FileOutputStream out = new FileOutputStream(item.getValue());
+        //     downloader.download(out);
+        //     out.close();
 
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+        // } catch (Exception e) {
+        //     // TODO: handle exception
+        // }
     }
 
     @FXML
     void uploadItem(ActionEvent event) throws IOException {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.showOpenDialog(null);
+        // directoryChooser.getAb
+        // JFileChooser fileChooser = new JFileChooser();
+        // fileChooser.showOpenDialog(null);
 
-        System.out.println(fileChooser.getSelectedFile().toPath().toString());
-        String fileName = fileChooser.getSelectedFile().getName();
-        System.out.println(fileName);
-        String uploadFilePath = fileChooser.getSelectedFile().toPath().toString();
-        // UploadFile uploadFile = new UploadFile();
-        // uploadFile.uploadFileFunc(uploadFilePath);
+        // System.out.println(fileChooser.getSelectedFile().toPath().toString());
+        // String fileName = fileChooser.getSelectedFile().getName();
+        // System.out.println(fileName);
+        // String uploadFilePath = fileChooser.getSelectedFile().toPath().toString();
+        // // UploadFile uploadFile = new UploadFile();
+        // // uploadFile.uploadFileFunc(uploadFilePath);
 
-        try {
-            try (InputStream in = new FileInputStream(uploadFilePath)) {
-                client.getClient().files().uploadBuilder(path + fileName).uploadAndFinish(in);
-            }
-        } catch (DbxException exception) {
-            System.err.println(exception.getMessage());
-        }
+        // try {
+        //     try (InputStream in = new FileInputStream(uploadFilePath)) {
+        //         client.getClient().files().uploadBuilder(path + fileName).uploadAndFinish(in);
+        //     }
+        // } catch (DbxException exception) {
+        //     System.err.println(exception.getMessage());
+        // }
     }
 
     @FXML

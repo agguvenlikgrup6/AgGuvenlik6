@@ -1,6 +1,7 @@
 package org.uludag.bmb.entity.gui;
 
 import org.uludag.bmb.entity.dropbox.DbClient;
+import org.uludag.bmb.entity.gui.treeview.HieararchyTree;
 
 import javafx.scene.control.TreeItem;
 

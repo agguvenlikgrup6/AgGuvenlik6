@@ -24,4 +24,8 @@ public class DbClient {
     public DbxClientV2 getClient() {
         return this.client;
     }
+
+    // public void downloadFile(){
+
+    // }
 }
