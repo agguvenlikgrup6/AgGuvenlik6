@@ -6,11 +6,11 @@ import com.dropbox.core.v2.DbxClientV2;
 
 public class DbClient {
     private DbxClientV2 client;
-    private final DbAccount account;
+    private DbAccount account;
 
-    public DbClient(DbAccount account) {
-        this.account = account;
-        login();
+    public DbClient() {
+        this.account = new DbAccount();
+        // login();
     }
 
     public void login() {
@@ -24,8 +24,4 @@ public class DbClient {
     public DbxClientV2 getClient() {
         return this.client;
     }
-
-    // public void downloadFile(){
-
-    // }
 }

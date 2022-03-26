@@ -24,11 +24,11 @@ public class RedirectParamsMapper {
 
     protected static Map<String, List<String>> toParamsMap(String query) {
         try {
-            String [] pairs = query.split("&");
+            String[] pairs = query.split("&");
             Map<String, List<String>> params = new HashMap<String, List<String>>(pairs.length);
 
             for (String pair : pairs) {
-                String [] keyValue = pair.split("=", 2);
+                String[] keyValue = pair.split("=", 2);
                 String key = keyValue[0];
                 String value = keyValue.length == 2 ? keyValue[1] : "";
 
@@ -47,14 +47,13 @@ public class RedirectParamsMapper {
         }
     }
 
-    public static Map<String, String[]> params(String ... pairs) {
-        if ((pairs.length % 2) != 0) {
-            System.out.println("pairs must be a multiple of 2.");
-        }
+    public static Map<String, String[]> params(String redirectQuery) {
+        String pairs[] = { "code", extractQueryParam(redirectQuery, "code"),
+                "state", extractQueryParam(redirectQuery, "state") };
 
         Map<String, String[]> query = new HashMap<String, String[]>();
         for (int i = 0; i < pairs.length; i += 2) {
-            query.put(pairs[i], new String [] { pairs[i + 1] });
+            query.put(pairs[i], new String[] { pairs[i + 1] });
         }
         return query;
     }

@@ -15,8 +15,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 public class StartupSceneController extends Controller {
 
@@ -42,35 +40,12 @@ public class StartupSceneController extends Controller {
         }
     }
 
-    public void launchLoginScene(Stage stage) {
+    public void displayLoginScene(Stage stage) {
         this.stage = stage;
         stage.setScene(scene);
         stage.setResizable(false);
-
-        stage.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
-                setCurrentWidthToStage(number2);
-            }
-        });
-
-        stage.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
-                setCurrentHeightToStage(number2);
-            }
-        });
-
-        // stage.hide();
+        stage.hide();
         stage.show();
-    }
-
-    private void setCurrentWidthToStage(Number number2) {
-        stage.setWidth((double) number2);
-    }
-
-    private void setCurrentHeightToStage(Number number2) {
-        stage.setHeight((double) number2);
     }
 
     @FXML
@@ -98,7 +73,7 @@ public class StartupSceneController extends Controller {
             alert.setHeaderText("Geçersiz Bir Dizin Seçtiniz");
             alert.setContentText("Lütfen Geçerli Bir Dizin Seçiniz");
             alert.showAndWait();
-
+        } else {
             new MainSceneController().displayHomeScreen(stage);
         }
     }
@@ -106,7 +81,11 @@ public class StartupSceneController extends Controller {
     @FXML
     void startOAuth(MouseEvent event) throws IOException {
         OAuthFlow oauth = new OAuthFlow();
+
         if (oauth.authValidation.isValid()) {
+            dbState.setProgress(100.0D);
+        } else {
+            oauth.startWithRedirect();
             dbState.setProgress(100.0D);
         }
 

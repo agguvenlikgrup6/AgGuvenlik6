@@ -15,11 +15,6 @@ import org.uludag.bmb.entity.gui.treeview.HieararchyTree;
 import javafx.scene.control.TreeItem;
 
 public class DropboxFilePath extends FilePath implements PathTree {
-
-    public DropboxFilePath(DbClient client) {
-        super(client);
-    }
-
     @Override
     public TreeItem<String> getTree() {
         return treeItem;

@@ -9,11 +9,10 @@ module org.uludag.bmb {
     requires spring.test;
     requires transitive jdk.httpserver;
     requires transitive javax.servlet.api;
-
-    opens org.uludag.bmb.gui to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
+    
+    opens org.uludag.bmb to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
     opens org.uludag.bmb.controller.gui to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
-
-    exports org.uludag.bmb.gui;
+    
     exports org.uludag.bmb.controller.gui;
     exports org.uludag.bmb.oauth;
 }

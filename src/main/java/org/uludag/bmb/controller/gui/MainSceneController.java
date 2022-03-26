@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
-
 
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
@@ -16,8 +14,6 @@ import com.dropbox.core.v2.files.Metadata;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.entity.gui.DropboxFilePath;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,8 +22,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -38,8 +32,8 @@ public class MainSceneController extends Controller implements Initializable {
     private Button btnDownload;
 
     @FXML
-    private ListView<?> fileList;
-    
+    private ListView<String> fileList;
+
     @FXML
     private Button btnUpload;
 
@@ -49,56 +43,36 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     private Text files;
 
-    @FXML
-    private Font x1;
-
-    @FXML
-    private Color x2;
-
-    @FXML
-    private Font x3;
-
-    @FXML
-    private Color x4;
-
-    public MainSceneController () {
+    public MainSceneController() {
         try {
             fxmlLoad(PropertiesReader.getProperty("mainSceneFxml"),
                     Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")),
                     Integer.parseInt(PropertiesReader.getProperty("mainSceneHeigth")));
         } catch (NumberFormatException | IOException e) {
-            // TODO handle exception
+            System.err.println(e.getMessage());
         }
     }
 
     public void displayHomeScreen(Stage stage) {
         this.stage = stage;
-
+        stage.setScene(scene);
         stage.hide();
         stage.show();
     }
 
-
-    private Set<String> stringSet;
-    ObservableList observableList = FXCollections.observableArrayList();
-
-    
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        var tree = new DropboxFilePath(client).getTree();
+        var tree = new DropboxFilePath().getTree();
         treeView.setRoot(tree);
     }
 
     @FXML
     void downloadFile(MouseEvent event) {
-
     }
 
     @FXML
     void selectItem(MouseEvent event) {
         TreeItem<String> item = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
-
         try {
             ArrayList<String> pathList = new ArrayList<>();
             path = "";
@@ -142,51 +116,22 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void downloadItem(ActionEvent event) {
-        // TreeItem<String> item = (TreeItem<String>) showFiles.getSelectionModel().getSelectedItem();
-
-        // try {
-        //     path += item.getValue();
-
-        //     DbxDownloader<FileMetadata> downloader = client.getClient().files().download(path);
-
-        //     FileOutputStream out = new FileOutputStream(item.getValue());
-        //     downloader.download(out);
-        //     out.close();
-
-        // } catch (Exception e) {
-        //     // TODO: handle exception
-        // }
     }
 
     @FXML
     void uploadItem(ActionEvent event) throws IOException {
-        // directoryChooser.getAb
-        // JFileChooser fileChooser = new JFileChooser();
-        // fileChooser.showOpenDialog(null);
-
-        // System.out.println(fileChooser.getSelectedFile().toPath().toString());
-        // String fileName = fileChooser.getSelectedFile().getName();
-        // System.out.println(fileName);
-        // String uploadFilePath = fileChooser.getSelectedFile().toPath().toString();
-        // // UploadFile uploadFile = new UploadFile();
-        // // uploadFile.uploadFileFunc(uploadFilePath);
-
         // try {
-        //     try (InputStream in = new FileInputStream(uploadFilePath)) {
-        //         client.getClient().files().uploadBuilder(path + fileName).uploadAndFinish(in);
-        //     }
+        // try (InputStream in = new FileInputStream(uploadFilePath)) {
+        // client.getClient().files().uploadBuilder(path +
+        // fileName).uploadAndFinish(in);
+        // }
         // } catch (DbxException exception) {
-        //     System.err.println(exception.getMessage());
+        // System.err.println(exception.getMessage());
         // }
     }
 
     @FXML
     void getPath(MouseEvent event) throws IOException {
-        System.out.println(files.getText());
 
-        // download.downloadFile(files.getText());
     }
-
-    
-
 }

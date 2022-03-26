@@ -11,8 +11,9 @@ public abstract class FilePath {
     
     protected final DbClient client;
     
-    public FilePath(DbClient client) {
-        this.client = client;
+    public FilePath() {
+        this.client = new DbClient();
+        client.login();
         treeItem = new TreeItem<String>();
         setHieararchy();
     }
