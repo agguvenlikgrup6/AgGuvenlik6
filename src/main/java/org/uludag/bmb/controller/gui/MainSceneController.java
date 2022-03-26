@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
@@ -43,7 +44,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     private Text files;
 
-    public MainSceneController() {
+    public MainSceneController() throws IOException, FileLoadException{
         try {
             fxmlLoad(PropertiesReader.getProperty("mainSceneFxml"),
                     Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")),
@@ -62,7 +63,15 @@ public class MainSceneController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        var tree = new DropboxFilePath().getTree();
+        DropboxFilePath paths = null;
+        try {
+            paths = new DropboxFilePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FileLoadException e) {
+            e.printStackTrace();
+        }
+        TreeItem<String> tree = paths.getTree();
         treeView.setRoot(tree);
     }
 

@@ -1,20 +1,25 @@
 package org.uludag.bmb.entity.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-import org.uludag.bmb.entity.dropbox.DbClient;
 import org.uludag.bmb.entity.gui.treeview.HieararchyNode;
 import org.uludag.bmb.entity.gui.treeview.HieararchyTree;
 
 import javafx.scene.control.TreeItem;
 
 public class DropboxFilePath extends FilePath implements PathTree {
+    public DropboxFilePath() throws IOException, FileLoadException {
+        super();
+    }
+
     @Override
     public TreeItem<String> getTree() {
         return treeItem;

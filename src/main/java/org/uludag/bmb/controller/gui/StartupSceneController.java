@@ -3,6 +3,8 @@ package org.uludag.bmb.controller.gui;
 import java.io.File;
 import java.io.IOException;
 
+import com.dropbox.core.json.JsonReader.FileLoadException;
+
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.oauth.OAuthFlow;
 
@@ -30,13 +32,13 @@ public class StartupSceneController extends Controller {
     @FXML
     private ProgressIndicator dbState;
 
-    public StartupSceneController() {
+    public StartupSceneController() throws IOException, FileLoadException {
         try {
             fxmlLoad(PropertiesReader.getProperty("startupSceneFxml"),
                     Integer.parseInt(PropertiesReader.getProperty("startupSceneWidth")),
                     Integer.parseInt(PropertiesReader.getProperty("startupSceneHeigth")));
-        } catch (NumberFormatException | IOException e) {
-            // TODO handle exception
+        } catch (NumberFormatException | IOException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -64,7 +66,7 @@ public class StartupSceneController extends Controller {
     }
 
     @FXML
-    void finishStartup(MouseEvent event) {
+    void finishStartup(MouseEvent event) throws IOException, FileLoadException {
         var path = chosenPath.getText();
 
         if (!new File(path).exists()) {
@@ -79,15 +81,14 @@ public class StartupSceneController extends Controller {
     }
 
     @FXML
-    void startOAuth(MouseEvent event) throws IOException {
-        OAuthFlow oauth = new OAuthFlow();
-
-        if (oauth.authValidation.isValid()) {
-            dbState.setProgress(100.0D);
-        } else {
+    void startOAuth(MouseEvent event) throws IOException, FileLoadException {
+        if (dbState.getProgress() < 100.0D) {
+            OAuthFlow oauth = new OAuthFlow();
             oauth.startWithRedirect();
+
+            client.login();
+
             dbState.setProgress(100.0D);
         }
-
     }
 }

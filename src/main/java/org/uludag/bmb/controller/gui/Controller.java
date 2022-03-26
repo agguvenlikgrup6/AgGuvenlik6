@@ -2,6 +2,8 @@ package org.uludag.bmb.controller.gui;
 
 import java.io.IOException;
 
+import com.dropbox.core.json.JsonReader.FileLoadException;
+
 import org.uludag.bmb.entity.dropbox.DbClient;
 
 import javafx.fxml.FXMLLoader;
@@ -16,8 +18,8 @@ public class Controller {
 
     public DbClient client;
 
-    public Controller() {
-        // client = new DbClient();
+    public Controller() throws IOException, FileLoadException {
+        client = new DbClient();
     }
 
     public void fxmlLoad(String fxml, int sceneWidth, int sceneHeight) {
@@ -27,11 +29,8 @@ public class Controller {
             parent = (Parent) fxmlLoader.load();
             scene = new Scene(parent);
         } catch (Exception ex) {
-            // TODO handle exception
             ex.printStackTrace();
         }
     }
-
-    
 
 }
