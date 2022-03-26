@@ -9,16 +9,8 @@ import java.util.Map;
 public class RedirectParamsMapper {
     public static String extractQueryParam(String query, String param) {
         Map<String, List<String>> params = toParamsMap(query);
-
-        if (!params.containsKey(param)) {
-            return null;
-        }
-
         List<String> values = params.get(param);
-        if (values.size() > 1) {
-            return null;
-        }
-
+        
         return values.get(0);
     }
 
