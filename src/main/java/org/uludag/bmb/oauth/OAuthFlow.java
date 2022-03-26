@@ -43,23 +43,16 @@ public class OAuthFlow {
 
             server.createContext(PropertiesReader.getProperty("context"), exchange -> {
                 try {
-                    String redirectQuery = exchange.getRequestURI().getQuery();
-
                     DbxAuthFinish authFinish = pkceWebAuth.finishFromRedirect(
                             dbAuth.getRedirectUri(),
                             dbAuth.getSession(),
-                            RedirectParamsMapper.params(redirectQuery));
+                            RedirectParamsMapper.params(exchange.getRequestURI().getQuery()));
 
                     DbxCredential credential = new DbxCredential(authFinish.getAccessToken(), authFinish
                             .getExpiresAt(), authFinish.getRefreshToken(), dbAuth.getAppInfo().getKey());
 
-                    File output = new File("authinfo.json");
-                    DbxCredential.Writer.writeToFile(credential, output);
-                    System.out.println(
-                            "Saved authorization information to \"" + output.getCanonicalPath() + "\".");
-
-                    var responseHeaders = exchange.getResponseHeaders();
-                    responseHeaders.set("Location", "http://localhost:8000/success");
+                    DbxCredential.Writer.writeToFile(credential, new File(PropertiesReader.getProperty("authinfo")));
+                    exchange.getResponseHeaders().set("Location", PropertiesReader.getProperty("successUri"));
                     exchange.sendResponseHeaders(302, 0);
 
                 } catch (Exception e) {
@@ -68,7 +61,6 @@ public class OAuthFlow {
                 latch.countDown();
             });
             server.start();
-
             latch.await(Integer.parseInt(PropertiesReader.getProperty("timeout")), TimeUnit.SECONDS);
             server.stop(0);
         } catch (Exception e) {
