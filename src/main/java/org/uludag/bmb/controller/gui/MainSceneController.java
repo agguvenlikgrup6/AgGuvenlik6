@@ -13,6 +13,7 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
+import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.entity.gui.DropboxFilePath;
 
 import javafx.collections.FXCollections;
@@ -28,7 +29,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 
 public class MainSceneController extends Controller implements Initializable {
     String path;
@@ -48,9 +49,6 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     private Text files;
 
-    // @FXML
-    // private TreeView<String> showFiles;
-
     @FXML
     private Font x1;
 
@@ -63,6 +61,24 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     private Color x4;
 
+    public MainSceneController () {
+        try {
+            fxmlLoad(PropertiesReader.getProperty("mainSceneFxml"),
+                    Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")),
+                    Integer.parseInt(PropertiesReader.getProperty("mainSceneHeigth")));
+        } catch (NumberFormatException | IOException e) {
+            // TODO handle exception
+        }
+    }
+
+    public void displayHomeScreen(Stage stage) {
+        this.stage = stage;
+
+        stage.hide();
+        stage.show();
+    }
+
+
     private Set<String> stringSet;
     ObservableList observableList = FXCollections.observableArrayList();
 
@@ -72,8 +88,6 @@ public class MainSceneController extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         var tree = new DropboxFilePath(client).getTree();
         treeView.setRoot(tree);
-
-        
     }
 
     @FXML
@@ -172,5 +186,7 @@ public class MainSceneController extends Controller implements Initializable {
 
         // download.downloadFile(files.getText());
     }
+
+    
 
 }
