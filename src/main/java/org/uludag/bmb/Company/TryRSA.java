@@ -1,9 +1,12 @@
 package org.uludag.bmb.Company;
 
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
@@ -22,6 +25,22 @@ public class TryRSA {
         catch(Exception ignored){
     
         }
+    }
+    public void initFromString(String pubk, String prik){
+        try{
+            X509EncodedKeySpec keySpecPublic = new X509EncodedKeySpec(decode(pubk));
+            PKCS8EncodedKeySpec keySpecPrivate = new PKCS8EncodedKeySpec(decode(prik));
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            publicKey = keyFactory.generatePublic(keySpecPublic);
+            privateKey = keyFactory.generatePrivate(keySpecPrivate);
+        }
+        catch(Exception ignored) {
+
+        }
+    }
+    public void printKeys(){
+        System.out.println("Public key --> "+encode(publicKey.getEncoded()));
+        System.out.println("Private key -->"+encode(privateKey.getEncoded()));
     }
     public String encrypt(String message) throws Exception{
         byte[] messageToBytes = message.getBytes();
