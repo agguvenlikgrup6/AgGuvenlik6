@@ -105,18 +105,18 @@ public class MainSceneController extends Controller implements Initializable {
                 path += p;
             }
 
-            ListFolderResult result = client.getClient().files().listFolder(path);
+            // ListFolderResult result = client.getClient().files().listFolder(path);
 
-            List<Metadata> entries = result.getEntries();
+            // List<Metadata> entries = result.getEntries();
 
             TreeItem<String> treeitem = new TreeItem<>("AAAA");
             // showFiles.setRoot(treeitem);
 
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata) {
-                    treeitem.getChildren().add(new TreeItem<>(metadata.getName()));
-                }
-            }
+            // for (Metadata metadata : entries) {
+            //     if (metadata instanceof FileMetadata) {
+            //         treeitem.getChildren().add(new TreeItem<>(metadata.getName()));
+            //     }
+            // }
 
         } catch (Exception e) {
 

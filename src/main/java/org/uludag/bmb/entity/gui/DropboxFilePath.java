@@ -40,9 +40,8 @@ public class DropboxFilePath extends FilePath implements PathTree {
     private void setTreeItem(TreeItem<String> rootItem, HieararchyNode hierarchyRoot) {
         int i = 0;
         for (HieararchyNode c : hierarchyRoot.childs) {
-            hierarchyRoot = c;
-            rootItem.getChildren().add(new TreeItem<>(hierarchyRoot.data));
-            setTreeItem(rootItem.getChildren().get(i++), hierarchyRoot);
+            rootItem.getChildren().add(new TreeItem<>(c.data));
+            setTreeItem(rootItem.getChildren().get(i++), c);
         }
     }
 

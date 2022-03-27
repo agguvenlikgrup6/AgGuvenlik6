@@ -16,12 +16,6 @@ public class Controller {
     protected Stage stage;
     protected Scene scene;
 
-    public DbClient client;
-
-    public Controller() throws IOException, FileLoadException {
-        client = new DbClient();
-    }
-
     public void fxmlLoad(String fxml, int sceneWidth, int sceneHeight) {
         FXMLLoader fxmlLoader = new FXMLLoader(Controller.class.getResource("/" + fxml + ".fxml"));
         fxmlLoader.setController(this);

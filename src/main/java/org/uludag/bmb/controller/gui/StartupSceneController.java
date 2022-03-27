@@ -6,6 +6,8 @@ import java.io.IOException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.controller.dropbox.LocalDropbox;
+import org.uludag.bmb.entity.dropbox.DbClient;
 import org.uludag.bmb.oauth.OAuthFlow;
 
 import javafx.fxml.FXML;
@@ -43,11 +45,19 @@ public class StartupSceneController extends Controller {
     }
 
     public void displayLoginScene(Stage stage) {
-        this.stage = stage;
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.hide();
-        stage.show();
+        try {
+            if (new DbClient().login()) {
+                new MainSceneController().displayHomeScreen(stage);
+            } else {
+                this.stage = stage;
+                stage.setScene(scene);
+                stage.setResizable(false);
+                stage.hide();
+                stage.show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -57,8 +67,9 @@ public class StartupSceneController extends Controller {
         directoryChooser.setInitialDirectory(null);
 
         try {
-            var path = directoryChooser.showDialog(null).getAbsolutePath();
+            String path = directoryChooser.showDialog(null).getAbsolutePath();
             chosenPath.setText(path);
+            // LocalDropbox.WRITER.;
         } catch (NullPointerException ex) {
             chooseLocalPath(event);
         }
@@ -86,8 +97,6 @@ public class StartupSceneController extends Controller {
         if (dbState.getProgress() < 100.0D) {
             OAuthFlow oauth = new OAuthFlow();
             oauth.startWithRedirect();
-
-            client.login();
 
             dbState.setProgress(100.0D);
         }

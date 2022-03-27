@@ -1,7 +1,6 @@
 package org.uludag.bmb.entity.dropbox;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,18 +16,15 @@ import com.dropbox.core.json.JsonReader.FileLoadException;
 import org.uludag.bmb.PropertiesReader;
 
 public class DbAuth {
-    // private DbxCredential credential;
     private DbxRequestConfig requestConfig;
     private DbxAppInfo appInfo;
-    private URL appInfoFile;
     private String sessionKey;
     private String redirectUri;
     private DbxStandardSessionStore session;
 
     public DbAuth() throws IOException, FileLoadException {
         requestConfig = new DbxRequestConfig(PropertiesReader.getProperty("clientIdentifier"));
-        appInfoFile = DbAuth.class.getResource(PropertiesReader.getProperty("appInfoFile"));
-        appInfo = DbxAppInfo.Reader.readFromFile(appInfoFile.getPath());
+        appInfo = new DbxAppInfo("bxvnh4y5x2ar0jz");
         sessionKey = this.generateSessionKey();
         redirectUri = PropertiesReader.getProperty("redirectUri");
     }

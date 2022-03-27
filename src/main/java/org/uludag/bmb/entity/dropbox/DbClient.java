@@ -18,13 +18,14 @@ public class DbClient {
         this.auth = new DbAuth();
     }
 
-    public void login() {
+    public boolean login() {
         try {
             credential = DbxCredential.Reader.readFromFile(PropertiesReader.getProperty("authinfo"));
             this.client = new DbxClientV2(auth.getRequestConfig(), credential);
             this.client.users().getCurrentAccount();
+            return true;
         } catch (DbxException | FileLoadException | IOException ex) {
-            ex.printStackTrace();
+            return false;
         }
     }
 
