@@ -35,13 +35,10 @@ public class TryRSA {
             privateKey = keyFactory.generatePrivate(keySpecPrivate);
         }
         catch(Exception ignored) {
-
         }
     }
-    public void printKeys(){
-        System.out.println("Public key --> "+encode(publicKey.getEncoded()));
-        System.out.println("Private key -->"+encode(privateKey.getEncoded()));
-    }
+    public String getPub(){ return encode(publicKey.getEncoded()); }
+    public String getPri(){ return encode(privateKey.getEncoded()); }
     public String encrypt(String message) throws Exception{
         byte[] messageToBytes = message.getBytes();
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");

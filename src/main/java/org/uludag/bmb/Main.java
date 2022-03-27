@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.uludag.bmb.Company.FileSystem;
-import org.uludag.bmb.Company.TryRSA;
+import org.uludag.bmb.Company.FileSystemRSA;
 
 public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
@@ -13,14 +13,10 @@ public class Main {
             //FileSystem tt = new FileSystem();
             //tt.dosyaSifreleme("deneme.txt", "aa.txt");
             //tt.dosyaSifreCozme("aa.txt","dd.txt");
-            TryRSA rsa = new TryRSA();
-            rsa.initFromString();            
-            String encryptedMessage = rsa.encrypt("Hello World!");
-            String decryptedMessage = rsa.decrypt(encryptedMessage);
+            FileSystemRSA tt_rsa = new FileSystemRSA();
+            //tt_rsa.dosyaSifreleme("deneme.txt", "aa.txt");
+            tt_rsa.dosyaSifreCozme("aa.txt", "bb.txt");
 
-            System.out.println(encryptedMessage);
-            System.out.println(decryptedMessage);
-            rsa.printKeys();
         }
         catch(Exception ignored){
             
