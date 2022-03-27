@@ -22,34 +22,16 @@ public class DropboxFilePath extends FilePath implements PathTree {
 
     @Override
     public TreeItem<String> getTree() {
-        return treeItem;
+        return this.treeItem;
     }
 
     @Override
     public void setHieararchy() {
-        try {
-            ListFolderResult result = client.getClient().files().listFolderBuilder("")
-                    .withIncludeDeleted(false)
-                    .withRecursive(true)
-                    .start();
+        readFolderPaths();
+        this.hieararchy = new HieararchyTree(new HieararchyNode("/", ""));
 
-            List<Metadata> entries = result.getEntries();
-            ArrayList<String> slist = new ArrayList<>();
-
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FolderMetadata) {
-                    slist.add(metadata.getPathDisplay());
-                }
-            }
-
-            hieararchy = new HieararchyTree(new HieararchyNode("/", ""));
-
-            for (String data : slist) {
-                hieararchy.addElement(data);
-            }
-
-        } catch (DbxException exception) {
-            System.err.println(exception.getMessage());
+        for (String data : this.folderPaths) {
+            this.hieararchy.addElement(data);
         }
 
         setTreeItem(this.treeItem, this.hieararchy.root);
@@ -61,6 +43,28 @@ public class DropboxFilePath extends FilePath implements PathTree {
             hierarchyRoot = c;
             rootItem.getChildren().add(new TreeItem<>(hierarchyRoot.data));
             setTreeItem(rootItem.getChildren().get(i++), hierarchyRoot);
+        }
+    }
+
+    @Override
+    public void readFolderPaths() {
+        this.folderPaths = new ArrayList<String>();
+        try {
+            ListFolderResult result = client.getClient().files().listFolderBuilder("")
+                    .withIncludeDeleted(false)
+                    .withRecursive(true)
+                    .start();
+
+            List<Metadata> entries = result.getEntries();
+
+            for (Metadata metadata : entries) {
+                if (metadata instanceof FolderMetadata) {
+                    this.folderPaths.add(metadata.getPathDisplay());
+                }
+            }
+
+        } catch (DbxException exception) {
+            exception.printStackTrace();
         }
     }
 }

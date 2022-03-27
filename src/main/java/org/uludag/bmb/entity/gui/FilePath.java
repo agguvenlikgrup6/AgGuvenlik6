@@ -1,6 +1,7 @@
 package org.uludag.bmb.entity.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
@@ -12,9 +13,10 @@ import javafx.scene.control.TreeItem;
 public abstract class FilePath {
     protected HieararchyTree hieararchy;
     protected TreeItem<String> treeItem;
-    
+    protected ArrayList<String> folderPaths;
+
     protected final DbClient client;
-    
+
     public FilePath() throws IOException, FileLoadException {
         this.client = new DbClient();
         client.login();
@@ -23,4 +25,6 @@ public abstract class FilePath {
     }
 
     public abstract void setHieararchy();
+
+    public abstract void readFolderPaths();
 }

@@ -76,6 +76,7 @@ public class StartupSceneController extends Controller {
             alert.setContentText("Lütfen Geçerli Bir Dizin Seçiniz");
             alert.showAndWait();
         } else {
+
             new MainSceneController().displayHomeScreen(stage);
         }
     }

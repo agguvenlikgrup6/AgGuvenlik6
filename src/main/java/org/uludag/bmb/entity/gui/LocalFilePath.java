@@ -21,4 +21,10 @@ public class LocalFilePath extends FilePath implements PathTree{
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public void readFolderPaths() {
+        // TODO Auto-generated method stub
+        
+    }
 }
