@@ -14,12 +14,13 @@ public class Main {
             //tt.dosyaSifreleme("deneme.txt", "aa.txt");
             //tt.dosyaSifreCozme("aa.txt","dd.txt");
             TryRSA rsa = new TryRSA();
-            rsa.init();
+            rsa.initFromString();            
             String encryptedMessage = rsa.encrypt("Hello World!");
             String decryptedMessage = rsa.decrypt(encryptedMessage);
 
             System.out.println(encryptedMessage);
             System.out.println(decryptedMessage);
+            rsa.printKeys();
         }
         catch(Exception ignored){
             
