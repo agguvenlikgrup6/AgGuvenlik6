@@ -17,7 +17,7 @@ public class TryRSA {
     public void init() throws Exception{
         try{
             KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-            generator.initialize(1024);
+            generator.initialize(1024); // minimumu 512
             KeyPair pair = generator.generateKeyPair();
             privateKey = pair.getPrivate();
             publicKey = pair.getPublic();
@@ -58,5 +58,9 @@ public class TryRSA {
     }
     private byte[] decode(String data){
         return Base64.getDecoder().decode(data);
+    }
+    public void printKeys(){
+        System.out.println("Public --->>>" + encode(publicKey.getEncoded()));
+        System.out.println("Private --->>>" + encode(privateKey.getEncoded()));
     }
 }
