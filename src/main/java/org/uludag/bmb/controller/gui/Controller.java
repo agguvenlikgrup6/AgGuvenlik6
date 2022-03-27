@@ -1,10 +1,5 @@
 package org.uludag.bmb.controller.gui;
 
-import java.io.IOException;
-
-import com.dropbox.core.json.JsonReader.FileLoadException;
-
-import org.uludag.bmb.entity.dropbox.DbClient;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

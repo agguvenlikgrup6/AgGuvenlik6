@@ -4,13 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import com.dropbox.core.json.JsonReader.FileLoadException;
-import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.ListFolderResult;
-import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.entity.gui.DropboxFilePath;
