@@ -68,7 +68,10 @@ public class StartupSceneController extends Controller {
         try {
             String path = directoryChooser.showDialog(null).getAbsolutePath();
             chosenPath.setText(path);
-            // LocalDropbox.WRITER.;
+            // TODO #18 LOKAL DİZİN BİLGİSİNİ TUTAN DOSYA OLUŞTUR
+
+            
+
         } catch (NullPointerException ex) {
             chooseLocalPath(event);
         }
