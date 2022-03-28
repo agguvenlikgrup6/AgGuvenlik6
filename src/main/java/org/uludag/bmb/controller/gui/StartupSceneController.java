@@ -6,6 +6,8 @@ import java.io.IOException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.controller.dropbox.ConfigController;
+import org.uludag.bmb.entity.dropbox.Config;
 import org.uludag.bmb.entity.dropbox.DbClient;
 import org.uludag.bmb.oauth.OAuthFlow;
 
@@ -68,9 +70,8 @@ public class StartupSceneController extends Controller {
         try {
             String path = directoryChooser.showDialog(null).getAbsolutePath();
             chosenPath.setText(path);
-            // TODO #18 LOKAL DİZİN BİLGİSİNİ TUTAN DOSYA OLUŞTUR
 
-            
+           ConfigController.initializeLocalStorage(new Config(path));
 
         } catch (NullPointerException ex) {
             chooseLocalPath(event);
