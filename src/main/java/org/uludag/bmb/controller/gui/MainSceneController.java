@@ -4,32 +4,42 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.plaf.basic.BasicComboBoxUI.ItemHandler;
+
 import com.dropbox.core.json.JsonReader.FileLoadException;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.entity.dropbox.DbClient;
 import org.uludag.bmb.entity.gui.DropboxFilePath;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class MainSceneController extends Controller implements Initializable {
     String path;
 
     @FXML
     private Button btnDownload;
-
-    @FXML
-    private ListView<String> fileList;
 
     @FXML
     private Button btnUpload;
@@ -39,6 +49,8 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     private Text files;
+    @FXML 
+    private ListView cloudListView;
 
     public MainSceneController() throws IOException, FileLoadException{
         try {
@@ -100,19 +112,35 @@ public class MainSceneController extends Controller implements Initializable {
             for (String p : pathList) {
                 path += p;
             }
+            DbClient client =new DbClient();
+            client.login();
+            ListFolderResult result = client.getClient().files().listFolder(path);
 
-            // ListFolderResult result = client.getClient().files().listFolder(path);
+            List<Metadata> entries = result.getEntries();
+            
+            
+            cloudListView.getItems().clear();
+            for (Metadata metadata : entries) {
+                if (metadata instanceof FileMetadata) {
+                        
+                    cloudListView.getItems().add(metadata.getName());
+                 
+                }
+            }
+            System.out.println(123);
+            cloudListView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
+                @Override
+                public ObservableValue<Boolean> call(String item) {
+                    BooleanProperty observable = new SimpleBooleanProperty();
+                    observable.addListener((obs, wasSelected, isNowSelected) -> 
+                        System.out.println("Check box for "+item+" changed from "+wasSelected+" to "+isNowSelected));
+                        
 
-            // List<Metadata> entries = result.getEntries();
-
-            TreeItem<String> treeitem = new TreeItem<>("AAAA");
-            // showFiles.setRoot(treeitem);
-
-            // for (Metadata metadata : entries) {
-            //     if (metadata instanceof FileMetadata) {
-            //         treeitem.getChildren().add(new TreeItem<>(metadata.getName()));
-            //     }
-            // }
+                    return observable ;
+                }
+            }));
+          
+       
 
         } catch (Exception e) {
 
