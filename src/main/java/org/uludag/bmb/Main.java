@@ -17,11 +17,9 @@ public class Main {
             // FileSystemRSA tt_rsa = new FileSystemRSA();
             // //tt_rsa.dosyaSifreleme("deneme.txt", "aa.txt");
             // tt_rsa.dosyaSifreCozme("aa.txt", "bb.txt");
-            TryRSA aa = new TryRSA();
-            aa.initFromString("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDG8vaK6QvS5QSHWmgBrFg5LzID2IATMr/lawwKnngjxZr8bJWsO6OOET4bP5KGzOMMKsN52vfKD8SX7a2hIxEXDxRNuobRI3s+Qj8L96VsYg4v6+rYGZ2VXmqwcSXuRURy3ZDQkMpzIQh2zHw4XTZucGyC47JYvLNow1vyB3IhZQIDAQAB","MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAMby9orpC9LlBIdaaAGsWDkvMgPYgBMyv+VrDAqeeCPFmvxslaw7o44RPhs/kobM4wwqw3na98oPxJftraEjERcPFE26htEjez5CPwv3pWxiDi/r6tgZnZVearBxJe5FRHLdkNCQynMhCHbMfDhdNm5wbILjsli8s2jDW/IHciFlAgMBAAECgYAPOKyYloRTPOFv/QCYdtgDJrNpbD7po8g0edBgiZ0Ag6W8Krn4L6dE/y26G6Q5ew3jXZbkyQDiAqXUcpixC5lK1fMkBYq7GW8LGY8zjLZE4rZYU5QYoBxyK7ooqJGwdRYDYxMEOyH7hflhdr2+xnIeykjjpHBbF274l2y9E5t3CwJBAOxHvvAdRAF0Qz4z3uVW0hhkf70LHi0ZvNqxw45/UO7PQaXTwPH/iLnfFfQB4xfTDL4y9Dn2XZ6DPnpuUetigssCQQDXjZ3TXj5sNj9fp9V02mVPbcgDSP3xzdplDijYwyuShqEIcM+w/dF/qiJw9gOJ6OnQiLa7tLQ4qDqi7ARhtPaPAkEAg3/imkwPXyfPjLzdnpHVV9IG7bVUVBFw893fUl01M9ORW7MgPQ7Uj23DEAxE0SuaefhtyBx/OgsdKJJhcTlgRQJATXhGWusqQDYW/MgTPZYohy2LjzKyoi876Mn4AD/U7yqXwbLZ0mDG5L0+955Tk0M0lZAtLLU7eIlt2ZQ91uf1HQJALN3J9H4F87fKqVd6Xo5PLXiR/RZvKNJRDsDUjvAe4OfKLpf7gOaEAv9VazDTbh7x+dA/9qgccmkVCGqTPT2C2w==");
-            String enc = aa.encrypt("Hello World!");
-            String denc = aa.decrypt(enc);
-            //System.out.println(enc);
+            TryRSA aab = new TryRSA();
+            aab.initJustPri("MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAIS734sRjlbkHa4+Vus6zib/bJCav157+Z73hm5aKWBdoD146v39MUgmdziqFa56q7KbJSQa7uvF+iQV9w50GEvg5wvUgYZ25+KS7cUjqK3/H7cCBp6cjaRdOJzORh0k5LQ3f8iKJNQgH7sc6tNjXGn4NlgxexjR6RuNaJCrt+7lAgMBAAECgYAMPsDKtZ3qCjVqw7mFDfHCy0GavYv2DX3j2nX+bDbw+vIzeZpEQD1xqIrLIXXKmOqKGaH9iLaN7b+74ILgRHmRNHUgIehnu2neOXLGpybpsUidkNdH5kXRGD78XUXqfDaXpebSgeoMJ5RuWUIPzOrzemSDvinFnY3SHoH9hn62QQJBALmqMva/xn05jBTMTYxyjTe/Q3A+PrZ/McBH2RLYMX90Amgdim4vHheIggL22cfHHk5gZ1RX4ozFpTuLxwWc6j0CQQC3BGwsPHju275t1DshGHPuJicfbGBXSoP4ewchNTFASCMDBWlaAn7V1xPwL7eY7Rigb6MCrFMtBwWtEAUpRWnJAkBcQA/wgFssT1Kl5tlFRomaQGNOuu7IGKzsoAZgkaEOdeLYPo1QsAKgqMgIlwSgefQ59zaANuavEWlHC+2IgW31AkBn1iOFiZ3Xb2eAqrwNj/EeehkSVAvpGsb7cNnftm1GGmd67FQUlHvf2ZJfYMNbCZJCXHRxLNJYJrbKtN8oxlA5AkBsqm/A1q4QRMN54HCGGUKvRGj2F9J85d4MAVTVvzW5T8EzKYW25/FgOymOg/Qd6mXjRG7QQNsWRki2JbPcpRhF");
+            String denc = aab.decrypt("Wt6sbUPj4sF/sAZDkLJ1gaGgmp0YllgnkGAWn3IL+eesvCxE025+Pf89TRySaemnjf272nB1cAOoQwsoNGF+vLQdhkFRU9B/EcSQvxRpQV0Dj9WX3v+GAdpuNCzeYLXG1cn+K+mBLORIxV6aWvzp92Y5B9L6rRrKYIPSgwdgNfc=");
             System.out.println(denc);
         }
         catch(Exception ignored){

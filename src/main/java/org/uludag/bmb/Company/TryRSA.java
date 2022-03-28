@@ -26,6 +26,24 @@ public class TryRSA {
     
         }
     }
+    public void initJustPub(String pubk){
+        try{
+            X509EncodedKeySpec keySpecPublic = new X509EncodedKeySpec(decode(pubk));
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            publicKey = keyFactory.generatePublic(keySpecPublic);
+        }
+        catch(Exception ignored) {
+        }
+    }
+    public void initJustPri(String prik){
+        try{
+            PKCS8EncodedKeySpec keySpecPrivate = new PKCS8EncodedKeySpec(decode(prik));
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            privateKey = keyFactory.generatePrivate(keySpecPrivate);
+        }
+        catch(Exception ignored) {
+        }
+    }
     public void initFromString(String pubk, String prik){
         try{
             X509EncodedKeySpec keySpecPublic = new X509EncodedKeySpec(decode(pubk));
