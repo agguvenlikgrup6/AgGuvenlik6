@@ -9,8 +9,4 @@ public class LocalDropbox {
     public void initializeLocalStorage(){
         
     }
-
-    public class _path{
-        String local_dropbox_path;
-    }
 }
