@@ -1,4 +1,4 @@
-package org.uludag.bmb.entity.gui;
+package org.uludag.bmb.entity.scene;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-import org.uludag.bmb.entity.gui.treeview.HieararchyNode;
-import org.uludag.bmb.entity.gui.treeview.HieararchyTree;
+import org.uludag.bmb.entity.scene.treeview.HieararchyNode;
+import org.uludag.bmb.entity.scene.treeview.HieararchyTree;
 
 import javafx.scene.control.TreeItem;
 

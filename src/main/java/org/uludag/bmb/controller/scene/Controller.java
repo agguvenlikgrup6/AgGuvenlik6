@@ -1,12 +1,11 @@
-package org.uludag.bmb.controller.gui;
-
+package org.uludag.bmb.controller.scene;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Controller {
+public abstract class Controller {
     protected Parent parent;
     protected Stage stage;
     protected Scene scene;
@@ -22,4 +21,6 @@ public class Controller {
         }
     }
 
+    public abstract void displayScene(Stage stage);
+    
 }

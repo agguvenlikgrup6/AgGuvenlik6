@@ -1,4 +1,4 @@
-package org.uludag.bmb.controller.gui;
+package org.uludag.bmb.controller.scene;
 
 import java.io.IOException;
 import java.net.URL;
@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.plaf.basic.BasicComboBoxUI.ItemHandler;
 
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.FileMetadata;
@@ -16,7 +15,7 @@ import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.entity.dropbox.DbClient;
-import org.uludag.bmb.entity.gui.DropboxFilePath;
+import org.uludag.bmb.entity.scene.DropboxFilePath;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -25,7 +24,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -50,7 +48,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     private Text files;
     @FXML 
-    private ListView cloudListView;
+    private ListView<String> cloudListView;
 
     public MainSceneController() throws IOException, FileLoadException{
         try {
@@ -62,7 +60,8 @@ public class MainSceneController extends Controller implements Initializable {
         }
     }
 
-    public void displayHomeScreen(Stage stage) {
+    @Override
+    public void displayScene(Stage stage) {
         this.stage = stage;
         stage.setScene(scene);
         stage.hide();
@@ -149,18 +148,12 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void downloadItem(ActionEvent event) {
+
     }
 
     @FXML
     void uploadItem(ActionEvent event) throws IOException {
-        // try {
-        // try (InputStream in = new FileInputStream(uploadFilePath)) {
-        // client.getClient().files().uploadBuilder(path +
-        // fileName).uploadAndFinish(in);
-        // }
-        // } catch (DbxException exception) {
-        // System.err.println(exception.getMessage());
-        // }
+        
     }
 
     @FXML

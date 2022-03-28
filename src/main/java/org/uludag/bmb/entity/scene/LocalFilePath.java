@@ -1,4 +1,4 @@
-package org.uludag.bmb.entity.gui;
+package org.uludag.bmb.entity.scene;
 
 import java.io.IOException;
 

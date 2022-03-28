@@ -1,4 +1,4 @@
-package org.uludag.bmb.controller.gui;
+package org.uludag.bmb.controller.scene;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.io.IOException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.controller.dropbox.ConfigController;
-import org.uludag.bmb.entity.dropbox.Config;
+import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.entity.config.Config;
 import org.uludag.bmb.entity.dropbox.DbClient;
 import org.uludag.bmb.oauth.OAuthFlow;
 
@@ -45,10 +45,11 @@ public class StartupSceneController extends Controller {
         }
     }
 
-    public void displayLoginScene(Stage stage) {
+    @Override
+    public void displayScene(Stage stage) {
         try {
             if (new DbClient().login()) {
-                new MainSceneController().displayHomeScreen(stage);
+                new MainSceneController().displayScene(stage);
             } else {
                 this.stage = stage;
                 stage.setScene(scene);
@@ -91,7 +92,7 @@ public class StartupSceneController extends Controller {
             alert.showAndWait();
         } else {
 
-            new MainSceneController().displayHomeScreen(stage);
+            new MainSceneController().displayScene(stage);
         }
     }
 

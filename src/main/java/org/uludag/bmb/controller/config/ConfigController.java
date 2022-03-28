@@ -1,4 +1,4 @@
-package org.uludag.bmb.controller.dropbox;
+package org.uludag.bmb.controller.config;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.entity.dropbox.Config;
+import org.uludag.bmb.entity.config.Config;
 
 
 public class ConfigController {

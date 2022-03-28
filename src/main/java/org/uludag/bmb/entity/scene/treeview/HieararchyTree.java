@@ -1,4 +1,4 @@
-package org.uludag.bmb.entity.gui.treeview;
+package org.uludag.bmb.entity.scene.treeview;
 
 public class HieararchyTree {
 

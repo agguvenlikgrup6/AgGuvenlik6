@@ -1,4 +1,4 @@
-package org.uludag.bmb.entity.gui;
+package org.uludag.bmb.entity.scene;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.entity.dropbox.DbClient;
-import org.uludag.bmb.entity.gui.treeview.HieararchyTree;
+import org.uludag.bmb.entity.scene.treeview.HieararchyTree;
 
 import javafx.scene.control.TreeItem;
 

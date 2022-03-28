@@ -93,8 +93,6 @@
           <content>
             <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="470.0">
               <children>
-                        <Button fx:id="btnUpload" layoutX="14.0" layoutY="22.0" mnemonicParsing="false" style="-fx-background-color: cyan; -fx-border-color: black;" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" />
-                        <Button fx:id="btnDownload" layoutX="94.0" layoutY="23.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="94.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text=" Download" textFill="WHITE" />
                         <Button fx:id="btnUpload" layoutX="14.0" layoutY="22.0" mnemonicParsing="false" onAction="#uploadItem" style="-fx-background-color: cyan; -fx-border-color: black;" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" />
                         <Button fx:id="btnDownload" layoutX="94.0" layoutY="23.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="94.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text=" Download" textFill="WHITE" />
                         <TabPane layoutX="14.0" layoutY="82.0" prefHeight="446.0" prefWidth="428.0" tabClosingPolicy="UNAVAILABLE">
