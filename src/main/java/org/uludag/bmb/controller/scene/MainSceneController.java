@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
@@ -25,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxListCell;
@@ -35,29 +35,23 @@ import javafx.util.Callback;
 
 public class MainSceneController extends Controller implements Initializable {
     String path;
-
     @FXML
     private Button btnDownload;
-
     @FXML
     private Button btnUpload;
-
     @FXML
     private TreeView<String> treeView;
-
     @FXML
     private Text files;
-    @FXML 
+    @FXML
     private ListView<String> cloudListView;
+    @FXML
+    private TabPane tabPane;
 
-    public MainSceneController() throws IOException, FileLoadException{
-        try {
-            fxmlLoad(PropertiesReader.getProperty("mainSceneFxml"),
-                    Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")),
-                    Integer.parseInt(PropertiesReader.getProperty("mainSceneHeigth")));
-        } catch (NumberFormatException | IOException e) {
-            System.err.println(e.getMessage());
-        }
+    public MainSceneController() throws IOException, FileLoadException {
+        super(PropertiesReader.getProperty("mainSceneFxml"),
+                Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")),
+                Integer.parseInt(PropertiesReader.getProperty("mainSceneHeigth")));
     }
 
     @Override
@@ -80,10 +74,6 @@ public class MainSceneController extends Controller implements Initializable {
         }
         TreeItem<String> tree = paths.getTree();
         treeView.setRoot(tree);
-    }
-
-    @FXML
-    void downloadFile(MouseEvent event) {
     }
 
     @FXML
@@ -111,35 +101,28 @@ public class MainSceneController extends Controller implements Initializable {
             for (String p : pathList) {
                 path += p;
             }
-            DbClient client =new DbClient();
+            DbClient client = new DbClient();
             client.login();
             ListFolderResult result = client.getClient().files().listFolder(path);
 
             List<Metadata> entries = result.getEntries();
-            
-            
+
             cloudListView.getItems().clear();
             for (Metadata metadata : entries) {
                 if (metadata instanceof FileMetadata) {
-                        
                     cloudListView.getItems().add(metadata.getName());
-                 
                 }
             }
-            System.out.println(123);
             cloudListView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
                 @Override
                 public ObservableValue<Boolean> call(String item) {
                     BooleanProperty observable = new SimpleBooleanProperty();
-                    observable.addListener((obs, wasSelected, isNowSelected) -> 
-                        System.out.println("Check box for "+item+" changed from "+wasSelected+" to "+isNowSelected));
-                        
+                    observable.addListener((obs, wasSelected, isNowSelected) -> System.out.println(
+                            "Check box for " + item + " changed from " + wasSelected + " to " + isNowSelected));
 
-                    return observable ;
+                    return observable;
                 }
             }));
-          
-       
 
         } catch (Exception e) {
 
@@ -153,7 +136,7 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void uploadItem(ActionEvent event) throws IOException {
-        
+
     }
 
     @FXML

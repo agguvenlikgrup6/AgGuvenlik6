@@ -1,7 +1,6 @@
 package org.uludag.bmb.entity.gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.dropbox.core.DbxException;

@@ -36,13 +36,9 @@ public class StartupSceneController extends Controller {
     private ProgressIndicator dbState;
 
     public StartupSceneController() throws IOException, FileLoadException {
-        try {
-            fxmlLoad(PropertiesReader.getProperty("startupSceneFxml"),
-                    Integer.parseInt(PropertiesReader.getProperty("startupSceneWidth")),
-                    Integer.parseInt(PropertiesReader.getProperty("startupSceneHeigth")));
-        } catch (NumberFormatException | IOException ex) {
-            ex.printStackTrace();
-        }
+        super(PropertiesReader.getProperty("startupSceneFxml"), 
+              Integer.parseInt(PropertiesReader.getProperty("startupSceneWidth")), 
+              Integer.parseInt(PropertiesReader.getProperty("startupSceneHeigth")));
     }
 
     @Override

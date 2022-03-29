@@ -10,6 +10,10 @@ public abstract class Controller {
     protected Stage stage;
     protected Scene scene;
 
+    public Controller(String scene, int width, int heigth) {
+        fxmlLoad(scene, width, heigth);
+    }
+
     public void fxmlLoad(String fxml, int sceneWidth, int sceneHeight) {
         FXMLLoader fxmlLoader = new FXMLLoader(Controller.class.getResource("/" + fxml + ".fxml"));
         fxmlLoader.setController(this);
@@ -22,5 +26,5 @@ public abstract class Controller {
     }
 
     public abstract void displayScene(Stage stage);
-    
+
 }

@@ -95,7 +95,7 @@
               <children>
                         <Button fx:id="btnUpload" layoutX="14.0" layoutY="22.0" mnemonicParsing="false" onAction="#uploadItem" style="-fx-background-color: cyan; -fx-border-color: black;" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" />
                         <Button fx:id="btnDownload" layoutX="94.0" layoutY="23.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="94.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text=" Download" textFill="WHITE" />
-                        <TabPane layoutX="14.0" layoutY="82.0" prefHeight="446.0" prefWidth="428.0" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane fx:id="tabPane" layoutX="14.0" layoutY="82.0" prefHeight="446.0" prefWidth="428.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
                             <Tab text="Online Dosyalar">
                               <content>
