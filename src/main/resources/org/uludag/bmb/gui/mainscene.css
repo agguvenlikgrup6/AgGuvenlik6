@@ -7,6 +7,19 @@
     -fx-opacity: 0;
 }
 
+.tree-cell > .tree-disclosure-node > .arrow {
+    -fx-min-width: 11;
+    -fx-pref-width: 11;
+    -fx-max-width: 11;
+
+    -fx-min-height: 11;
+    -fx-pref-height: 11;
+    -fx-max-height: 11;
+
+    -fx-shape: "M 20 0 L 0 9 L 6 0 L 0 -9z";
+} 
+
+
 .tab .tab-label {
     -fx-alignment: CENTER;
     -fx-text-fill: -fx-text-base-color;

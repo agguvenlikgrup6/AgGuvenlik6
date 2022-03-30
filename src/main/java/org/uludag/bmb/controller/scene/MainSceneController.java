@@ -4,20 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
-import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
-import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.ListFolderResult;
-import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.entity.dropbox.DbClient;
-import org.uludag.bmb.entity.scene.DropboxFilePath;
 import org.uludag.bmb.operations.DbxList;
 
 import javafx.beans.property.BooleanProperty;
@@ -69,7 +60,6 @@ public class MainSceneController extends Controller implements Initializable {
     public void displayScene(Stage stage) {
         this.stage = stage;
         stage.setScene(scene);
-        scene.getStylesheets().add(PropertiesReader.getProperty("mainSceneCss"));
         stage.hide();
         stage.show();
     }

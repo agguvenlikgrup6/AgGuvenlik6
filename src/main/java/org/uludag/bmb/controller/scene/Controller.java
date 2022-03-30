@@ -1,5 +1,7 @@
 package org.uludag.bmb.controller.scene;
 
+import org.uludag.bmb.PropertiesReader;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,6 +22,9 @@ public abstract class Controller {
         try {
             parent = (Parent) fxmlLoader.load();
             scene = new Scene(parent);
+            if(PropertiesReader.getProperty(fxml + "Css") != null){
+                scene.getStylesheets().add(PropertiesReader.getProperty(fxml + "Css"));
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -14,6 +14,8 @@ import com.dropbox.core.v2.files.Metadata;
 import org.uludag.bmb.entity.dropbox.DbClient;
 
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class DbxList extends DbxOperations {
     public final class Hierarchy {
@@ -42,25 +44,26 @@ public class DbxList extends DbxOperations {
         public static final TreeItem<String> getAsTreeItem(String path) {
             TreeItem<String> root = new TreeItem<>();
             Map<String, TreeItem<String>> items = new HashMap<>();
+            Image nodeImage = new Image(DbxList.class.getResourceAsStream("/folder.png"));
             for (String p : toList(path)) {
-                getItem(items, root, p);
+                getItem(items, root, p, nodeImage);
             }
             return root;
         }
 
         private static TreeItem<String> getItem(Map<String, TreeItem<String>> items, TreeItem<String> root,
-                String itemPath) {
+                String itemPath, Image nodeImage) {
             TreeItem<String> result = items.get(itemPath);
-
+            
             if (result == null) {
                 int index = itemPath.lastIndexOf('/');
-                result = new TreeItem<>(itemPath.substring(index + 1));
+                result = new TreeItem<>(itemPath.substring(index + 1), new ImageView(nodeImage));
                 items.put(itemPath, result);
 
                 if (index == -1) {
                     root.getChildren().add(result);
                 } else {
-                    TreeItem<String> parent = getItem(items, root, itemPath.substring(0, index));
+                    TreeItem<String> parent = getItem(items, root, itemPath.substring(0, index), nodeImage);
                     parent.getChildren().add(result);
                 }
             }
