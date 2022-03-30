@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.dropbox.core.DbxException;
@@ -16,6 +18,7 @@ import com.dropbox.core.v2.files.Metadata;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.entity.dropbox.DbClient;
 import org.uludag.bmb.entity.scene.DropboxFilePath;
+import org.uludag.bmb.operations.DbxList;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -31,7 +34,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -74,21 +76,14 @@ public class MainSceneController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        DropboxFilePath paths = null;
-        try {
-            paths = new DropboxFilePath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (FileLoadException e) {
-            e.printStackTrace();
-        }
-        TreeItem<String> tree = paths.getTree();
-        treeView.setRoot(tree);
+        TreeItem<String> root = DbxList.Hierarchy.getAsTreeItem("");
+        treeView.setRoot(root);
+        treeView.setShowRoot(false);
     }
+    
 
     @FXML
     void listSelectFiles(MouseEvent event) {
-        ArrayList<String> selectedFiles = new ArrayList<String>();
         cloudListView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
             @Override
             public ObservableValue<Boolean> call(String item) {
@@ -114,22 +109,9 @@ public class MainSceneController extends Controller implements Initializable {
             }
             path.add("/");
             Collections.reverse(path);
-
-            DbClient client = new DbClient(true);
-
-            ListFolderResult result;
-            try {
-                result = client.getClient().files().listFolder(String.join("", path));
-                List<Metadata> entries = result.getEntries();
-                cloudListView.getItems().clear();
-                for (Metadata metadata : entries) {
-                    if (metadata instanceof FileMetadata) {
-                        cloudListView.getItems().add(metadata.getName());
-                    }
-                }
-            } catch (DbxException e) {
-                e.printStackTrace();
-            }
+            
+            cloudListView.getItems().clear();
+            cloudListView.getItems().addAll(DbxList.FILES(path));
         }
     }
 

@@ -1,4 +1,4 @@
-package org.uludag.bmb.controller.scene.ListView;
+package org.uludag.bmb.controller.scene.listview;
 
 import javafx.scene.control.ListCell;
 
