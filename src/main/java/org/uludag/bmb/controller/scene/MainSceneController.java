@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
@@ -29,6 +30,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -36,16 +38,24 @@ import javafx.util.Callback;
 public class MainSceneController extends Controller implements Initializable {
     @FXML
     private Button btnDownload;
+
     @FXML
     private Button btnUpload;
-    @FXML
-    private TreeView<String> treeView;
-    @FXML
-    private Text files;
+
     @FXML
     private ListView<String> cloudListView;
+
+    @FXML
+    private ListView<String> localListView;
+
     @FXML
     private TabPane tabPane;
+
+    @FXML
+    private TreeView<String> treeView;
+
+    @FXML
+    private Font x1;
 
     public MainSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("mainSceneFxml"),
@@ -77,58 +87,49 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
-    void selectItem(MouseEvent event) {
-        String path;
-        TreeItem<String> item = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
-        try {
-            ArrayList<String> pathList = new ArrayList<>();
-            path = "";
-            var fake = item;
+    void listSelectFiles(MouseEvent event) {
+        ArrayList<String> selectedFiles = new ArrayList<String>();
+        cloudListView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
+            @Override
+            public ObservableValue<Boolean> call(String item) {
+                BooleanProperty observable = new SimpleBooleanProperty();
+                observable.addListener((obs, wasSelected, isNowSelected) -> System.out.println(
+                        "Check box for " + item + " changed from " + wasSelected + " to " + isNowSelected));
 
-            if (item.getParent() == null) {
-                path += "/";
-            } else {
-
-                while (fake.getParent() != null) {
-                    pathList.add("/");
-                    pathList.add(fake.getValue());
-                    fake = fake.getParent();
-                }
-
-                pathList.add("/");
-                Collections.reverse(pathList);
+                return observable;
             }
+        }));
+    }
 
-            for (String p : pathList) {
-                path += p;
+    @FXML
+    void hierarchySelectFolder(MouseEvent event) {
+        ArrayList<String> path = new ArrayList<String>();
+        TreeItem<String> selectedFolder = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
+        var item = selectedFolder;
+
+        if (item != null) {
+            while (item.getParent() != null) {
+                path.add(item.getValue() + "/");
+                item = item.getParent();
             }
-            DbClient client = new DbClient();
-            client.login();
-            ListFolderResult result = client.getClient().files().listFolder(path);
+            path.add("/");
+            Collections.reverse(path);
 
-            List<Metadata> entries = result.getEntries();
+            DbClient client = new DbClient(true);
 
-            cloudListView.getItems().clear();
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata) {
-                    cloudListView.getItems().add(metadata.getName());
+            ListFolderResult result;
+            try {
+                result = client.getClient().files().listFolder(String.join("", path));
+                List<Metadata> entries = result.getEntries();
+                cloudListView.getItems().clear();
+                for (Metadata metadata : entries) {
+                    if (metadata instanceof FileMetadata) {
+                        cloudListView.getItems().add(metadata.getName());
+                    }
                 }
+            } catch (DbxException e) {
+                e.printStackTrace();
             }
-
-
-            cloudListView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
-                @Override
-                public ObservableValue<Boolean> call(String item) {
-                    BooleanProperty observable = new SimpleBooleanProperty();
-                    observable.addListener((obs, wasSelected, isNowSelected) -> System.out.println(
-                            "Check box for " + item + " changed from " + wasSelected + " to " + isNowSelected));
-
-                    return observable;
-                }
-            }));
-
-        } catch (Exception e) {
-
         }
     }
 

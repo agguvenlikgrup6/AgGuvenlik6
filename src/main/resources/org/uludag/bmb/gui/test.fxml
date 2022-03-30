@@ -57,7 +57,7 @@
                       <Font size="18.0" fx:id="x1" />
                     </font>
                   </Label>
-                        <TreeView fx:id="treeView" layoutY="86.0" onMouseClicked="#selectItem" prefHeight="232.0" prefWidth="200.0" style="-fx-background-color: #fbfaf9;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="86.0" />
+                        <TreeView fx:id="treeView" layoutY="86.0" onMouseClicked="#hierarchySelectFolder" prefHeight="232.0" prefWidth="200.0" style="-fx-background-color: #fbfaf9;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="86.0" />
                 </children>
               </AnchorPane>
             <AnchorPane id="Content" minHeight="-1.0" minWidth="400.0" style="-fx-background-color: white;">
@@ -70,7 +70,7 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="tabPane">
                                        <children>
-                                          <ListView fx:id="cloudListView" layoutX="6.0" layoutY="14.0" prefHeight="593.0" prefWidth="774.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <ListView fx:id="cloudListView" layoutX="6.0" layoutY="14.0" onMouseClicked="#listSelectFiles" prefHeight="593.0" prefWidth="774.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                               </content>

@@ -14,8 +14,19 @@ public class DbClient {
     private DbAuth auth;
     private DbxCredential credential;
 
-    public DbClient() throws IOException, FileLoadException {
-        this.auth = new DbAuth();
+    public DbClient() {
+        try {
+            this.auth = new DbAuth();
+        } catch (FileLoadException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public DbClient(boolean loginState){
+        this();
+        if(loginState){
+            this.login();
+        }
     }
 
     public boolean login() {
