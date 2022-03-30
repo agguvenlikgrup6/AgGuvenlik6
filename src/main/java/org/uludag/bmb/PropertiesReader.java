@@ -12,11 +12,15 @@ public class PropertiesReader {
      *
      * @param propertyName değeri okunacak property
      */
-    public static String getProperty(String propertyName) throws IOException {
+    public static String getProperty(String propertyName) {
         Properties properties;
         InputStream is = PropertiesReader.class.getResourceAsStream("/application.properties");
         properties = new Properties();
-        properties.load(is);
+        try {
+            properties.load(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return properties.getProperty(propertyName);
     }
 }

@@ -47,7 +47,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     private TabPane tabPane;
 
-    public MainSceneController() throws IOException, FileLoadException {
+    public MainSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("mainSceneFxml"),
                 Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")),
                 Integer.parseInt(PropertiesReader.getProperty("mainSceneHeigth")));
@@ -57,6 +57,7 @@ public class MainSceneController extends Controller implements Initializable {
     public void displayScene(Stage stage) {
         this.stage = stage;
         stage.setScene(scene);
+        scene.getStylesheets().add(PropertiesReader.getProperty("mainSceneCss"));
         stage.hide();
         stage.show();
     }

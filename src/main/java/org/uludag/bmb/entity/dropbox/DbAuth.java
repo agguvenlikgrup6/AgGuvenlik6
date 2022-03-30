@@ -22,7 +22,7 @@ public class DbAuth {
     private String redirectUri;
     private DbxStandardSessionStore session;
 
-    public DbAuth() throws IOException, FileLoadException {
+    public DbAuth() throws FileLoadException {
         requestConfig = new DbxRequestConfig(PropertiesReader.getProperty("clientIdentifier"));
         appInfo = new DbxAppInfo("bxvnh4y5x2ar0jz");
         sessionKey = this.generateSessionKey();

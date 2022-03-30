@@ -15,15 +15,15 @@ import org.uludag.bmb.entity.config.Config;
 public class ConfigController {
 
     public static final void initializeLocalStorage(Config config) {
-        ObjectMapper mapper = new ObjectMapper();
-        FileOutputStream fout;
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            FileOutputStream fout;
             fout = new FileOutputStream(PropertiesReader.getProperty("configFile"));
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             mapper.writeValue(fout, config);
             fout.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

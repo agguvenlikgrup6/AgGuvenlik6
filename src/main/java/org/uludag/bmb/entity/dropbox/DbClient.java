@@ -24,7 +24,7 @@ public class DbClient {
             this.client = new DbxClientV2(auth.getRequestConfig(), credential);
             this.client.users().getCurrentAccount();
             return true;
-        } catch (DbxException | FileLoadException | IOException ex) {
+        } catch (DbxException | FileLoadException ex) {
             return false;
         }
     }
