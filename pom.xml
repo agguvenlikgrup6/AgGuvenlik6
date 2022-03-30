@@ -76,10 +76,13 @@
                 <directory>src/main/resources/org/uludag/bmb/</directory>
             </resource>
             <resource>
-                <directory>src/main/resources/org/uludag/bmb/gui/</directory>
+                <directory>src/main/resources/org/uludag/bmb/fxml/</directory>
             </resource>
             <resource>
-                <directory>src/main/resources/org/uludag/bmb/oauth/</directory>
+                <directory>src/main/resources/org/uludag/bmb/icons/</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources/org/uludag/bmb/css/</directory>
             </resource>
         </resources>
         <plugins>
