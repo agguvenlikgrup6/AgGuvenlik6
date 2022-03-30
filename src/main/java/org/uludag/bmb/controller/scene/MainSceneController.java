@@ -34,7 +34,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class MainSceneController extends Controller implements Initializable {
-    String path;
     @FXML
     private Button btnDownload;
     @FXML
@@ -78,6 +77,7 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void selectItem(MouseEvent event) {
+        String path;
         TreeItem<String> item = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
         try {
             ArrayList<String> pathList = new ArrayList<>();
