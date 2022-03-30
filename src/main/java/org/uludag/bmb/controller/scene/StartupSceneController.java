@@ -7,6 +7,7 @@ import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.controller.scene.ListView.ListViewController;
 import org.uludag.bmb.entity.config.Config;
 import org.uludag.bmb.entity.dropbox.DbClient;
 import org.uludag.bmb.oauth.OAuthFlow;
@@ -46,6 +47,7 @@ public class StartupSceneController extends Controller {
         try {
             if (new DbClient().login()) {
                 new MainSceneController().displayScene(stage);
+                // new ListViewController().displayScene(stage);
             } else {
                 this.stage = stage;
                 stage.setScene(scene);

@@ -32,76 +32,48 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox fillWidth="false" prefHeight="594.0" prefWidth="944.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fillWidth="false" prefHeight="673.0" prefWidth="1188.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <MenuBar VBox.vgrow="NEVER">
-      <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
-    <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-      <items>
-        <AnchorPane>
-          <children>
-            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Master" textAlignment="CENTER" wrapText="false">
-              <font>
-                <Font size="18.0" fx:id="x1" />
-              </font>
-              <textFill>
-                <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
-              </textFill>
-            </Label>
-                  <TreeView fx:id="treeView" layoutX="11.0" layoutY="76.0" onMouseClicked="#selectItem" prefHeight="200.0" prefWidth="200.0" />
-          </children>
-        </AnchorPane>
-        <ScrollPane prefWidth="554.0">
-          <content>
-            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="470.0">
+      <AnchorPane prefHeight="776.0" prefWidth="1188.0" VBox.vgrow="ALWAYS">
+         <children>
+          <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="681.0" prefWidth="1188.0">
+            <items>
+              <AnchorPane maxWidth="220.0" minWidth="100.0" prefHeight="679.0" prefWidth="220.0" SplitPane.resizableWithParent="false">
+                <children>
+                  <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefHeight="21.0" prefWidth="200.0" style="&#10;" text="Dosya Dizinleri" textAlignment="CENTER" wrapText="false">
+                    <font>
+                      <Font size="18.0" fx:id="x1" />
+                    </font>
+                    <textFill>
+                      <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
+                    </textFill>
+                  </Label>
+                        <TreeView fx:id="treeView" layoutY="55.0" onMouseClicked="#selectItem" prefHeight="330.0" prefWidth="241.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="55.0" />
+                </children>
+              </AnchorPane>
+            <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="310.0">
               <children>
-                        <Button fx:id="btnUpload" layoutX="14.0" layoutY="22.0" mnemonicParsing="false" onAction="#uploadItem" style="-fx-background-color: cyan; -fx-border-color: black;" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" />
-                        <Button fx:id="btnDownload" layoutX="94.0" layoutY="23.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="94.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text=" Download" textFill="WHITE" />
-                        <TabPane fx:id="tabPane" layoutX="14.0" layoutY="82.0" prefHeight="446.0" prefWidth="428.0" tabClosingPolicy="UNAVAILABLE">
+                        <Button fx:id="btnUpload" layoutX="14.0" layoutY="22.0" mnemonicParsing="false" onAction="#uploadItem" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: cyan; -fx-border-color: black;" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.topAnchor="22.0" />
+                        <Button fx:id="btnDownload" layoutX="121.0" layoutY="22.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="95.0" style="-fx-background-color: lightgreen; -fx-border-color: black;" text=" Download" textFill="WHITE" AnchorPane.topAnchor="22.0" />
+                        <TabPane fx:id="tabPane" layoutY="56.0" prefHeight="623.0" prefWidth="587.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0">
                           <tabs>
                             <Tab text="Online Dosyalar">
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <ListView fx:id="cloudListView" layoutX="14.0" layoutY="14.0" prefHeight="415.0" prefWidth="428.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <ListView fx:id="cloudListView" layoutX="14.0" layoutY="14.0" prefHeight="415.0" prefWidth="565.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -115,31 +87,14 @@
                         </TabPane>
               </children>
             </AnchorPane>
-          </content>
-        </ScrollPane>
-        <AnchorPane prefHeight="545.0" prefWidth="376.0">
-          <children>
-            <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-          </children>
-        </AnchorPane>
-      </items>
-    </SplitPane>
-    <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-      <children>
-        <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">
-          <font>
-            <Font size="11.0" fx:id="x3" />
-          </font>
-          <textFill>
-            <Color red="0.625" green="0.625" blue="0.625" fx:id="x4" />
-          </textFill>
-        </Label>
-        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label font="$x3" maxWidth="-1.0" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
-      </children>
-      <padding>
-        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-      </padding>
-    </HBox>
+              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="200.0" minWidth="100.0" prefHeight="679.0" prefWidth="255.0" SplitPane.resizableWithParent="false">
+                <children>
+                  <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" textFill="#5d00ff" wrapText="false" />
+                </children>
+              </AnchorPane>
+            </items>
+          </SplitPane>
+         </children>
+      </AnchorPane>
   </children>
 </VBox>

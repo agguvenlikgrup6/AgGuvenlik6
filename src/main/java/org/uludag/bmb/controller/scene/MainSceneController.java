@@ -113,6 +113,8 @@ public class MainSceneController extends Controller implements Initializable {
                     cloudListView.getItems().add(metadata.getName());
                 }
             }
+
+
             cloudListView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
                 @Override
                 public ObservableValue<Boolean> call(String item) {
