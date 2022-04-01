@@ -94,6 +94,20 @@ public class DbxList extends DbxOperations {
     }
 
     public static final List<String> FILES(String path) {
-        return null;
+        List<String> files = new ArrayList<String>();
+        DbClient client = new DbClient(true);
+        ListFolderResult result;
+        try {
+            result = client.getClient().files().listFolder(String.join("", path));
+            List<Metadata> entries = result.getEntries();
+            for (Metadata metadata : entries) {
+                if (metadata instanceof FileMetadata) {
+                    files.add(metadata.getName());
+                }
+            }
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+        return files;
     }
 }

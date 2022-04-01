@@ -60,9 +60,9 @@
                         <TreeView fx:id="treeView" layoutX="10.0" layoutY="58.0" onMouseClicked="#hierarchySelectFolder" prefHeight="299.0" prefWidth="230.0" style="-fx-background-color: #fbfaf9;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="58.0" />
                 </children>
               </AnchorPane>
-            <AnchorPane id="Content" minHeight="-1.0" minWidth="400.0" style="-fx-background-color: white;">
+            <AnchorPane id="Content" fx:id="middlePane" minHeight="-1.0" minWidth="400.0" style="-fx-background-color: white;">
               <children>
-                        <Button id="upload" fx:id="btnUpload" layoutX="14.0" layoutY="59.0" mnemonicParsing="false" onAction="#uploadItem" prefHeight="25.0" prefWidth="95.0" styleClass="btnMainMenu" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="59.0" />
+                        <Button id="upload" fx:id="btnUpload" layoutX="8.0" layoutY="59.0" mnemonicParsing="false" onAction="#uploadItem" prefHeight="25.0" prefWidth="106.0" styleClass="btnMainMenu" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="59.0" />
                         <Button id="download" fx:id="btnDownload" layoutX="116.0" layoutY="59.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="95.0" styleClass="btnMainMenu" text=" Download" textFill="WHITE" AnchorPane.topAnchor="59.0" />
                         <TabPane fx:id="tabPane" layoutX="8.0" layoutY="56.0" prefHeight="623.0" prefWidth="792.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="90.0">
                           <tabs>
@@ -86,7 +86,7 @@
                             </Tab>
                           </tabs>
                         </TabPane>
-                        <Label layoutX="14.0" layoutY="10.0" prefHeight="40.0" prefWidth="58.0" text="Label" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="10.0" />
+                        <SplitPane fx:id="linkPane" layoutX="16.0" layoutY="14.0" prefHeight="35.0" prefWidth="744.0" styleClass="pathLinkPane" />
               </children>
                      <padding>
                         <Insets left="5.0" right="5.0" />

@@ -1,7 +1,5 @@
 package org.uludag.bmb.entity.dropbox;
 
-import java.io.IOException;
-
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.oauth.DbxCredential;
