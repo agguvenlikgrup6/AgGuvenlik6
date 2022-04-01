@@ -79,16 +79,6 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void listSelectFiles(MouseEvent event) {
-        cloudListView.setCellFactory(CheckBoxListCell.forListView(new Callback<String, ObservableValue<Boolean>>() {
-            @Override
-            public ObservableValue<Boolean> call(String item) {
-                BooleanProperty observable = new SimpleBooleanProperty();
-                observable.addListener((obs, wasSelected, isNowSelected) -> System.out.println(
-                        "Check box for " + item + " changed from " + wasSelected + " to " + isNowSelected));
-
-                return observable;
-            }
-        }));
     }
 
     @FXML
