@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.filedata.FileDataProperty;
 import org.uludag.bmb.operations.DbxList;
 
 import javafx.collections.FXCollections;
@@ -20,11 +23,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -52,7 +56,22 @@ public class MainSceneController extends Controller implements Initializable {
     private SplitPane linkPane;
 
     @FXML
-    private TableView<?> cloudTableView;
+    private TableView<FileDataProperty> cloudTableView;
+
+    @FXML
+    private TableColumn<FileDataProperty, ArrayList<String>> ctwAccess;
+
+    @FXML
+    private TableColumn<FileDataProperty, CheckBox> ctwCheckBox;
+
+    @FXML
+    private TableColumn<FileDataProperty, String> ctwFileName;
+
+    @FXML
+    private TableColumn<FileDataProperty, Date> ctwLastEdit;
+
+    @FXML
+    private TableColumn<FileDataProperty, Boolean> ctwSyncStatus;
 
     public MainSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("mainSceneFxml"),
@@ -75,6 +94,10 @@ public class MainSceneController extends Controller implements Initializable {
         treeView.setShowRoot(false);
 
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
+        ctwLastEdit.setCellValueFactory(cellData -> cellData.getValue().lastEditDate());
+        ctwSyncStatus.setCellValueFactory(cellData -> cellData.getValue().syncStatus());
+        ctwCheckBox.setCellValueFactory(cellData -> cellData.getValue().selection());
     }
 
     @FXML
@@ -99,12 +122,9 @@ public class MainSceneController extends Controller implements Initializable {
             Collections.reverse(path);
             Collections.reverse(pathNaked);
 
-            // cloudListView.getItems().clear();
-            // cloudListView.getItems().addAll(DbxList.FILES(path));
-
+            cloudTableView.setItems(DbxList.CLOUD_FILES(path));
             addToPathLink(pathNaked);
         }
-
     }
 
     private void addToPathLink(ArrayList<String> path) {
@@ -115,8 +135,7 @@ public class MainSceneController extends Controller implements Initializable {
         pathPart.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                // cloudListView.getItems().clear();
-                // cloudListView.getItems().addAll(DbxList.FILES(""));
+                cloudTableView.setItems(DbxList.CLOUD_FILES(""));
                 treeView.getSelectionModel().select(0);
                 linkPane.getItems().remove(1, linkPane.getItems().size());
             }
@@ -129,20 +148,17 @@ public class MainSceneController extends Controller implements Initializable {
             pathPart.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    // Üstteki path kısmından seçilen klasöre uygun olarak treeview güncellenir
                     int selectedPathIndex = linkPane.getItems().indexOf(event.getSource());
                     int pathSize = linkPane.getItems().size();
                     for (int i = 0; i < pathSize - (selectedPathIndex + 1); i++) {
                         treeView.getSelectionModel().selectPrevious();
                     }
 
-                    // liste temizlenir ardından seçilen path'e göre güncellenir
-                    // cloudListView.getItems().clear();
-                    String path = "/";
+                    String pathS = "/";
                     for (int i = 1; i <= linkPane.getItems().indexOf(event.getSource()); i++) {
-                        path += ((Hyperlink) linkPane.getItems().get(i)).getText();
+                        pathS += ((Hyperlink) linkPane.getItems().get(i)).getText();
                     }
-                    // cloudListView.getItems().addAll(DbxList.FILES(path));
+                    cloudTableView.setItems(DbxList.CLOUD_FILES(pathS));
                     linkPane.getItems().remove(linkPane.getItems().indexOf(event.getSource()) + 1,
                             linkPane.getItems().size());
                 }

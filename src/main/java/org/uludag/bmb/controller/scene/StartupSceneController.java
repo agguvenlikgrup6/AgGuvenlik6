@@ -6,9 +6,9 @@ import java.io.IOException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.config.Config;
+import org.uludag.bmb.beans.dropbox.DbClient;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.entity.config.Config;
-import org.uludag.bmb.entity.dropbox.DbClient;
 import org.uludag.bmb.oauth.OAuthFlow;
 
 import javafx.fxml.FXML;

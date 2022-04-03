@@ -1,18 +1,21 @@
 package org.uludag.bmb.operations;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-import org.uludag.bmb.entity.dropbox.DbClient;
+import org.uludag.bmb.beans.dropbox.DbClient;
+import org.uludag.bmb.beans.filedata.FileDataProperty;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,7 +34,7 @@ public class DbxList extends DbxOperations {
 
                 List<Metadata> entries = result.getEntries();
                 for (Metadata metadata : entries) {
-                    if (metadata instanceof FolderMetadata) {
+                    if (!(metadata instanceof FileMetadata)) {
                         folders.add(metadata.getPathDisplay());
                     }
                 }
@@ -93,6 +96,49 @@ public class DbxList extends DbxOperations {
         return files;
     }
 
+    public static final ObservableList<FileDataProperty> CLOUD_FILES(ArrayList<String> path){
+        ObservableList<FileDataProperty> files = FXCollections.observableArrayList();
+        DbClient client = new DbClient(true);
+        ListFolderResult result;
+        try {
+            result = client.getClient().files().listFolder(String.join("", path));
+            List<Metadata> entries = result.getEntries();
+            for (Metadata metadata : entries) {
+                if(metadata instanceof FileMetadata){
+                    String fileName = metadata.getName();
+                    FileMetadata fileMetadata = (FileMetadata) client.getClient().files().getMetadata(metadata.getPathLower());
+                    Date fileDate = fileMetadata.getServerModified();
+                    files.add(new FileDataProperty(fileName, fileDate, false));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return files;
+    }
+
+    public static final ObservableList<FileDataProperty> CLOUD_FILES(String path){
+        ObservableList<FileDataProperty> files = FXCollections.observableArrayList();
+        DbClient client = new DbClient(true);
+        ListFolderResult result;
+        try {
+            result = client.getClient().files().listFolder(path);
+            List<Metadata> entries = result.getEntries();
+            for (Metadata metadata : entries) {
+                if(metadata instanceof FileMetadata){
+                    String fileName = metadata.getName();
+                    FileMetadata fileMetadata = (FileMetadata) client.getClient().files().getMetadata(metadata.getPathLower());
+                    Date fileDate = fileMetadata.getServerModified();
+                    files.add(new FileDataProperty(fileName, fileDate, false));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return files;
+    }
+
+
     public static final List<String> FILES(String path) {
         List<String> files = new ArrayList<String>();
         DbClient client = new DbClient(true);
@@ -110,4 +156,5 @@ public class DbxList extends DbxOperations {
         }
         return files;
     }
+
 }

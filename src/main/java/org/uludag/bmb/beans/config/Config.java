@@ -1,4 +1,4 @@
-package org.uludag.bmb.entity.config;
+package org.uludag.bmb.beans.config;
 
 public class Config {
     private String localDropboxPath;

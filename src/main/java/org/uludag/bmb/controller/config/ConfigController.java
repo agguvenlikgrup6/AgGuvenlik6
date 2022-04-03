@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.entity.config.Config;
+import org.uludag.bmb.beans.config.Config;
 
 public class ConfigController {
 

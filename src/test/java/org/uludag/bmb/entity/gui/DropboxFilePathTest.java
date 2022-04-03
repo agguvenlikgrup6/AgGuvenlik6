@@ -11,7 +11,7 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
 import org.junit.Test;
-import org.uludag.bmb.entity.dropbox.DbClient;
+import org.uludag.bmb.beans.dropbox.DbClient;
 
 public class DropboxFilePathTest {
 

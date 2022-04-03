@@ -38,68 +38,72 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fillWidth="false" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="800.0" minWidth="1300.0" prefHeight="800.0" prefWidth="1300.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-      <AnchorPane style="-fx-background-color: white;" VBox.vgrow="ALWAYS">
-         <children>
-          <SplitPane cacheShape="false" centerShape="false" dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="false" nodeOrientation="LEFT_TO_RIGHT" scaleShape="false" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <items>
-              <AnchorPane maxWidth="250.0" minWidth="110.0" prefWidth="220.0" style="-fx-background-color: #f7f5f2;" SplitPane.resizableWithParent="false">
-                <children>
-                  <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefHeight="21.0" prefWidth="200.0" style="&#10;" text="Dosya Dizinleri" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="6.0">
-                    <font>
-                      <Font size="18.0" fx:id="x1" />
-                    </font>
-                  </Label>
-                        <TreeView fx:id="treeView" layoutX="10.0" layoutY="58.0" onMouseClicked="#hierarchySelectFolder" prefHeight="299.0" prefWidth="230.0" style="-fx-background-color: #fbfaf9;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="58.0" />
-                </children>
-              </AnchorPane>
-            <AnchorPane id="Content" fx:id="middlePane" minHeight="-1.0" minWidth="400.0" style="-fx-background-color: white;">
-              <children>
-                        <Button id="upload" fx:id="btnUpload" layoutX="8.0" layoutY="59.0" mnemonicParsing="false" onAction="#uploadItem" prefHeight="25.0" prefWidth="106.0" styleClass="btnMainMenu" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="59.0" />
-                        <Button id="download" fx:id="btnDownload" layoutX="116.0" layoutY="59.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="95.0" styleClass="btnMainMenu" text=" Download" textFill="WHITE" AnchorPane.topAnchor="59.0" />
-                        <TabPane fx:id="tabPane" layoutX="8.0" layoutY="56.0" prefHeight="623.0" prefWidth="792.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="90.0">
-                          <tabs>
-                            <Tab id="tab1" closable="false" text="Online Dosyalar">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="tabPane">
-                                       <children>
-                                          <TableView fx:id="cloudTableView" layoutX="39.0" layoutY="26.0" prefHeight="592.0" prefWidth="762.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <columnResizePolicy>
-                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                             </columnResizePolicy>
-                                          </TableView>
-                                       </children>
-                                    </AnchorPane>
-                              </content>
-                            </Tab>
-                            <Tab id="tab2" closable="false" text="Yerel Dosyalar">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="tabPane" />
-                              </content>
-                            </Tab>
-                          </tabs>
-                        </TabPane>
-                        <SplitPane fx:id="linkPane" layoutX="16.0" layoutY="14.0" prefHeight="35.0" prefWidth="744.0" styleClass="pathLinkPane" />
-              </children>
-                     <padding>
-                        <Insets left="5.0" right="5.0" />
-                     </padding>
-            </AnchorPane>
-              <AnchorPane cache="true" maxHeight="1.7976931348623157E308" maxWidth="220.0" minWidth="110.0" prefWidth="220.0" SplitPane.resizableWithParent="false">
-                <children>
-                  <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="34.0" AnchorPane.topAnchor="14.0" />
-                </children>
-              </AnchorPane>
-            </items>
-          </SplitPane>
-         </children>
+    <SplitPane cacheShape="false" centerShape="false" dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="false" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: white;" VBox.vgrow="ALWAYS">
+      <items>
+        <AnchorPane maxWidth="250.0" minWidth="200.0" prefWidth="250.0" style="-fx-background-color: #f7f5f2;" SplitPane.resizableWithParent="false">
+          <children>
+            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefHeight="21.0" prefWidth="200.0" style="&#10;" text="Dosya Dizinleri" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="6.0">
+              <font>
+                <Font size="18.0" fx:id="x1" />
+              </font>
+            </Label>
+                  <TreeView fx:id="treeView" layoutX="10.0" layoutY="58.0" onMouseClicked="#hierarchySelectFolder" prefHeight="299.0" prefWidth="230.0" style="-fx-background-color: #fbfaf9;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="58.0" />
+          </children>
+        </AnchorPane>
+      <AnchorPane id="Content" fx:id="middlePane" maxWidth="1.7976931348623157E308" minHeight="-1.0" minWidth="400.0" style="-fx-background-color: white;">
+        <children>
+                  <Button id="upload" fx:id="btnUpload" layoutX="8.0" layoutY="59.0" mnemonicParsing="false" onAction="#uploadItem" prefHeight="25.0" prefWidth="106.0" styleClass="btnMainMenu" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="59.0" />
+                  <Button id="download" fx:id="btnDownload" layoutX="130.0" layoutY="59.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="95.0" styleClass="btnMainMenu" text=" Download" textFill="WHITE" AnchorPane.leftAnchor="130.0" AnchorPane.topAnchor="59.0" />
+                  <TabPane fx:id="tabPane" layoutX="8.0" layoutY="56.0" maxWidth="1.7976931348623157E308" prefHeight="623.0" prefWidth="792.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="90.0">
+                    <tabs>
+                      <Tab id="tab1" closable="false" text="Online Dosyalar">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="tabPane">
+                                 <children>
+                                    <TableView fx:id="cloudTableView" layoutX="39.0" layoutY="26.0" prefHeight="592.0" prefWidth="762.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                       <columns>
+                                          <TableColumn fx:id="ctwCheckBox" prefWidth="37.0" resizable="false" text="Seçim" />
+                                          <TableColumn fx:id="ctwFileName" prefWidth="187.0" text="Dosya" />
+                                          <TableColumn fx:id="ctwLastEdit" prefWidth="161.0" text="Son Değişiklik" />
+                                          <TableColumn fx:id="ctwSyncStatus" prefWidth="209.0" text="Senkronizasyon Durumu" />
+                                          <TableColumn fx:id="ctwAccess" prefWidth="176.0" text="Kimler Erişebilir" />
+                                       </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                      <Tab id="tab2" closable="false" text="Yerel Dosyalar">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="tabPane" />
+                        </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+                  <SplitPane fx:id="linkPane" layoutX="16.0" layoutY="14.0" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="744.0" styleClass="pathLinkPane" />
+        </children>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
       </AnchorPane>
+        <AnchorPane cache="true" maxWidth="250.0" minWidth="200.0" prefWidth="250.0">
+          <children>
+            <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="34.0" AnchorPane.topAnchor="14.0" />
+          </children>
+        </AnchorPane>
+      </items>
+    </SplitPane>
   </children>
 </VBox>

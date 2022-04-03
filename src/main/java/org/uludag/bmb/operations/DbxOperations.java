@@ -1,6 +1,6 @@
 package org.uludag.bmb.operations;
 
-import org.uludag.bmb.entity.dropbox.DbClient;
+import org.uludag.bmb.beans.dropbox.DbClient;
 
 public class DbxOperations {
     protected DbClient client;
