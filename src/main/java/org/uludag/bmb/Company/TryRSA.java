@@ -17,7 +17,7 @@ public class TryRSA {
     public void init() throws Exception{
         try{
             KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-            generator.initialize(1024); // minimumu 512
+            generator.initialize(4096); // minimumu 512
             KeyPair pair = generator.generateKeyPair();
             privateKey = pair.getPrivate();
             publicKey = pair.getPublic();
