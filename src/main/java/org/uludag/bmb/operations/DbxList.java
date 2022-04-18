@@ -107,8 +107,9 @@ public class DbxList extends DbxOperations {
                 if(metadata instanceof FileMetadata){
                     String fileName = metadata.getName();
                     FileMetadata fileMetadata = (FileMetadata) client.getClient().files().getMetadata(metadata.getPathLower());
+                    String filePath = fileMetadata.getPathDisplay();
                     Date fileDate = fileMetadata.getServerModified();
-                    files.add(new FileDataProperty(fileName, fileDate, false));
+                    files.add(new FileDataProperty(fileName, fileDate, false, filePath));
                 }
             }
         } catch (Exception e) {
@@ -128,8 +129,9 @@ public class DbxList extends DbxOperations {
                 if(metadata instanceof FileMetadata){
                     String fileName = metadata.getName();
                     FileMetadata fileMetadata = (FileMetadata) client.getClient().files().getMetadata(metadata.getPathLower());
+                    String filePath = fileMetadata.getPathDisplay();
                     Date fileDate = fileMetadata.getServerModified();
-                    files.add(new FileDataProperty(fileName, fileDate, false));
+                    files.add(new FileDataProperty(fileName, fileDate, false, filePath));
                 }
             }
         } catch (Exception e) {

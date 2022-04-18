@@ -1,22 +1,23 @@
 package org.uludag.bmb.controller.scene;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.filedata.FileDataProperty;
+import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.operations.DbxFiles;
 import org.uludag.bmb.operations.DbxList;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,6 +33,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -63,6 +65,9 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     private TableColumn<FileDataProperty, CheckBox> ctwCheckBox;
+
+    @FXML
+    private TableColumn<FileDataProperty, String> ctwFilePath;
 
     @FXML
     private TableColumn<FileDataProperty, String> ctwFileName;
@@ -97,7 +102,8 @@ public class MainSceneController extends Controller implements Initializable {
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
         ctwLastEdit.setCellValueFactory(cellData -> cellData.getValue().lastEditDate());
         ctwSyncStatus.setCellValueFactory(cellData -> cellData.getValue().syncStatus());
-        ctwCheckBox.setCellValueFactory(cellData -> cellData.getValue().selection());
+        ctwCheckBox.setCellValueFactory(new PropertyValueFactory<FileDataProperty, CheckBox>("selection"));
+        ctwFilePath.setCellValueFactory(cellData -> cellData.getValue().filePath());
     }
 
     @FXML
@@ -121,8 +127,8 @@ public class MainSceneController extends Controller implements Initializable {
             path.add("/");
             Collections.reverse(path);
             Collections.reverse(pathNaked);
-
-            cloudTableView.setItems(DbxList.CLOUD_FILES(path));
+            var items = DbxList.CLOUD_FILES(path);
+            cloudTableView.setItems(items);
             addToPathLink(pathNaked);
         }
     }
@@ -170,7 +176,25 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void downloadItem(ActionEvent event) {
+        ObservableList<FileDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
+        String localPath = ConfigController.getLocalPath();
 
+        for (var file : selectedFiles) {
+            String fileWithPath = localPath + file.getFilePath() + "/" + file.getFileName();
+            // eğer dosya yoksa
+            if (!Files.exists(Paths.get(fileWithPath))) {
+                // eğer dosyanın bulunduğu klasör yoksa
+                if (!Files.exists(Paths.get(localPath + file.getFilePath()))) {
+                    File fileFolder = new File(localPath + file.getFilePath());
+                    fileFolder.mkdirs();
+                }
+                new Thread(() -> {
+                    DbxFiles.DOWNLOAD_FILE(localPath, file.getFilePath(), "/" + file.getFileName());
+                }).start();
+            } else {
+                System.out.println("Dosya zaten indirilmiş!");
+            }
+        }
     }
 
     @FXML

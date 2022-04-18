@@ -8,19 +8,27 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
+import javafx.scene.input.MouseEvent;
 
 public class FileDataProperty {
     private final StringProperty fileName1;
     private final ObjectProperty<Date> lastEditDate;
     private final BooleanProperty syncStatus;
     private ObjectProperty<CheckBox> selection;
+    private final StringProperty filePath;
 
-    public FileDataProperty(String fileName, Date lastEditDate, boolean syncStatus) {
+    public FileDataProperty(String fileName, Date lastEditDate, boolean syncStatus, String filePath) {
         this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
         this.fileName1 = new SimpleStringProperty(this, "fileName", fileName);
         this.syncStatus = new SimpleBooleanProperty(this, "syncStatus", syncStatus);
         this.selection = new SimpleObjectProperty<>(this, "selection", new CheckBox());
+        this.filePath = new SimpleStringProperty(this, "filepath", filePath);
+    }
+
+    public void addEventHandler(EventHandler<MouseEvent> a) {
+        this.selection.get().addEventHandler(MouseEvent.MOUSE_CLICKED, a);
     }
 
     public ObjectProperty<CheckBox> selection() {
@@ -71,4 +79,17 @@ public class FileDataProperty {
         this.syncStatus.set(syncStatus);
     }
 
+    public final StringProperty filePath() {
+        return filePath;
+    }
+
+    public final String getFilePath() {
+        String p = filePath.get();
+        int index = p.lastIndexOf('/');
+        return p.substring(1, index);
+    }
+
+    public final void setFilePath(String filePath) {
+        this.filePath.set(filePath);
+    }
 }

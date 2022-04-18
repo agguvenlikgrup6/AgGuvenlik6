@@ -79,6 +79,7 @@
                                           <TableColumn fx:id="ctwLastEdit" prefWidth="161.0" text="Son Değişiklik" />
                                           <TableColumn fx:id="ctwSyncStatus" prefWidth="209.0" text="Senkronizasyon Durumu" />
                                           <TableColumn fx:id="ctwAccess" prefWidth="176.0" text="Kimler Erişebilir" />
+                                          <TableColumn fx:id="ctwFilePath" prefWidth="75.0" text="PATHINFO" visible="false" />
                                        </columns>
                                     </TableView>
                                  </children>
