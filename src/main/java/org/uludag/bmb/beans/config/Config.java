@@ -5,6 +5,7 @@ public class Config {
 
     public Config(String path) {
         this.localDropboxPath = path;
+        //
     }
     
     public String getLocalDropboxPath(){
