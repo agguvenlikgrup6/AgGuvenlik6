@@ -11,19 +11,20 @@ import org.uludag.bmb.Company.TryRSA;
 public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
         try{
-            //FileSystem tt = new FileSystem();
+            FileSystem tt = new FileSystem();
             //tt.dosyaSifreleme("deneme.txt", "aa.txt");
-            //tt.dosyaSifreCozme("aa.txt","dd.txt");
+            //tt.dosyaSifrelemeNew("deneme.txt");
+            // tt.dosyaSifreCozme("aa.txt","dd.txt");
             // FileSystemRSA tt_rsa = new FileSystemRSA();
             // //tt_rsa.dosyaSifreleme("deneme.txt", "aa.txt");
             // tt_rsa.dosyaSifreCozme("aa.txt", "bb.txt");
-            TryRSA aab = new TryRSA();
-            aab.init();
-            String enc = aab.encrypt("Hello World!");
-            String denc = aab.decrypt(enc);
-            System.out.println(enc);
-            System.out.println(denc);
-            aab.printKeys();;
+            // TryRSA aab = new TryRSA();
+            // aab.init();
+            // String enc = aab.encrypt("Hello World!");
+            // String denc = aab.decrypt(enc);
+            // System.out.println(enc);
+            // System.out.println(denc);
+            // aab.printKeys();;
         }
         catch(Exception ignored){
             

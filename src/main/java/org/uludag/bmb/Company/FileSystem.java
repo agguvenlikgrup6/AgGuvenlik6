@@ -83,4 +83,39 @@ public class FileSystem {
         catch(Exception e){
         }
     }
+    public void dosyaSifrelemeNew(String old_file){
+        File f = new File(old_file);
+        try{
+            Scanner fr = new Scanner(f);
+            while(fr.hasNextLine()){
+                textDosya = fr.nextLine();
+            }
+            fr.close();
+            crypt.init();
+            File new_f = new File(crypt.encryptForNew(old_file));
+            if (new_f.createNewFile()){
+                // crypt.init();
+                FileWriter myWriter = new FileWriter(new_f);
+                myWriter.write(crypt.encryptForNew(textDosya));
+                myWriter.close();
+                System.out.println("Don't Forget These Keys !!!");
+                System.out.println("Secret Key  --> " + crypt.s_keyCall());
+                System.out.println("IV --> " + crypt.ivCall());
+            }
+            else{
+                Scanner myObj = new Scanner(System.in);
+                System.out.println("Secret Key -->>  ");
+                String s_key = myObj.nextLine();
+                Scanner myObj2 = new Scanner(System.in);
+                System.out.println("IV -->>  ");
+                String IV = myObj2.nextLine();
+                FileWriter myWriter = new FileWriter(new_f);
+                crypt.initFromStrings(s_key, IV);
+                myWriter.write(crypt.encryptForExist(textDosya));
+                myWriter.close();
+            }
+        }
+        catch(Exception e){
+        }
+    }
 }
