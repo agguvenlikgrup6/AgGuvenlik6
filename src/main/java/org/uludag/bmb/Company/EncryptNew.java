@@ -12,7 +12,8 @@ public class EncryptNew {
     private SecretKey key;
     private int KEY_SIZE = 128;
     private int T_LEN = 128;
-    private byte[] IV;
+    private byte[] IVName;
+    private byte[] IVFile;
     
 
     public void init() throws Exception{
@@ -32,15 +33,28 @@ public class EncryptNew {
     }
     public void initFromStrings(String secretKey, String IV){
         key = new SecretKeySpec(decode(secretKey),"AES");
-        this.IV = decode(IV);
+        this.IVName = decode(IV);
+    }
+    public void initFromStringsNew(String secretKey, String IV, String IV2){
+        key = new SecretKeySpec(decode(secretKey),"AES");
+        this.IVName = decode(IV);
+        this.IVFile = decode(IV2);
     }
     private byte[] decode(String data){
         return Base64.getDecoder().decode(data);
     }
-    public String encryptForExist(String message) throws Exception{
+    public String encryptForExistFileName(String message) throws Exception{
         byte[] messageInBytes = message.getBytes();
         Cipher encryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
-        GCMParameterSpec spec = new GCMParameterSpec(T_LEN, IV);
+        GCMParameterSpec spec = new GCMParameterSpec(T_LEN, IVName);
+        encryptionCipher.init(Cipher.ENCRYPT_MODE, key,spec);
+        byte[] encrptedBytes = encryptionCipher.doFinal(messageInBytes);
+        return encode(encrptedBytes);
+    }
+    public String encryptForExistFile(String message) throws Exception{
+        byte[] messageInBytes = message.getBytes();
+        Cipher encryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
+        GCMParameterSpec spec = new GCMParameterSpec(T_LEN, IVFile);
         encryptionCipher.init(Cipher.ENCRYPT_MODE, key,spec);
         byte[] encrptedBytes = encryptionCipher.doFinal(messageInBytes);
         return encode(encrptedBytes);
@@ -49,18 +63,34 @@ public class EncryptNew {
         byte[] messageInBytes = message.getBytes();
         Cipher encryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");
         encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
-        IV = encryptionCipher.getIV();
+        IVName = encryptionCipher.getIV();
         byte[] encryptedBytes = encryptionCipher.doFinal(messageInBytes);
         return encode(encryptedBytes);
     }
     public String decrypt(String encryptedMessage) throws Exception{
         byte[] messageInBytes = decode(encryptedMessage);
         Cipher decryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
-        GCMParameterSpec spec = new GCMParameterSpec(T_LEN,IV);
+        GCMParameterSpec spec = new GCMParameterSpec(T_LEN,IVName);
+        decryptionCipher.init(Cipher.DECRYPT_MODE,key,spec);
+        byte[] decryptedBytes = decryptionCipher.doFinal(messageInBytes);
+        return new String(decryptedBytes);
+    }
+    public String decryptForName(String encryptedMessage) throws Exception{
+        byte[] messageInBytes = decode(encryptedMessage);
+        Cipher decryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
+        GCMParameterSpec spec = new GCMParameterSpec(T_LEN,IVName);
+        decryptionCipher.init(Cipher.DECRYPT_MODE,key,spec);
+        byte[] decryptedBytes = decryptionCipher.doFinal(messageInBytes);
+        return new String(decryptedBytes);
+    }
+    public String decryptForFile(String encryptedMessage) throws Exception{
+        byte[] messageInBytes = decode(encryptedMessage);
+        Cipher decryptionCipher = Cipher.getInstance("/AES/GCM/NoPadding");
+        GCMParameterSpec spec = new GCMParameterSpec(T_LEN,IVFile);
         decryptionCipher.init(Cipher.DECRYPT_MODE,key,spec);
         byte[] decryptedBytes = decryptionCipher.doFinal(messageInBytes);
         return new String(decryptedBytes);
     }
     public String s_keyCall(){ return encode(key.getEncoded());}
-    public String ivCall(){ return encode(IV);}
+    public String ivCall(){ return encode(IVName);}
 }

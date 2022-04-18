@@ -10,7 +10,7 @@ import org.uludag.bmb.Company.Encrypt;
 public class FileSystem {
     private String textDosya;
     EncryptNew crypt = new EncryptNew();
-    public void dosyaSifreleme(String old_file, String new_file){
+    public void dosyaSifrelemeAll(String old_file){
         File f = new File(old_file);
         try{
             Scanner fr = new Scanner(f);
@@ -19,33 +19,18 @@ public class FileSystem {
             }
             fr.close();
             crypt.init();
+            String new_file = dosyaAdSifreleme(old_file);
             File new_f = new File(new_file);
-            if (new_f.createNewFile()){
-                // crypt.init();
-                FileWriter myWriter = new FileWriter(new_f);
-                myWriter.write(crypt.encryptForNew(textDosya));
-                myWriter.close();
-                System.out.println("Don't Forget These Keys !!!");
-                System.out.println("Secret Key  --> " + crypt.s_keyCall());
-                System.out.println("IV --> " + crypt.ivCall());
-            }
-            else{
-                Scanner myObj = new Scanner(System.in);
-                System.out.println("Secret Key -->>  ");
-                String s_key = myObj.nextLine();
-                Scanner myObj2 = new Scanner(System.in);
-                System.out.println("IV -->>  ");
-                String IV = myObj2.nextLine();
-                FileWriter myWriter = new FileWriter(new_f);
-                crypt.initFromStrings(s_key, IV);
-                myWriter.write(crypt.encryptForExist(textDosya));
-                myWriter.close();
-            }
+            new_f.createNewFile();
+            FileWriter myWriter = new FileWriter(new_f);
+            myWriter.write(crypt.encryptForNew(textDosya));
+            myWriter.close();
+            System.out.println("File IV --> " + crypt.ivCall());
         }
         catch(Exception e){
         }
     }
-    public void dosyaSifreCozme(String old_file, String new_file){
+    public void dosyaSifreCozmeAll(String old_file){
         File f = new File(old_file);
         try{
             Scanner fr = new Scanner(f);
@@ -53,69 +38,64 @@ public class FileSystem {
                 textDosya =fr.nextLine();
             }
             fr.close();
-            File new_f = new File(new_file);
+            Scanner myObj = new Scanner(System.in);
+            System.out.println("Secret Key -->>  ");
+            String s_key = myObj.nextLine();
+            Scanner myObj2 = new Scanner(System.in);
+            System.out.println("Name IV -->>  ");
+            String IV = myObj2.nextLine();
+            Scanner myObj3 = new Scanner(System.in);
+            System.out.println("File IV -->>  ");
+            String IV2 = myObj2.nextLine();
+            crypt.initFromStringsNew(s_key, IV, IV2);
+            String decryptedFileName = crypt.decryptForName(old_file);
+            File new_f = new File(decryptedFileName);
             if (new_f.exists()){
-                Scanner myObj = new Scanner(System.in);
-                System.out.println("Secret Key -->>  ");
-                String s_key = myObj.nextLine();
-                Scanner myObj2 = new Scanner(System.in);
-                System.out.println("IV -->>  ");
-                String IV = myObj2.nextLine();
                 FileWriter myWriter = new FileWriter(new_f);
-                crypt.initFromStrings(s_key, IV);
-                myWriter.write(crypt.decrypt(textDosya));
+                myWriter.write(crypt.decryptForFile(textDosya));
                 myWriter.close();
             }
             else{
                 new_f.createNewFile();
-                Scanner myObj = new Scanner(System.in);
-                System.out.println("Secret Key -->>  ");
-                String s_key = myObj.nextLine();
-                Scanner myObj2 = new Scanner(System.in);
-                System.out.println("IV -->>  ");
-                String IV = myObj2.nextLine();
                 FileWriter myWriter = new FileWriter(new_f);
-                crypt.initFromStrings(s_key, IV);
-                myWriter.write(crypt.decrypt(textDosya));
+                myWriter.write(crypt.decryptForFile(textDosya));
                 myWriter.close();
             }
         }
         catch(Exception e){
         }
     }
-    public void dosyaSifrelemeNew(String old_file){
-        File f = new File(old_file);
+    public String dosyaAdSifreleme(String file_name){
         try{
-            Scanner fr = new Scanner(f);
-            while(fr.hasNextLine()){
-                textDosya = fr.nextLine();
-            }
-            fr.close();
             crypt.init();
-            File new_f = new File(crypt.encryptForNew(old_file));
-            if (new_f.createNewFile()){
-                // crypt.init();
-                FileWriter myWriter = new FileWriter(new_f);
-                myWriter.write(crypt.encryptForNew(textDosya));
-                myWriter.close();
-                System.out.println("Don't Forget These Keys !!!");
-                System.out.println("Secret Key  --> " + crypt.s_keyCall());
-                System.out.println("IV --> " + crypt.ivCall());
-            }
-            else{
-                Scanner myObj = new Scanner(System.in);
-                System.out.println("Secret Key -->>  ");
-                String s_key = myObj.nextLine();
-                Scanner myObj2 = new Scanner(System.in);
-                System.out.println("IV -->>  ");
-                String IV = myObj2.nextLine();
-                FileWriter myWriter = new FileWriter(new_f);
-                crypt.initFromStrings(s_key, IV);
-                myWriter.write(crypt.encryptForExist(textDosya));
-                myWriter.close();
-            }
+            String encryptedFileName = crypt.encryptForNew(file_name);
+            System.out.println("Don't Forget These Keys !!!");
+            System.out.println("Secret Key --> " + crypt.s_keyCall());
+            System.out.println("Name IV --> " + crypt.ivCall());
+            return encryptedFileName;
         }
         catch(Exception e){
+            String a = "aa";
+            return a;
+        }
+
+    }
+    public String dosyaAdSifreCozme(String file_name){
+        try{
+            Scanner myObj = new Scanner(System.in);
+            System.out.println("Secret Key -->>  ");
+            String s_key = myObj.nextLine();
+            Scanner myObj2 = new Scanner(System.in);
+            System.out.println("Name IV -->>  ");
+            String IV = myObj2.nextLine();
+            crypt.initFromStrings(s_key, IV);
+            String decryptedFileName = crypt.decryptForName(file_name);
+            System.out.println(decryptedFileName);
+            return decryptedFileName;
+        }
+        catch(Exception e){
+            String a = "aa";
+            return a;
         }
     }
 }
