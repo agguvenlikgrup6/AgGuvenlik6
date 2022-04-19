@@ -114,7 +114,15 @@ public class MainSceneController extends Controller implements Initializable {
     void listSelectFiles(MouseEvent event) {
     }
 
-    ArrayList<Integer> selects = new ArrayList<Integer>();
+    @FXML
+    void shareFile(ActionEvent event) {
+        System.out.println("paylaş");
+    }
+
+    @FXML
+    void deleteFile(ActionEvent event) {
+        System.out.println("delete");
+    }
 
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
