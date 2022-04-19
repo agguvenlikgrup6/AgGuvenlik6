@@ -36,9 +36,9 @@ public class StartupSceneController extends Controller {
     private ProgressIndicator dbState;
 
     public StartupSceneController() throws FileLoadException {
-        super(PropertiesReader.getProperty("startupSceneFxml"), 
-              Integer.parseInt(PropertiesReader.getProperty("startupSceneWidth")), 
-              Integer.parseInt(PropertiesReader.getProperty("startupSceneHeigth")));
+        super(PropertiesReader.getProperty("startupSceneFxml"),
+                Integer.parseInt(PropertiesReader.getProperty("startupSceneWidth")),
+                Integer.parseInt(PropertiesReader.getProperty("startupSceneHeigth")));
     }
 
     @Override
@@ -66,10 +66,19 @@ public class StartupSceneController extends Controller {
         directoryChooser.setInitialDirectory(null);
 
         try {
+            String os = System.getProperty("os.name").toLowerCase();
+
             String path = directoryChooser.showDialog(null).getAbsolutePath();
+            if (os.indexOf("mac") >= 0) {
+                path += '/';
+            } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+                path += '/';
+            } else {
+                path += "\\";
+            }
             chosenPath.setText(path);
 
-           ConfigController.initializeLocalStorage(new Config(path));
+            ConfigController.initializeLocalStorage(new Config(path));
 
         } catch (NullPointerException ex) {
             chooseLocalPath(event);
