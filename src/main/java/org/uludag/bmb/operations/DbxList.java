@@ -102,7 +102,9 @@ public class DbxList extends DbxOperations {
         ListFolderResult result;
         try {
             result = client.getClient().files().listFolder(String.join("", path));
+            // var kk = client.getClient().sharing().listSharedLinksBuilder().withPath("").start();
             List<Metadata> entries = result.getEntries();
+            
             for (Metadata metadata : entries) {
                 if(metadata instanceof FileMetadata){
                     String fileName = metadata.getName();

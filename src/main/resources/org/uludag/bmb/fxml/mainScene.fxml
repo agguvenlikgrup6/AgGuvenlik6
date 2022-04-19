@@ -89,7 +89,7 @@
                                             <items>
                                                 <MenuItem fx:id="ctwMenuShare" mnemonicParsing="false" onAction="#shareFile" text="Paylaş" />
                                                 <MenuItem fx:id="ctwMenuDownload" mnemonicParsing="false" onAction="#downloadItem" text="İndir" />
-                                                <MenuItem fx:id="ctwMenuDelete" mnemonicParsing="false" onAction='#deleteFile' text="Sil" />
+                                                <MenuItem fx:id="ctwMenuDelete" mnemonicParsing="false" onAction="#deleteFile" text="Sil" />
                                             </items>
                                           </ContextMenu>
                                        </contextMenu>

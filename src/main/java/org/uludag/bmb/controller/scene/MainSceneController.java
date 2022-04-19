@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.dropbox.DbClient;
 import org.uludag.bmb.beans.filedata.FileDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.DbxFiles;
@@ -26,7 +27,10 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
@@ -39,8 +43,12 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class MainSceneController extends Controller implements Initializable {
     @FXML
@@ -116,7 +124,29 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void shareFile(ActionEvent event) {
-        System.out.println("paylaş");
+        ObservableList<FileDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(Controller.class.getResource("/shareScene.fxml"));
+            fxmlLoader.setController(new ShareWindowController());
+            ShareWindowController controller = fxmlLoader.getController();
+            Parent root = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Dosya Paylaş");
+            Scene newScene = new Scene(root);
+            newScene.getStylesheets().add(PropertiesReader.getProperty("shareSceneCss"));
+            stage.setScene(newScene);
+            stage.show();
+
+            controller.setFileList(selectedFiles);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // for (FileDataProperty file : selectedFiles) {
+        // DbClient client = new DbClient(true);
+        // client.getClient().sharing().
+        // }
     }
 
     @FXML
