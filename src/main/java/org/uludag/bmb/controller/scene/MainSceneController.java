@@ -142,11 +142,6 @@ public class MainSceneController extends Controller implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // for (FileDataProperty file : selectedFiles) {
-        // DbClient client = new DbClient(true);
-        // client.getClient().sharing().
-        // }
     }
 
     @FXML
