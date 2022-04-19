@@ -1,7 +1,9 @@
 package org.uludag.bmb.controller.scene;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,20 +12,22 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.UploadErrorException;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.config.FileDataJson;
 import org.uludag.bmb.beans.dropbox.DbClient;
 import org.uludag.bmb.beans.filedata.FileDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.cryption.Crypto;
 import org.uludag.bmb.operations.DbxFiles;
 import org.uludag.bmb.operations.DbxList;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -31,6 +35,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
@@ -41,14 +47,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class MainSceneController extends Controller implements Initializable {
     @FXML
@@ -247,7 +250,42 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
-    void uploadItem(ActionEvent event) throws IOException {
+    void uploadItem(ActionEvent event) throws IOException, UploadErrorException, DbxException {
+
+        Alert alert = new Alert(AlertType.NONE);
+        var folderPathNode = linkPane.getItems();
+        var cloudFolderPath = "/";
+        for (int index = 1; index < folderPathNode.size(); index++) {
+            cloudFolderPath += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+
+        var localFilePath = selectedFile.getAbsolutePath().toString();
+        var fileName = selectedFile.getName().toString();
+
+        DbClient dbClient = new DbClient(true);
+
+
+        try (FileInputStream in = new FileInputStream(localFilePath)) {
+            var fileData = Crypto.encryptFile(fileName, in);
+            var metadata = dbClient.getClient().files().uploadBuilder(cloudFolderPath + fileData.encryptedFileName).uploadAndFinish(fileData.encryptedFile);
+            // mapping
+            fileData.id = metadata.getId();
+            ConfigController.mapDbFile(new FileDataJson(fileData.encryptedFileName, fileData.secretKey, metadata.getId()));
+
+            alert.setHeaderText(fileName + " adlı dosya eklendi.");
+            alert.setAlertType(AlertType.INFORMATION);
+            alert.setTitle("Başarı");
+            alert.show();
+
+        } catch (Exception e) {
+            alert.setHeaderText(fileName + " adlı dosya eklenirken hata oluştu");
+            alert.setAlertType(AlertType.WARNING);
+            alert.setTitle("Başarısız");
+            alert.show();
+        }
 
     }
 
