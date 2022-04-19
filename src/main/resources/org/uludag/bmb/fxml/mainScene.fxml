@@ -34,7 +34,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -42,6 +44,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -81,6 +84,15 @@
                                           <TableColumn fx:id="ctwAccess" prefWidth="176.0" text="Kimler Erişebilir" />
                                           <TableColumn fx:id="ctwFilePath" prefWidth="75.0" text="PATHINFO" visible="false" />
                                        </columns>
+                                       <contextMenu>
+                                          <ContextMenu>
+                                            <items>
+                                                <MenuItem mnemonicParsing="false" text="Paylaş" />
+                                                <MenuItem mnemonicParsing="false" text="İndir" />
+                                                <MenuItem mnemonicParsing="false" text="Sil" />
+                                            </items>
+                                          </ContextMenu>
+                                       </contextMenu>
                                     </TableView>
                                  </children>
                               </AnchorPane>
@@ -102,6 +114,7 @@
         <AnchorPane cache="true" maxWidth="250.0" minWidth="200.0" prefWidth="250.0">
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" wrapText="false" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="34.0" AnchorPane.topAnchor="14.0" />
+                  <Pane layoutX="-1.0" layoutY="733.0" prefHeight="65.0" prefWidth="250.0" style="-fx-background-color: aqua;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="733.0" />
           </children>
         </AnchorPane>
       </items>

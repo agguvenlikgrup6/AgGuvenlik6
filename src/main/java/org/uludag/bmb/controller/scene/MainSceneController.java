@@ -19,6 +19,8 @@ import org.uludag.bmb.operations.DbxFiles;
 import org.uludag.bmb.operations.DbxList;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -104,13 +106,15 @@ public class MainSceneController extends Controller implements Initializable {
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
         ctwLastEdit.setCellValueFactory(cellData -> cellData.getValue().lastEditDate());
         ctwSyncStatus.setCellValueFactory(cellData -> cellData.getValue().syncStatus());
-        ctwCheckBox.setCellValueFactory(new PropertyValueFactory<FileDataProperty, CheckBox>("selection"));
+        ctwCheckBox.setCellValueFactory(cellData -> cellData.getValue().selection());
         ctwFilePath.setCellValueFactory(cellData -> cellData.getValue().filePath());
     }
 
     @FXML
     void listSelectFiles(MouseEvent event) {
     }
+
+    ArrayList<Integer> selects = new ArrayList<Integer>();
 
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
