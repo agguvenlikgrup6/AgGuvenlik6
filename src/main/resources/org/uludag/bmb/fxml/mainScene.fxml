@@ -62,7 +62,7 @@
       <AnchorPane id="Content" fx:id="middlePane" maxWidth="1.7976931348623157E308" minHeight="-1.0" minWidth="400.0" style="-fx-background-color: white;">
         <children>
                   <Button id="upload" fx:id="btnUpload" layoutX="8.0" layoutY="59.0" mnemonicParsing="false" onAction="#uploadItem" prefHeight="25.0" prefWidth="106.0" styleClass="btnMainMenu" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="59.0" />
-                  <Button id="download" fx:id="btnDownload" layoutX="130.0" layoutY="59.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="95.0" styleClass="btnMainMenu" text=" Download" textFill="WHITE" AnchorPane.leftAnchor="130.0" AnchorPane.topAnchor="59.0" />
+                  <Button id="download" fx:id="btnDownload" layoutX="130.0" layoutY="59.0" mnemonicParsing="false" onAction="#downloadItem" onMouseClicked="#downloadItem" prefHeight="25.0" prefWidth="95.0" styleClass="btnMainMenu" text=" Download" textFill="WHITE" AnchorPane.leftAnchor="130.0" AnchorPane.topAnchor="59.0" />
                   <TabPane fx:id="tabPane" layoutX="8.0" layoutY="56.0" maxWidth="1.7976931348623157E308" prefHeight="623.0" prefWidth="792.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="90.0">
                     <tabs>
                       <Tab id="tab1" closable="false" text="Online Dosyalar">

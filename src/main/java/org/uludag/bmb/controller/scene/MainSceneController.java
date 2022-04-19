@@ -18,7 +18,9 @@ import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.DbxFiles;
 import org.uludag.bmb.operations.DbxList;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -112,25 +114,34 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
-        ArrayList<String> path = new ArrayList<String>();
-        ArrayList<String> pathNaked = new ArrayList<String>();
+        new Thread(() -> {
+            ArrayList<String> path = new ArrayList<String>();
+            ArrayList<String> pathNaked = new ArrayList<String>();
 
-        TreeItem<String> selectedFolder = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
-        var item = selectedFolder;
+            TreeItem<String> selectedFolder = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
+            var item = selectedFolder;
 
-        if (item != null) {
-            while (item.getParent() != null) {
-                path.add(item.getValue() + "/");
-                pathNaked.add(item.getValue() + "/");
-                item = item.getParent();
+            if (item != null) {
+                while (item.getParent() != null) {
+                    path.add(item.getValue() + "/");
+                    pathNaked.add(item.getValue() + "/");
+                    item = item.getParent();
+                }
+                path.add("/");
+                Collections.reverse(path);
+                Collections.reverse(pathNaked);
+                var items = DbxList.CLOUD_FILES(path);
+                cloudTableView.setItems(items);
+                cloudTableView.refresh();
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        addToPathLink(pathNaked);
+                    }
+                });
             }
-            path.add("/");
-            Collections.reverse(path);
-            Collections.reverse(pathNaked);
-            var items = DbxList.CLOUD_FILES(path);
-            cloudTableView.setItems(items);
-            addToPathLink(pathNaked);
-        }
+        }).start();
     }
 
     private void addToPathLink(ArrayList<String> path) {
@@ -172,6 +183,7 @@ public class MainSceneController extends Controller implements Initializable {
             });
             linkPane.getItems().add(pathPart);
         }
+
     }
 
     @FXML
