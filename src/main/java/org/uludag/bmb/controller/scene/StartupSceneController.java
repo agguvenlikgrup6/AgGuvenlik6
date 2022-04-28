@@ -78,7 +78,7 @@ public class StartupSceneController extends Controller {
             }
             chosenPath.setText(path);
 
-            ConfigController.initializeLocalStorage(new Config(path));
+            ConfigController.Settings.SaveSettings(new Config(path));
 
         } catch (NullPointerException ex) {
             chooseLocalPath(event);

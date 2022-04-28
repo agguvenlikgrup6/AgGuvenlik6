@@ -3,17 +3,13 @@ package org.uludag.bmb.cryption;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -30,8 +26,7 @@ public class Crypto {
 
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
-
-    public static EncryptedFileData encryptFile(File file){
+    public static EncryptedFileData encryptFile(File file) {
         byte[] fileData;
         try {
             fileData = getFileBytes(new FileInputStream(file.getAbsolutePath()));
@@ -56,14 +51,14 @@ public class Crypto {
 
     }
 
-    public static byte[] encrypt(byte[] pText, SecretKey secret, byte[] iv) throws Exception {
+    private static byte[] encrypt(byte[] pText, SecretKey secret, byte[] iv) throws Exception {
         Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
         cipher.init(Cipher.ENCRYPT_MODE, secret, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
         byte[] encryptedText = cipher.doFinal(pText);
         return encryptedText;
     }
 
-    public static byte[] encryptWithPrefixIV(byte[] pText, SecretKey secret, byte[] iv) throws Exception {
+    private static byte[] encryptWithPrefixIV(byte[] pText, SecretKey secret, byte[] iv) throws Exception {
 
         byte[] cipherText = encrypt(pText, secret, iv);
 
@@ -76,7 +71,7 @@ public class Crypto {
 
     }
 
-    public static byte[] getFileBytes(FileInputStream f) {
+    private static byte[] getFileBytes(FileInputStream f) {
         try {
             byte[] content = new byte[f.available()];
             f.read(content);
@@ -89,7 +84,7 @@ public class Crypto {
 
     }
 
-    public static String decrypt(byte[] cText, SecretKey secret, byte[] iv) throws Exception {
+    private static String decrypt(byte[] cText, SecretKey secret, byte[] iv) throws Exception {
 
         Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
         cipher.init(Cipher.DECRYPT_MODE, secret, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
@@ -103,7 +98,7 @@ public class Crypto {
 
     }
 
-    public static String decryptWithPrefixIV(byte[] cText, SecretKey secret) throws Exception {
+    private static String decryptWithPrefixIV(byte[] cText, SecretKey secret) throws Exception {
 
         ByteBuffer bb = ByteBuffer.wrap(cText);
 
@@ -119,32 +114,21 @@ public class Crypto {
 
     }
 
-    public static String keyToString(SecretKey secretKey) {
-        byte encoded[] = secretKey.getEncoded();
-        String encodedKey = Base64.getEncoder().encodeToString(encoded);
-        return encodedKey;
-    }
-
-    public static SecretKey decodeKeyFromString(String keyStr) {
+    private static SecretKey decodeKeyFromString(String keyStr) {
         byte[] decodedKey = Base64.getDecoder().decode(keyStr);
         SecretKey secretKey = new SecretKeySpec(decodedKey, 0,
                 decodedKey.length, "AES");
         return secretKey;
     }
 
-    public static String encryptFileName(String name) {
-        var fileNameBytes = name.getBytes();
-
-        return null;
-    }
-
     // public static void main(String[] args) throws Exception {
-    //     SecretKey secretKey = CryptoUtils.getAESKey(AES_KEY_BIT);
-    //     String keyString = keyToString(secretKey);
-    //     SecretKey key = decodeKeyFromString(keyString);
-    //     byte[] iv = CryptoUtils.getRandomNonce(IV_LENGTH_BYTE);
-    //     byte[] encryptedText = Crypto.encryptWithPrefixIV(getFileBytes(new File("a")), secretKey, iv);
-    //     Crypto.decryptWithPrefixIV(encryptedText, key);
+    // SecretKey secretKey = CryptoUtils.getAESKey(AES_KEY_BIT);
+    // String keyString = keyToString(secretKey);
+    // SecretKey key = decodeKeyFromString(keyString);
+    // byte[] iv = CryptoUtils.getRandomNonce(IV_LENGTH_BYTE);
+    // byte[] encryptedText = Crypto.encryptWithPrefixIV(getFileBytes(new
+    // File("a")), secretKey, iv);
+    // Crypto.decryptWithPrefixIV(encryptedText, key);
     // }
 
 }

@@ -17,6 +17,7 @@ public class EncryptedFileData {
     public EncryptedFileData(InputStream file, String name, String secretKey) {
         this.encryptedFile = file;
         this.name = name;
+        this.key = secretKey;
         
     }
 

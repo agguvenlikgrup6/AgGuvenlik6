@@ -230,7 +230,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void downloadItem(ActionEvent event) {
         ObservableList<FileDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
-        String localPath = ConfigController.getLocalPath();
+        String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
 
         for (var file : selectedFiles) {
             String fileWithPath = localPath + file.getFilePath() + "/" + file.getFileName();

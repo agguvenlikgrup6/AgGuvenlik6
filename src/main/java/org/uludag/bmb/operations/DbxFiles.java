@@ -36,7 +36,7 @@ public class DbxFiles extends DbxOperations {
         EncryptedFileData efd = Crypto.encryptFile(file);
         try {
             FileMetadata metaData = dbClient.getClient().files().uploadBuilder(uploadDirectory + efd.name).uploadAndFinish(efd.encryptedFile);
-            ConfigController.Crypto.Save(new EncryptedFileData(metaData, efd.name, efd.key));
+            ConfigController.Crypto.Save(new EncryptedFileData(metaData, file.getName(), efd.key));
         } catch (DbxException | IOException e) {
             e.printStackTrace();
         }
