@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.dropbox.core.DbxException;
@@ -251,41 +252,16 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void uploadItem(ActionEvent event) throws IOException, UploadErrorException, DbxException {
-
-        Alert alert = new Alert(AlertType.NONE);
         var folderPathNode = linkPane.getItems();
-        var cloudFolderPath = "/";
+        var uploadDirectory = "/";
         for (int index = 1; index < folderPathNode.size(); index++) {
-            cloudFolderPath += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
+            uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
         }
 
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(stage);
 
-        var localFilePath = selectedFile.getAbsolutePath().toString();
-        var fileName = selectedFile.getName().toString();
-
-        DbClient dbClient = new DbClient(true);
-
-
-        try (FileInputStream in = new FileInputStream(localFilePath)) {
-            var fileData = Crypto.encryptFile(fileName, in);
-            var metadata = dbClient.getClient().files().uploadBuilder(cloudFolderPath + fileData.encryptedFileName).uploadAndFinish(fileData.encryptedFile);
-            // mapping
-            fileData.id = metadata.getId();
-            ConfigController.mapDbFile(new FileDataJson(fileData.encryptedFileName, fileData.secretKey, metadata.getId()));
-
-            alert.setHeaderText(fileName + " adlı dosya eklendi.");
-            alert.setAlertType(AlertType.INFORMATION);
-            alert.setTitle("Başarı");
-            alert.show();
-
-        } catch (Exception e) {
-            alert.setHeaderText(fileName + " adlı dosya eklenirken hata oluştu");
-            alert.setAlertType(AlertType.WARNING);
-            alert.setTitle("Başarısız");
-            alert.show();
-        }
+        DbxFiles.UPLOAD_FILE(uploadDirectory, selectedFile);
 
     }
 

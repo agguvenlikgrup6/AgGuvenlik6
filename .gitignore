@@ -3,6 +3,7 @@
 
 # Directory
 target/*
+Data/*
 
 /authinfo.json
 
