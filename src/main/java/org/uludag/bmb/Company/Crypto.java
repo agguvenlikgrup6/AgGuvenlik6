@@ -7,23 +7,23 @@ import org.uludag.bmb.Company.EncryptNew;
 import org.uludag.bmb.Company.Encrypt;
 
 
-public class FileSystem {
+public class Crypto {
     private String textDosya;
     EncryptNew crypt = new EncryptNew();
-    public void dosyaSifrelemeAll(String old_file){
+    public synchronized void dosyaSifrelemeAll(String old_file){
         File f = new File(old_file);
         try{
             Scanner fr = new Scanner(f);
-            while(fr.hasNextLine()){
-                textDosya = fr.nextLine();
-            }
-            fr.close();
             crypt.init();
             String new_file = dosyaAdSifreleme(old_file);
             File new_f = new File(new_file);
             new_f.createNewFile();
             FileWriter myWriter = new FileWriter(new_f);
-            myWriter.write(crypt.encryptForNew(textDosya));
+            while(fr.hasNextLine()){
+                textDosya = fr.nextLine();
+                myWriter.write(crypt.encryptForNew(textDosya));
+            }
+            fr.close();
             myWriter.close();
             System.out.println("File IV --> " + crypt.ivCall());
         }
@@ -34,10 +34,6 @@ public class FileSystem {
         File f = new File(old_file);
         try{
             Scanner fr = new Scanner(f);
-            while(fr.hasNextLine()){
-                textDosya =fr.nextLine();
-            }
-            fr.close();
             Scanner myObj = new Scanner(System.in);
             System.out.println("Secret Key -->>  ");
             String s_key = myObj.nextLine();
@@ -52,13 +48,21 @@ public class FileSystem {
             File new_f = new File(decryptedFileName);
             if (new_f.exists()){
                 FileWriter myWriter = new FileWriter(new_f);
-                myWriter.write(crypt.decryptForFile(textDosya));
+                while(fr.hasNextLine()){
+                    textDosya =fr.nextLine();
+                    myWriter.write(crypt.decryptForFile(textDosya));
+                }
+                fr.close();
                 myWriter.close();
             }
             else{
                 new_f.createNewFile();
                 FileWriter myWriter = new FileWriter(new_f);
-                myWriter.write(crypt.decryptForFile(textDosya));
+                while(fr.hasNextLine()){
+                    textDosya =fr.nextLine();
+                    myWriter.write(crypt.decryptForFile(textDosya));
+                }
+                fr.close();
                 myWriter.close();
             }
         }
