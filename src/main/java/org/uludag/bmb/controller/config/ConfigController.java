@@ -59,7 +59,17 @@ public class ConfigController {
                 
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                mapper.writeValue(Paths.get(dir.getAbsolutePath() + "/" + encryptedFileData.metadata.getName()).toFile(), map);
+                String os = System.getProperty("os.name").toLowerCase();
+                String osDelim = "";
+                if (os.indexOf("mac") >= 0) {
+                    osDelim = "/";
+                } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+                    osDelim = "/";
+                } else {
+                    osDelim = "\\";
+                }
+                //TODO #25 İŞLETİM SİSTMEİNE GÖRE PATH 
+                mapper.writeValue(Paths.get(dir.getAbsolutePath() + osDelim + encryptedFileData.metadata.getName() + ".json").toFile(), map);
             } catch (Exception e) {
                 e.printStackTrace();
             }
