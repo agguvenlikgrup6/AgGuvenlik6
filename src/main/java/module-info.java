@@ -11,6 +11,8 @@ module org.uludag.bmb {
     requires transitive javax.servlet.api;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.core;
+    requires org.xerial.sqlitejdbc;
+    requires java.sql;
 
     opens org.uludag.bmb to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
     opens org.uludag.bmb.controller.scene to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;

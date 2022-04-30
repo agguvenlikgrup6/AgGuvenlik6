@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.uludag.bmb.PropertiesReader;
@@ -53,10 +52,11 @@ public class ConfigController {
             try {
                 Map<String, Object> map = new HashMap<>();
                 var pathDisplay = encryptedFileData.metadata.getPathDisplay();
-                map.put("path", pathDisplay.substring(0, (pathDisplay.length() - encryptedFileData.metadata.getName().length())));
+                map.put("path", pathDisplay.substring(0,
+                        (pathDisplay.length() - encryptedFileData.metadata.getName().length())));
                 map.put("name", encryptedFileData.name);
-                map.put("key", encryptedFileData.key); 
-                
+                map.put("key", encryptedFileData.key);
+
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);
                 String os = System.getProperty("os.name").toLowerCase();
@@ -68,8 +68,9 @@ public class ConfigController {
                 } else {
                     osDelim = "\\";
                 }
-                //TODO #25 İŞLETİM SİSTMEİNE GÖRE PATH 
-                mapper.writeValue(Paths.get(dir.getAbsolutePath() + osDelim + encryptedFileData.metadata.getName() + ".json").toFile(), map);
+                mapper.writeValue(Paths
+                        .get(dir.getAbsolutePath() + osDelim + encryptedFileData.metadata.getName() + ".json").toFile(),
+                        map);
             } catch (Exception e) {
                 e.printStackTrace();
             }
