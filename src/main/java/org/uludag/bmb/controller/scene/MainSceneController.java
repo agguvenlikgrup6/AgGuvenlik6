@@ -157,7 +157,6 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
         new Thread(() -> {
-            System.out.println("Sync durumu : " + SyncStatus.getSyncStatus());
             ArrayList<String> path = new ArrayList<String>();
             ArrayList<String> pathNaked = new ArrayList<String>();
 
