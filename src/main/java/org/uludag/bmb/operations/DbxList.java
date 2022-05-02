@@ -20,7 +20,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class DbxList extends DbxOperations {
+public class DbxList {
     public final class Hierarchy {
         public static final List<String> toList(String path) {
             List<String> folders = new ArrayList<String>();
@@ -57,7 +57,7 @@ public class DbxList extends DbxOperations {
         private static TreeItem<String> getItem(Map<String, TreeItem<String>> items, TreeItem<String> root,
                 String itemPath, Image nodeImage) {
             TreeItem<String> result = items.get(itemPath);
-            
+
             if (result == null) {
                 int index = itemPath.lastIndexOf('/');
                 result = new TreeItem<>(itemPath.substring(index + 1), new ImageView(nodeImage));
@@ -96,19 +96,21 @@ public class DbxList extends DbxOperations {
         return files;
     }
 
-    public static final ObservableList<FileDataProperty> CLOUD_FILES(ArrayList<String> path){
+    public static final ObservableList<FileDataProperty> CLOUD_FILES(ArrayList<String> path) {
         ObservableList<FileDataProperty> files = FXCollections.observableArrayList();
         DbClient client = new DbClient(true);
         ListFolderResult result;
         try {
             result = client.getClient().files().listFolder(String.join("", path));
-            // var kk = client.getClient().sharing().listSharedLinksBuilder().withPath("").start();
+            // var kk =
+            // client.getClient().sharing().listSharedLinksBuilder().withPath("").start();
             List<Metadata> entries = result.getEntries();
-            
+
             for (Metadata metadata : entries) {
-                if(metadata instanceof FileMetadata){
+                if (metadata instanceof FileMetadata) {
                     String fileName = metadata.getName();
-                    FileMetadata fileMetadata = (FileMetadata) client.getClient().files().getMetadata(metadata.getPathLower());
+                    FileMetadata fileMetadata = (FileMetadata) client.getClient().files()
+                            .getMetadata(metadata.getPathLower());
                     String filePath = fileMetadata.getPathDisplay();
                     Date fileDate = fileMetadata.getServerModified();
                     files.add(new FileDataProperty(fileName, fileDate, false, filePath));
@@ -120,7 +122,7 @@ public class DbxList extends DbxOperations {
         return files;
     }
 
-    public static final ObservableList<FileDataProperty> CLOUD_FILES(String path){
+    public static final ObservableList<FileDataProperty> CLOUD_FILES(String path) {
         ObservableList<FileDataProperty> files = FXCollections.observableArrayList();
         DbClient client = new DbClient(true);
         ListFolderResult result;
@@ -128,9 +130,10 @@ public class DbxList extends DbxOperations {
             result = client.getClient().files().listFolder(path);
             List<Metadata> entries = result.getEntries();
             for (Metadata metadata : entries) {
-                if(metadata instanceof FileMetadata){
+                if (metadata instanceof FileMetadata) {
                     String fileName = metadata.getName();
-                    FileMetadata fileMetadata = (FileMetadata) client.getClient().files().getMetadata(metadata.getPathLower());
+                    FileMetadata fileMetadata = (FileMetadata) client.getClient().files()
+                            .getMetadata(metadata.getPathLower());
                     String filePath = fileMetadata.getPathDisplay();
                     Date fileDate = fileMetadata.getServerModified();
                     files.add(new FileDataProperty(fileName, fileDate, false, filePath));
@@ -141,7 +144,6 @@ public class DbxList extends DbxOperations {
         }
         return files;
     }
-
 
     public static final List<String> FILES(String path) {
         List<String> files = new ArrayList<String>();

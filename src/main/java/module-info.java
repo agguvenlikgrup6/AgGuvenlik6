@@ -13,7 +13,11 @@ module org.uludag.bmb {
     requires com.fasterxml.jackson.core;
     requires org.xerial.sqlitejdbc;
     requires java.sql;
+    requires jdk.unsupported;
+    requires org.apache.commons.io;
+    requires java.net.http;
 
+    opens org.uludag.bmb.sync to java.net.http;
     opens org.uludag.bmb to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
     opens org.uludag.bmb.controller.scene to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
     opens org.uludag.bmb.controller.config to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;

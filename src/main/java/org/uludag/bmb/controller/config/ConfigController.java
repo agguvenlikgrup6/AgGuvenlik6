@@ -24,6 +24,7 @@ public class ConfigController {
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);
                 mapper.writeValue(fout, config);
                 fout.close();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

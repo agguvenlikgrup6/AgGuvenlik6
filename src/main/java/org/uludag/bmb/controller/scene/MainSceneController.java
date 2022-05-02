@@ -26,6 +26,7 @@ import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.cryption.Crypto;
 import org.uludag.bmb.operations.DbxFiles;
 import org.uludag.bmb.operations.DbxList;
+import org.uludag.bmb.sync.SyncStatus;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -156,6 +157,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
         new Thread(() -> {
+            System.out.println("Sync durumu : " + SyncStatus.getSyncStatus());
             ArrayList<String> path = new ArrayList<String>();
             ArrayList<String> pathNaked = new ArrayList<String>();
 
@@ -253,7 +255,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void uploadItem(ActionEvent event) throws IOException, UploadErrorException, DbxException {
         var folderPathNode = linkPane.getItems();
-        var uploadDirectory = "/";
+        String uploadDirectory = "/";
         for (int index = 1; index < folderPathNode.size(); index++) {
             uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
         }
