@@ -1,12 +1,8 @@
 package org.uludag.bmb.sync;
 
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.sun.net.httpserver.HttpServer;
@@ -28,9 +24,8 @@ public class SyncStatus {
             }
         });
         server.createContext("/stop", t -> {
-            this.server.stop(0);
+            this.server.stop(1);
         });
-        server.setExecutor(null);
         server.start();
         this.syncStatus.set(true);
     }

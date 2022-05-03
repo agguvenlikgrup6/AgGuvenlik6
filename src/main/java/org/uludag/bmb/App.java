@@ -9,6 +9,7 @@ import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.controller.scene.StartupSceneController;
 import org.uludag.bmb.sync.SyncMonitor;
+import org.uludag.bmb.sync.SyncStatus;
 
 public class App extends Application {
     @Override
@@ -19,10 +20,12 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
-        
+        SyncStatus.stopSyncServer();
+        System.exit(1);
     }
 
     public static void main(String[] args) {
         launch(args);
     }
+
 }

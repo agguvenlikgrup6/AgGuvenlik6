@@ -37,38 +37,15 @@ public class DbxFiles {
     }
 
     public static final void UPLOAD_FILE(String uploadDirectory, File file) {
-        
-        // Önce dosyasının takip dizinine kopyalanması
-        // ardından yükleme işleminin dizin içerisinden gerçekleştirilmesi
         Config config = ConfigController.Settings.LoadSettings();
         String destinationFile = config.getLocalDropboxPath();
-
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.indexOf("mac") >= 0) {
-            destinationFile += "/";
-        } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
-            destinationFile += "/";
-        } else {
-            destinationFile += "\\";
-        }
+        destinationFile += uploadDirectory.substring(1, uploadDirectory.length());
         destinationFile += file.getName();
         try {
             InputStream is = new FileInputStream(file);
             Path desPath = (Path) Paths.get(destinationFile);
             Files.copy(is, desPath, StandardCopyOption.REPLACE_EXISTING);
-
         } catch (Exception e) {
-            // TODO: handle exception
-        }
-
-        DbClient dbClient = new DbClient(true);
-
-        EncryptedFileData efd = Crypto.encryptFile(file);
-        try {
-            FileMetadata metaData = dbClient.getClient().files().uploadBuilder(uploadDirectory + efd.name)
-                    .uploadAndFinish(efd.encryptedFile);
-            ConfigController.Crypto.Save(new EncryptedFileData(metaData, file.getName(), efd.key));
-        } catch (DbxException | IOException e) {
             e.printStackTrace();
         }
     }
