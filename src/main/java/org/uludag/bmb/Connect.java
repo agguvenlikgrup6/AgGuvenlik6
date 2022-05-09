@@ -15,8 +15,6 @@ public class Connect {
         // createNewDatabase("gggg");
         // createNewTable("DBOX", "records");
 
-        insert("Aryan", 30000);
-        insert("Robert", 20000);
         insert("Jerry", 15000);
 
     }

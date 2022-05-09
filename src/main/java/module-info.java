@@ -16,9 +16,12 @@ module org.uludag.bmb {
     requires jdk.unsupported;
     requires org.apache.commons.io;
     requires java.net.http;
+    requires commons.dbutils;
+    requires commons.dbcp2;
 
-    opens org.uludag.bmb.sync to java.net.http;
-    opens org.uludag.bmb to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
+    opens org.uludag.bmb.sync to java.net.http, commons.dbutils;
+    opens org.uludag.bmb to javafx.fxml, javafx.controls, javafx.base, javafx.graphics, commons.dbutils;
+    opens org.uludag.bmb.beans.dto to commons.dbutils;
     opens org.uludag.bmb.controller.scene to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
     opens org.uludag.bmb.controller.config to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
     opens org.uludag.bmb.beans.config to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;

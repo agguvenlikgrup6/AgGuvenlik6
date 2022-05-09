@@ -22,20 +22,29 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
     @Override
     public void onFileCreate(File file) {
         System.out.println("oluşturma");
-        int len = ConfigController.Settings.LoadSettings().getLocalDropboxPath().length();
-        String cloudPath = file.getAbsolutePath().substring(len - 1,
-                file.getAbsolutePath().length() - file.getName().length());
+        if (SyncStatus.getSyncStatus()) {
+            int len = ConfigController.Settings.LoadSettings().getLocalDropboxPath().length();
+            String cloudPath = file.getAbsolutePath().substring(len - 1,
+                    file.getAbsolutePath().length() - file.getName().length());
 
-        DbClient dbClient = new DbClient(true);
+            DbClient dbClient = new DbClient(true);
 
-        EncryptedFileData efd = Crypto.encryptFile(file);
-        try {
-            FileMetadata metaData = dbClient.getClient().files().uploadBuilder(cloudPath + efd.name).uploadAndFinish(efd.encryptedFile);
-            // ConfigController.Crypto.Save(new EncryptedFileData(metaData, file.getName(),efd.key));
-        } catch (DbxException | IOException e) {
-            e.printStackTrace();
+            EncryptedFileData efd = Crypto.encryptFile(file);
+            try {
+                FileMetadata metaData = dbClient.getClient().files().uploadBuilder(cloudPath + efd.name)
+                        .uploadAndFinish(efd.encryptedFile);
+                // ConfigController.Crypto.Save(new EncryptedFileData(metaData,
+                // file.getName(),efd.key));
+            } catch (DbxException | IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Sync servisi kapalı, yeniden başlatılıyor");
+            SyncStatus.stopSyncServer();
+            Thread thread = new Thread(new SyncMonitor());
+            thread.start();
+            onFileCreate(file);
         }
-
     }
 
     @Override

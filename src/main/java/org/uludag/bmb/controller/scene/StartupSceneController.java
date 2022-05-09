@@ -81,7 +81,7 @@ public class StartupSceneController extends Controller {
             chosenPath.setText(path);
 
             ConfigController.Settings.SaveSettings(new Config(path));
-            DatabaseController.createLocalDatabase();
+            //DatabaseController.createLocalDatabase();
 
         } catch (NullPointerException ex) {
             chooseLocalPath(event);
