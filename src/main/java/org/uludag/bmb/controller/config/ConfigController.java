@@ -1,18 +1,13 @@
 package org.uludag.bmb.controller.config;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.config.Config;
-import org.uludag.bmb.beans.crypto.EncryptedFileData;
 
 public class ConfigController {
     public class Settings {
@@ -40,40 +35,6 @@ public class ConfigController {
             } catch (Exception ex) {
                 ex.printStackTrace();
                 return null;
-            }
-        }
-    }
-
-    public class Crypto {
-        public static void Save(EncryptedFileData encryptedFileData) {
-            File dir = new File(PropertiesReader.getProperty("dataFolder"));
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            try {
-                Map<String, Object> map = new HashMap<>();
-                var pathDisplay = encryptedFileData.metadata.getPathDisplay();
-                map.put("path", pathDisplay.substring(0,
-                        (pathDisplay.length() - encryptedFileData.metadata.getName().length())));
-                map.put("name", encryptedFileData.name);
-                map.put("key", encryptedFileData.key);
-
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                String os = System.getProperty("os.name").toLowerCase();
-                String osDelim = "";
-                if (os.indexOf("mac") >= 0) {
-                    osDelim = "/";
-                } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
-                    osDelim = "/";
-                } else {
-                    osDelim = "\\";
-                }
-                mapper.writeValue(Paths
-                        .get(dir.getAbsolutePath() + osDelim + encryptedFileData.metadata.getName() + ".json").toFile(),
-                        map);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }

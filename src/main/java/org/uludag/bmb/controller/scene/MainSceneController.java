@@ -10,23 +10,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
-import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.UploadErrorException;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.config.FileDataJson;
-import org.uludag.bmb.beans.dropbox.DbClient;
 import org.uludag.bmb.beans.filedata.FileDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.cryption.Crypto;
-import org.uludag.bmb.operations.DbxFiles;
-import org.uludag.bmb.operations.DbxList;
-import org.uludag.bmb.sync.SyncStatus;
+import org.uludag.bmb.operations.UpDown;
+import org.uludag.bmb.operations.UITrees;
+import org.uludag.bmb.sync.SyncServer;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -111,7 +106,7 @@ public class MainSceneController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        TreeItem<String> root = DbxList.Hierarchy.getAsTreeItem("");
+        TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         treeView.setRoot(root);
         treeView.setShowRoot(false);
 
@@ -157,7 +152,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
         new Thread(() -> {
-            System.out.println(SyncStatus.getSyncStatus());
+            System.out.println(SyncServer.getSyncStatus());
             ArrayList<String> path = new ArrayList<String>();
             ArrayList<String> pathNaked = new ArrayList<String>();
 
@@ -173,7 +168,7 @@ public class MainSceneController extends Controller implements Initializable {
                 path.add("/");
                 Collections.reverse(path);
                 Collections.reverse(pathNaked);
-                var items = DbxList.CLOUD_FILES(path);
+                var items = UITrees.CLOUD_FILES(path);
                 cloudTableView.setItems(items);
                 cloudTableView.refresh();
 
@@ -195,7 +190,7 @@ public class MainSceneController extends Controller implements Initializable {
         pathPart.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                cloudTableView.setItems(DbxList.CLOUD_FILES(""));
+                cloudTableView.setItems(UITrees.CLOUD_FILES(""));
                 treeView.getSelectionModel().select(0);
                 linkPane.getItems().remove(1, linkPane.getItems().size());
             }
@@ -218,7 +213,7 @@ public class MainSceneController extends Controller implements Initializable {
                     for (int i = 1; i <= linkPane.getItems().indexOf(event.getSource()); i++) {
                         pathS += ((Hyperlink) linkPane.getItems().get(i)).getText();
                     }
-                    cloudTableView.setItems(DbxList.CLOUD_FILES(pathS));
+                    cloudTableView.setItems(UITrees.CLOUD_FILES(pathS));
                     linkPane.getItems().remove(linkPane.getItems().indexOf(event.getSource()) + 1,
                             linkPane.getItems().size());
                 }
@@ -244,7 +239,7 @@ public class MainSceneController extends Controller implements Initializable {
                     fileFolder.mkdirs();
                 }
                 new Thread(() -> {
-                    DbxFiles.DOWNLOAD_FILE(localPath, file.getFilePath(), "/" + file.getFileName());
+                    UpDown.DOWNLOAD_FILE(localPath, file.getFilePath(), "/" + file.getFileName());
                 }).start();
             } else {
                 System.out.println("Dosya zaten indirilmiş!");
@@ -263,7 +258,7 @@ public class MainSceneController extends Controller implements Initializable {
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(stage);
 
-        DbxFiles.UPLOAD_FILE(uploadDirectory, selectedFile);
+        UpDown.UPLOAD_FILE(uploadDirectory, selectedFile);
 
     }
 

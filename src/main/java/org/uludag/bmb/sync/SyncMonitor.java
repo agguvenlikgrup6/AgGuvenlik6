@@ -13,7 +13,7 @@ public class SyncMonitor implements Runnable {
     private FileAlterationMonitor monitor;
     private FileAlterationListener listener;
     private final long interval = 1000;
-    private SyncStatus syncServer;
+    private SyncServer syncServer;
 
     @Override
     public void run() {
@@ -28,7 +28,7 @@ public class SyncMonitor implements Runnable {
             this.monitor = new FileAlterationMonitor(interval);
             this.listener = new SyncAdaptor();
 
-            this.syncServer = new SyncStatus();
+            this.syncServer = new SyncServer();
 
             observer.addListener(listener);
             monitor.addObserver(observer);

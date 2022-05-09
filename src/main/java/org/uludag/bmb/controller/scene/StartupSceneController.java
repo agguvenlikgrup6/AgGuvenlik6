@@ -5,12 +5,10 @@ import java.io.IOException;
 
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
-import org.uludag.bmb.Connect;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.dropbox.DbClient;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.oauth.OAuthFlow;
 
 import javafx.fxml.FXML;
@@ -81,7 +79,7 @@ public class StartupSceneController extends Controller {
             chosenPath.setText(path);
 
             ConfigController.Settings.SaveSettings(new Config(path));
-            //DatabaseController.createLocalDatabase();
+            // DatabaseController.createLocalDatabase();
 
         } catch (NullPointerException ex) {
             chooseLocalPath(event);

@@ -9,11 +9,11 @@ import com.sun.net.httpserver.HttpServer;
 
 import org.uludag.bmb.PropertiesReader;
 
-public class SyncStatus {
+public class SyncServer {
     private AtomicBoolean syncStatus = new AtomicBoolean(false);
     private HttpServer server;
 
-    public SyncStatus() throws Exception {
+    public SyncServer() throws Exception {
         this.server = HttpServer
                 .create(new InetSocketAddress(Integer.parseInt(PropertiesReader.getProperty("syncStatusPort"))), 0);
         server.createContext("/status", exchange -> {

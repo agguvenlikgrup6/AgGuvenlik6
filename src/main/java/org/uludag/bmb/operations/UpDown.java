@@ -20,7 +20,7 @@ import org.uludag.bmb.beans.dropbox.DbClient;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.cryption.Crypto;
 
-public class DbxFiles {
+public class UpDown {
     public static final void DOWNLOAD_FILE(String localPath, String filePath, String fileName) {
         try {
             OutputStream downloadFile = new FileOutputStream(localPath + filePath + fileName);

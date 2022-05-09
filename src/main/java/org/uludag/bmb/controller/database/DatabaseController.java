@@ -20,7 +20,6 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.sqlite.SQLiteDataSource;
-import org.uludag.bmb.Connect;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.dto.FileRecord;

@@ -20,7 +20,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class DbxList {
+public class UITrees {
     public final class Hierarchy {
         public static final List<String> toList(String path) {
             List<String> folders = new ArrayList<String>();
@@ -47,7 +47,7 @@ public class DbxList {
         public static final TreeItem<String> getAsTreeItem(String path) {
             TreeItem<String> root = new TreeItem<>();
             Map<String, TreeItem<String>> items = new HashMap<>();
-            Image nodeImage = new Image(DbxList.class.getResourceAsStream("/folder.png"));
+            Image nodeImage = new Image(UITrees.class.getResourceAsStream("/folder.png"));
             for (String p : toList(path)) {
                 getItem(items, root, p, nodeImage);
             }
