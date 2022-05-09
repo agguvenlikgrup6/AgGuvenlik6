@@ -2,6 +2,7 @@ package org.uludag.bmb;
 
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileWriter;
@@ -9,12 +10,17 @@ import java.io.IOException;
 
 import org.uludag.bmb.Company.FileSystemRSA;
 import org.uludag.bmb.Company.Crypto;
+import org.uludag.bmb.Company.HashTry;
 import org.uludag.bmb.Company.TryRSA;
 
 public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
         try{
-            Crypto tt = new Crypto();
+            File a = new File("görselprog.pdf");
+            byte[] abc = Files.readAllBytes(a.toPath());
+            HashTry pp = new HashTry();
+            pp.getHash(abc);
+            //Crypto tt = new Crypto();
             //tt.dosyaSifrelemeAll("deneme.txt");
             //tt.dosyaAdSifreCozme("hwP5+EixvLljXHFsDJTERM3FeIaF74LTqAw=");
             //tt.dosyaSifreCozmeAll("O4h16EjeeP57lhG1pCM3T9xDQSWucj+pv+8=");
