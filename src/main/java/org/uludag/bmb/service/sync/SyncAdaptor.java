@@ -1,4 +1,4 @@
-package org.uludag.bmb.sync;
+package org.uludag.bmb.service.sync;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,10 +7,10 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
 
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.uludag.bmb.beans.authentication.DbClient;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
-import org.uludag.bmb.beans.dropbox.DbClient;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.cryption.Crypto;
+import org.uludag.bmb.service.cryption.Crypto;
 
 public class SyncAdaptor extends FileAlterationListenerAdaptor {
 

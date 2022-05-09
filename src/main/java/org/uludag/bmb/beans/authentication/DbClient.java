@@ -1,4 +1,4 @@
-package org.uludag.bmb.beans.dropbox;
+package org.uludag.bmb.beans.authentication;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;

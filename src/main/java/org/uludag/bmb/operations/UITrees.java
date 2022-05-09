@@ -11,8 +11,8 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-import org.uludag.bmb.beans.dropbox.DbClient;
-import org.uludag.bmb.beans.filedata.FileDataProperty;
+import org.uludag.bmb.beans.authentication.DbClient;
+import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -96,8 +96,8 @@ public class UITrees {
         return files;
     }
 
-    public static final ObservableList<FileDataProperty> CLOUD_FILES(ArrayList<String> path) {
-        ObservableList<FileDataProperty> files = FXCollections.observableArrayList();
+    public static final ObservableList<TableViewDataProperty> CLOUD_FILES(ArrayList<String> path) {
+        ObservableList<TableViewDataProperty> files = FXCollections.observableArrayList();
         DbClient client = new DbClient(true);
         ListFolderResult result;
         try {
@@ -113,7 +113,7 @@ public class UITrees {
                             .getMetadata(metadata.getPathLower());
                     String filePath = fileMetadata.getPathDisplay();
                     Date fileDate = fileMetadata.getServerModified();
-                    files.add(new FileDataProperty(fileName, fileDate, false, filePath));
+                    files.add(new TableViewDataProperty(fileName, fileDate, false, filePath));
                 }
             }
         } catch (Exception e) {
@@ -122,8 +122,8 @@ public class UITrees {
         return files;
     }
 
-    public static final ObservableList<FileDataProperty> CLOUD_FILES(String path) {
-        ObservableList<FileDataProperty> files = FXCollections.observableArrayList();
+    public static final ObservableList<TableViewDataProperty> CLOUD_FILES(String path) {
+        ObservableList<TableViewDataProperty> files = FXCollections.observableArrayList();
         DbClient client = new DbClient(true);
         ListFolderResult result;
         try {
@@ -136,7 +136,7 @@ public class UITrees {
                             .getMetadata(metadata.getPathLower());
                     String filePath = fileMetadata.getPathDisplay();
                     Date fileDate = fileMetadata.getServerModified();
-                    files.add(new FileDataProperty(fileName, fileDate, false, filePath));
+                    files.add(new TableViewDataProperty(fileName, fileDate, false, filePath));
                 }
             }
         } catch (Exception e) {

@@ -12,13 +12,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.FileMetadata;
 
+import org.uludag.bmb.beans.authentication.DbClient;
 import org.uludag.bmb.beans.config.Config;
-import org.uludag.bmb.beans.crypto.EncryptedFileData;
-import org.uludag.bmb.beans.dropbox.DbClient;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.cryption.Crypto;
 
 public class UpDown {
     public static final void DOWNLOAD_FILE(String localPath, String filePath, String fileName) {

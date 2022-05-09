@@ -1,4 +1,4 @@
-package org.uludag.bmb.beans.filedata;
+package org.uludag.bmb.beans.dataproperty;
 
 import java.util.Date;
 
@@ -12,14 +12,14 @@ import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseEvent;
 
-public class FileDataProperty {
+public class TableViewDataProperty {
     private final StringProperty fileName1;
     private final ObjectProperty<Date> lastEditDate;
     private final BooleanProperty syncStatus;
     private ObjectProperty<CheckBox> selection;
     private final StringProperty filePath;
 
-    public FileDataProperty(String fileName, Date lastEditDate, boolean syncStatus, String filePath) {
+    public TableViewDataProperty(String fileName, Date lastEditDate, boolean syncStatus, String filePath) {
         this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
         this.fileName1 = new SimpleStringProperty(this, "fileName", fileName);
         this.syncStatus = new SimpleBooleanProperty(this, "syncStatus", syncStatus);

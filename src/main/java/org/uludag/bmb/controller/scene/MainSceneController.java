@@ -17,11 +17,11 @@ import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.UploadErrorException;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.filedata.FileDataProperty;
+import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.UpDown;
+import org.uludag.bmb.service.sync.SyncServer;
 import org.uludag.bmb.operations.UITrees;
-import org.uludag.bmb.sync.SyncServer;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -70,25 +70,25 @@ public class MainSceneController extends Controller implements Initializable {
     private SplitPane linkPane;
 
     @FXML
-    private TableView<FileDataProperty> cloudTableView;
+    private TableView<TableViewDataProperty> cloudTableView;
 
     @FXML
-    private TableColumn<FileDataProperty, ArrayList<String>> ctwAccess;
+    private TableColumn<TableViewDataProperty, ArrayList<String>> ctwAccess;
 
     @FXML
-    private TableColumn<FileDataProperty, CheckBox> ctwCheckBox;
+    private TableColumn<TableViewDataProperty, CheckBox> ctwCheckBox;
 
     @FXML
-    private TableColumn<FileDataProperty, String> ctwFilePath;
+    private TableColumn<TableViewDataProperty, String> ctwFilePath;
 
     @FXML
-    private TableColumn<FileDataProperty, String> ctwFileName;
+    private TableColumn<TableViewDataProperty, String> ctwFileName;
 
     @FXML
-    private TableColumn<FileDataProperty, Date> ctwLastEdit;
+    private TableColumn<TableViewDataProperty, Date> ctwLastEdit;
 
     @FXML
-    private TableColumn<FileDataProperty, Boolean> ctwSyncStatus;
+    private TableColumn<TableViewDataProperty, Boolean> ctwSyncStatus;
 
     public MainSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("mainSceneFxml"),
@@ -124,7 +124,7 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void shareFile(ActionEvent event) {
-        ObservableList<FileDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
+        ObservableList<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Controller.class.getResource("/shareScene.fxml"));
             fxmlLoader.setController(new ShareWindowController());
@@ -226,7 +226,7 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void downloadItem(ActionEvent event) {
-        ObservableList<FileDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
+        ObservableList<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
         String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
 
         for (var file : selectedFiles) {

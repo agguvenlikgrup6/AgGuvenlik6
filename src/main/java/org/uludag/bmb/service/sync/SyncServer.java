@@ -1,4 +1,4 @@
-package org.uludag.bmb.sync;
+package org.uludag.bmb.service.sync;
 
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;

@@ -22,7 +22,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.sqlite.SQLiteDataSource;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.config.Config;
-import org.uludag.bmb.beans.dto.FileRecord;
+import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.controller.config.ConfigController;
 
 public class DatabaseController {

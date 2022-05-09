@@ -10,8 +10,8 @@ import com.dropbox.core.v2.sharing.MemberSelector;
 import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import com.dropbox.core.v2.sharing.SharedLinkSettings;
 
-import org.uludag.bmb.beans.dropbox.DbClient;
-import org.uludag.bmb.beans.filedata.FileDataProperty;
+import org.uludag.bmb.beans.authentication.DbClient;
+import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,7 +27,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class ShareWindowController implements Initializable {
-    private ObservableList<FileDataProperty> fileList;
+    private ObservableList<TableViewDataProperty> fileList;
 
     @FXML
     private Button btnCreateLink;
@@ -57,7 +57,7 @@ public class ShareWindowController implements Initializable {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Dosya Paylaşım");
         try {
-            for (FileDataProperty f : fileList) {
+            for (TableViewDataProperty f : fileList) {
                 client.getClient().sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
             }
             alert.setHeaderText("Dosya Paylaşımı Başarı İle Sonuçlandı.\nPaylaşılan Hesaplar:");
@@ -78,9 +78,9 @@ public class ShareWindowController implements Initializable {
         }
     }
 
-    private void setFiles(ObservableList<FileDataProperty> fileList) {
+    private void setFiles(ObservableList<TableViewDataProperty> fileList) {
         fileNamePane.getItems().clear();
-        for (FileDataProperty file : fileList) {
+        for (TableViewDataProperty file : fileList) {
             fileNamePane.getItems().add(new Label(file.getFileName()));
         }
     }
@@ -89,7 +89,7 @@ public class ShareWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
     }
 
-    public void setFileList(ObservableList<FileDataProperty> fileList) {
+    public void setFileList(ObservableList<TableViewDataProperty> fileList) {
         this.fileList = fileList;
         this.setFiles(fileList);
 

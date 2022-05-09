@@ -1,4 +1,4 @@
-package org.uludag.bmb.beans.dto;
+package org.uludag.bmb.beans.database;
 
 import java.text.DateFormat;
 import java.text.ParseException;

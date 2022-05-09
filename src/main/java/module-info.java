@@ -19,14 +19,14 @@ module org.uludag.bmb {
     requires commons.dbutils;
     requires commons.dbcp2;
 
-    opens org.uludag.bmb.sync to java.net.http, commons.dbutils;
+    opens org.uludag.bmb.service.sync to java.net.http, commons.dbutils;
     opens org.uludag.bmb to javafx.fxml, javafx.controls, javafx.base, javafx.graphics, commons.dbutils;
-    opens org.uludag.bmb.beans.dto to commons.dbutils;
+    opens org.uludag.bmb.beans.database to commons.dbutils;
     opens org.uludag.bmb.controller.scene to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
     opens org.uludag.bmb.controller.config to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
     opens org.uludag.bmb.beans.config to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
     exports org.uludag.bmb.beans.crypto to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
-    opens org.uludag.bmb.beans.filedata to javafx.fxml, javafx.controls, javafx.base, javafx.graphics, org.uludag.bmb.controller.scene;
+    opens org.uludag.bmb.beans.dataproperty to javafx.fxml, javafx.controls, javafx.base, javafx.graphics, org.uludag.bmb.controller.scene;
     exports org.uludag.bmb.controller.scene;
     exports org.uludag.bmb.oauth;
 }

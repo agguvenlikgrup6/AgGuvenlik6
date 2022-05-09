@@ -1,4 +1,4 @@
-package org.uludag.bmb.cryption;
+package org.uludag.bmb.service.cryption;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

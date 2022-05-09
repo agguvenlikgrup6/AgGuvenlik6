@@ -1,4 +1,4 @@
-package org.uludag.bmb.cryption;
+package org.uludag.bmb.service.cryption;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
