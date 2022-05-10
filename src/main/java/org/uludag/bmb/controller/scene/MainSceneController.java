@@ -1,12 +1,8 @@
 package org.uludag.bmb.controller.scene;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -19,9 +15,9 @@ import com.dropbox.core.v2.files.UploadErrorException;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.operations.UpDown;
 import org.uludag.bmb.service.sync.SyncServer;
-import org.uludag.bmb.operations.UITrees;
+import org.uludag.bmb.operations.dropbox.FileOperations;
+import org.uludag.bmb.operations.scenedatasource.UITrees;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -32,8 +28,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
@@ -231,7 +225,7 @@ public class MainSceneController extends Controller implements Initializable {
             String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
 
             for (var file : selectedFiles) {
-                UpDown.DOWNLOAD_FILE(localPath, file.getFilePath(), "/" + file.getFileName());
+                FileOperations.DOWNLOAD_FILE(localPath, file.getFilePath(), "/" + file.getFileName());
             }
         }
     }
@@ -247,7 +241,7 @@ public class MainSceneController extends Controller implements Initializable {
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(stage);
 
-        UpDown.UPLOAD_FILE(uploadDirectory, selectedFile);
+        FileOperations.UPLOAD_FILE(uploadDirectory, selectedFile);
     }
 
     @FXML

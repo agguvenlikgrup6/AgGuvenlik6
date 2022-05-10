@@ -1,4 +1,4 @@
-package org.uludag.bmb.operations;
+package org.uludag.bmb.operations.dropbox;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,11 +13,10 @@ import java.nio.file.StandardCopyOption;
 
 import com.dropbox.core.DbxException;
 
-import org.uludag.bmb.beans.authentication.DbClient;
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.controller.config.ConfigController;
 
-public class UpDown {
+public class FileOperations {
     public static final void DOWNLOAD_FILE(String localPath, String filePath, String fileName) {
         new Thread(() -> {
             try {
@@ -29,8 +28,7 @@ public class UpDown {
                         fileFolder.mkdirs();
                     }
                     OutputStream downloadFile = new FileOutputStream(localPath + filePath + fileName);
-                    DbClient client = new DbClient(true);
-                    client.getClient().files().downloadBuilder("/" + filePath + fileName).download(downloadFile);
+                    DbClient.client.files().downloadBuilder("/" + filePath + fileName).download(downloadFile);
                     downloadFile.close();
                     System.out.println("indirme başarılı");
                 }

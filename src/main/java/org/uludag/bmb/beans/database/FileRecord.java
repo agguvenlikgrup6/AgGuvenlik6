@@ -1,13 +1,5 @@
 package org.uludag.bmb.beans.database;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-
-// import java.sql.Date;
-
 public class FileRecord {
     private String name;
     private String path;
@@ -56,7 +48,7 @@ public class FileRecord {
         this.key = key;
     }
 
-    public String getModificationDate(){
+    public String getModificationDate() {
         return this.modificationDate;
     }
 

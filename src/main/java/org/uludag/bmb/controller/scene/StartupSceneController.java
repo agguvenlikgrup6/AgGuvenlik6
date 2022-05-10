@@ -6,10 +6,10 @@ import java.io.IOException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.authentication.DbClient;
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.oauth.OAuthFlow;
+import org.uludag.bmb.operations.dropbox.DbClient;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -44,7 +44,7 @@ public class StartupSceneController extends Controller {
     @Override
     public void displayScene(Stage stage) {
         try {
-            if (new DbClient().login()) {
+            if (DbClient.client != null) {
                 new MainSceneController().displayScene(stage);
                 // new ListViewController().displayScene(stage);
             } else {

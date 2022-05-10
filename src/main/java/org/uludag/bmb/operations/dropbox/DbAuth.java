@@ -1,4 +1,4 @@
-package org.uludag.bmb.beans.authentication;
+package org.uludag.bmb.operations.dropbox;
 
 import java.io.IOException;
 import java.util.UUID;

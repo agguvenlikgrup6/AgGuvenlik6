@@ -5,12 +5,11 @@ import java.io.IOException;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.Metadata;
 
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
-import org.uludag.bmb.beans.authentication.DbClient;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.operations.dropbox.DbClient;
 import org.uludag.bmb.service.cryption.Crypto;
 
 public class SyncAdaptor extends FileAlterationListenerAdaptor {
@@ -27,11 +26,9 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
             String cloudPath = file.getAbsolutePath().substring(len - 1,
                     file.getAbsolutePath().length() - file.getName().length());
 
-            DbClient dbClient = new DbClient(true);
-
             EncryptedFileData efd = Crypto.encryptFile(file);
             try {
-                FileMetadata metaData = dbClient.getClient().files().uploadBuilder(cloudPath + efd.name)
+                FileMetadata metaData = DbClient.client.files().uploadBuilder(cloudPath + efd.name)
                         .uploadAndFinish(efd.encryptedFile);
                 // database insert record
                 System.out.println("Dosya yükleme başarılı" + metaData.getPathDisplay());

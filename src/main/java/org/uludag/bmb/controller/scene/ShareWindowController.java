@@ -10,8 +10,8 @@ import com.dropbox.core.v2.sharing.MemberSelector;
 import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import com.dropbox.core.v2.sharing.SharedLinkSettings;
 
-import org.uludag.bmb.beans.authentication.DbClient;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
+import org.uludag.bmb.operations.dropbox.DbClient;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -48,7 +48,7 @@ public class ShareWindowController implements Initializable {
 
     @FXML
     void shareWithMails(ActionEvent event) {
-        DbClient client = new DbClient(true);
+        // DbClient client = new DbClient(true);
         List<MemberSelector> members = new ArrayList<>();
         var mails = emailList.getText().split(";");
         for (String mail : mails) {
@@ -58,7 +58,8 @@ public class ShareWindowController implements Initializable {
         alert.setTitle("Dosya Paylaşım");
         try {
             for (TableViewDataProperty f : fileList) {
-                client.getClient().sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
+                // client.getClient().sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
+                DbClient.client.sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
             }
             alert.setHeaderText("Dosya Paylaşımı Başarı İle Sonuçlandı.\nPaylaşılan Hesaplar:");
             alert.setContentText(emailList.getText());

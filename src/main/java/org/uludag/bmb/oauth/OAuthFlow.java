@@ -13,7 +13,7 @@ import com.dropbox.core.oauth.DbxCredential;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.authentication.DbAuth;
+import org.uludag.bmb.operations.dropbox.DbAuth;
 
 import com.sun.net.httpserver.HttpServer;
 
