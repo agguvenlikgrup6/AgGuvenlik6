@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.Metadata;
 
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.uludag.bmb.beans.authentication.DbClient;
@@ -21,7 +22,6 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
 
     @Override
     public void onFileCreate(File file) {
-        System.out.println("oluşturma");
         if (SyncServer.getSyncStatus()) {
             int len = ConfigController.Settings.LoadSettings().getLocalDropboxPath().length();
             String cloudPath = file.getAbsolutePath().substring(len - 1,
@@ -33,7 +33,8 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
             try {
                 FileMetadata metaData = dbClient.getClient().files().uploadBuilder(cloudPath + efd.name)
                         .uploadAndFinish(efd.encryptedFile);
-                //database insert record
+                // database insert record
+                System.out.println("Dosya yükleme başarılı" + metaData.getPathDisplay());
             } catch (DbxException | IOException e) {
                 e.printStackTrace();
             }

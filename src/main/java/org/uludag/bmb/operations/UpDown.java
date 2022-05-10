@@ -19,31 +19,52 @@ import org.uludag.bmb.controller.config.ConfigController;
 
 public class UpDown {
     public static final void DOWNLOAD_FILE(String localPath, String filePath, String fileName) {
-        try {
-            OutputStream downloadFile = new FileOutputStream(localPath + filePath + fileName);
+        new Thread(() -> {
             try {
-                DbClient client = new DbClient(true);
-                client.getClient().files().downloadBuilder("/" + filePath + fileName).download(downloadFile);
-            } finally {
-                downloadFile.close();
-                System.out.println("indirme başarılı");
+                String fileWithPath = localPath + filePath + "/" + fileName;
+
+                if (!Files.exists(Paths.get(fileWithPath))) {
+                    if (!Files.exists(Paths.get(localPath + filePath))) {
+                        File fileFolder = new File(localPath + filePath);
+                        fileFolder.mkdirs();
+                    }
+                    OutputStream downloadFile = new FileOutputStream(localPath + filePath + fileName);
+                    DbClient client = new DbClient(true);
+                    client.getClient().files().downloadBuilder("/" + filePath + fileName).download(downloadFile);
+                    downloadFile.close();
+                    System.out.println("indirme başarılı");
+                }
+            } catch (DbxException | IOException e) {
+                e.printStackTrace();
             }
-        } catch (DbxException | IOException e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 
     public static final void UPLOAD_FILE(String uploadDirectory, File file) {
         Config config = ConfigController.Settings.LoadSettings();
-        String destinationFile = config.getLocalDropboxPath();
-        destinationFile += uploadDirectory.substring(1, uploadDirectory.length());
-        destinationFile += file.getName();
-        try {
-            InputStream is = new FileInputStream(file);
-            Path desPath = (Path) Paths.get(destinationFile);
-            Files.copy(is, desPath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception e) {
-            e.printStackTrace();
+        String localPath = config.getLocalDropboxPath();
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+        } else {
+            uploadDirectory = uploadDirectory.replace("/", "\\");
+        }
+
+        String fileDirectory = localPath + uploadDirectory;
+        String fileWithPath = fileDirectory + file.getName(); // /home/oguz/Desktop/Sync/A/B/ali.txt
+
+        if (!Files.exists(Paths.get(fileWithPath))) {
+            if (!Files.exists(Paths.get(fileDirectory))) {
+                File fileFolder = new File(fileDirectory);
+                fileFolder.mkdirs();
+            }
+
+            try {
+                InputStream is = new FileInputStream(file);
+                Path destinationPath = (Path) Paths.get(fileWithPath);
+                Files.copy(is, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }

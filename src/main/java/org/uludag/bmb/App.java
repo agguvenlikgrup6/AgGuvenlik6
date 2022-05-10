@@ -14,7 +14,7 @@ import org.uludag.bmb.service.sync.SyncServer;
 public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException, FileLoadException {
-        new Thread(new SyncMonitor()).start();
+        // new Thread(new SyncMonitor()).start();
         new StartupSceneController().displayScene(stage);
     }
 

@@ -1,8 +1,10 @@
 package org.uludag.bmb.service.sync;
 
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.sun.net.httpserver.HttpServer;
@@ -25,6 +27,16 @@ public class SyncServer {
         });
         server.createContext("/stop", t -> {
             this.server.stop(1);
+        });
+
+        server.createContext("/test", t -> {
+            String response = "başarılı";
+            t.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+            byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
+            t.sendResponseHeaders(200, bytes.length);
+            OutputStream os = t.getResponseBody();
+            os.write(bytes);
+            os.close();
         });
         server.start();
         this.syncStatus.set(true);

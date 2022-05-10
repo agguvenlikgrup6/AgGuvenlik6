@@ -28,7 +28,7 @@ public class SyncMonitor implements Runnable {
             this.monitor = new FileAlterationMonitor(interval);
             this.listener = new SyncAdaptor();
 
-            this.syncServer = new SyncServer();
+            // this.syncServer = new SyncServer();
 
             observer.addListener(listener);
             monitor.addObserver(observer);

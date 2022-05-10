@@ -227,22 +227,11 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void downloadItem(ActionEvent event) {
         ObservableList<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
-        String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
+        if (selectedFiles.size() != 0) {
+            String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
 
-        for (var file : selectedFiles) {
-            String fileWithPath = localPath + file.getFilePath() + "/" + file.getFileName();
-            // eğer dosya yoksa
-            if (!Files.exists(Paths.get(fileWithPath))) {
-                // eğer dosyanın bulunduğu klasör yoksa
-                if (!Files.exists(Paths.get(localPath + file.getFilePath()))) {
-                    File fileFolder = new File(localPath + file.getFilePath());
-                    fileFolder.mkdirs();
-                }
-                new Thread(() -> {
-                    UpDown.DOWNLOAD_FILE(localPath, file.getFilePath(), "/" + file.getFileName());
-                }).start();
-            } else {
-                System.out.println("Dosya zaten indirilmiş!");
+            for (var file : selectedFiles) {
+                UpDown.DOWNLOAD_FILE(localPath, file.getFilePath(), "/" + file.getFileName());
             }
         }
     }
@@ -259,7 +248,6 @@ public class MainSceneController extends Controller implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(stage);
 
         UpDown.UPLOAD_FILE(uploadDirectory, selectedFile);
-
     }
 
     @FXML
