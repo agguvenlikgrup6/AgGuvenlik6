@@ -11,13 +11,13 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
 import org.junit.Test;
-import org.uludag.bmb.operations.dropbox.DbClient;
+import org.uludag.bmb.operations.dropbox.Client;
 
 public class DropboxFilePathTest {
 
     @Test
     public void listDropboxFolderPaths() throws IOException, FileLoadException, ListFolderErrorException, DbxException {
-        ListFolderResult result = DbClient.client.files().listFolderBuilder("")
+        ListFolderResult result = Client.client.files().listFolderBuilder("")
                 .withIncludeDeleted(false)
                 .withRecursive(true)
                 .start();

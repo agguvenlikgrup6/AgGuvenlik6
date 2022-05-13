@@ -27,8 +27,8 @@ public class FileOperations {
                         File fileFolder = new File(localPath + filePath);
                         fileFolder.mkdirs();
                     }
-                    OutputStream downloadFile = new FileOutputStream(localPath + filePath + fileName);
-                    DbClient.client.files().downloadBuilder("/" + filePath + fileName).download(downloadFile);
+                    OutputStream downloadFile = new FileOutputStream(localPath + filePath + "/" +fileName);
+                    Client.client.files().downloadBuilder("/" + filePath + fileName).download(downloadFile);
                     downloadFile.close();
                     System.out.println("indirme başarılı");
                 }
@@ -60,6 +60,7 @@ public class FileOperations {
                 InputStream is = new FileInputStream(file);
                 Path destinationPath = (Path) Paths.get(fileWithPath);
                 Files.copy(is, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

@@ -13,15 +13,15 @@ import com.dropbox.core.oauth.DbxCredential;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.operations.dropbox.DbAuth;
+import org.uludag.bmb.operations.dropbox.ClientUtils;
 
 import com.sun.net.httpserver.HttpServer;
 
 public class OAuthFlow {
-    private DbAuth dbAuth;
+    private ClientUtils dbAuth;
 
     public OAuthFlow() throws IOException, FileLoadException {
-        dbAuth = new DbAuth(new MockHttpServletRequest());
+        dbAuth = new ClientUtils(new MockHttpServletRequest());
     }
 
     private DbxPKCEWebAuth createAuthRequest() throws IOException {

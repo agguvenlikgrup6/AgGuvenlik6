@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
@@ -31,6 +34,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
@@ -39,7 +43,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Font;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -52,13 +56,19 @@ public class MainSceneController extends Controller implements Initializable {
     private Button btnUpload;
 
     @FXML
+    private Button btnClearNotifications;
+
+    @FXML
+    private Button btnNotificationn;
+
+    @FXML
     private TabPane tabPane;
 
     @FXML
     private TreeView<String> treeView;
 
     @FXML
-    private Font x1;
+    private Pane notificationPane;
 
     @FXML
     private SplitPane linkPane;
@@ -68,6 +78,9 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     private TableColumn<TableViewDataProperty, ArrayList<String>> ctwAccess;
+
+    @FXML
+    private Pane fileDetailPane;
 
     @FXML
     private TableColumn<TableViewDataProperty, CheckBox> ctwCheckBox;
@@ -83,6 +96,9 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     private TableColumn<TableViewDataProperty, Boolean> ctwSyncStatus;
+
+    @FXML  
+    public ListView<String> notificationList;
 
     public MainSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("mainSceneFxml"),
@@ -100,6 +116,18 @@ public class MainSceneController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+          @Override
+          public void run() {
+            //BİLDİRİM TABLOSU KONTROL EDİLECEK GİRDİ VARSA BİLDİRİM LİSTESİNE EKLENİP
+            //DATABASE İÇERİSİNDEN SİLİNECEK
+
+          }
+        }, 0, 2, TimeUnit.SECONDS);
+
+
+        notificationPane.visibleProperty().set(false);
         TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         treeView.setRoot(root);
         treeView.setShowRoot(false);
@@ -108,12 +136,12 @@ public class MainSceneController extends Controller implements Initializable {
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
         ctwLastEdit.setCellValueFactory(cellData -> cellData.getValue().lastEditDate());
         ctwSyncStatus.setCellValueFactory(cellData -> cellData.getValue().syncStatus());
-        ctwCheckBox.setCellValueFactory(cellData -> cellData.getValue().selection());
         ctwFilePath.setCellValueFactory(cellData -> cellData.getValue().filePath());
     }
 
     @FXML
-    void listSelectFiles(MouseEvent event) {
+    void clearNotifications(MouseEvent event) {
+        notificationList.getItems().clear();
     }
 
     @FXML
@@ -145,35 +173,33 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
-        new Thread(() -> {
-            System.out.println(SyncServer.getSyncStatus());
-            ArrayList<String> path = new ArrayList<String>();
-            ArrayList<String> pathNaked = new ArrayList<String>();
+        System.out.println(SyncServer.getSyncStatus());
+        ArrayList<String> path = new ArrayList<String>();
+        ArrayList<String> pathNaked = new ArrayList<String>();
 
-            TreeItem<String> selectedFolder = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
-            var item = selectedFolder;
+        TreeItem<String> selectedFolder = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
+        var item = selectedFolder;
 
-            if (item != null) {
-                while (item.getParent() != null) {
-                    path.add(item.getValue() + "/");
-                    pathNaked.add(item.getValue() + "/");
-                    item = item.getParent();
-                }
-                path.add("/");
-                Collections.reverse(path);
-                Collections.reverse(pathNaked);
-                var items = UITrees.CLOUD_FILES(path);
-                cloudTableView.setItems(items);
-                cloudTableView.refresh();
-
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        addToPathLink(pathNaked);
-                    }
-                });
+        if (item != null) {
+            while (item.getParent() != null) {
+                path.add(item.getValue() + "/");
+                pathNaked.add(item.getValue() + "/");
+                item = item.getParent();
             }
-        }).start();
+            path.add("/");
+            Collections.reverse(path);
+            Collections.reverse(pathNaked);
+            var items = UITrees.CLOUD_FILES(path);
+            cloudTableView.setItems(items);
+            cloudTableView.refresh();
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    addToPathLink(pathNaked);
+                }
+            });
+        }
     }
 
     private void addToPathLink(ArrayList<String> path) {
@@ -244,8 +270,16 @@ public class MainSceneController extends Controller implements Initializable {
         FileOperations.UPLOAD_FILE(uploadDirectory, selectedFile);
     }
 
+
     @FXML
-    void getPath(MouseEvent event) throws IOException {
+    void showNotifications(MouseEvent event) {
+        if (!notificationPane.visibleProperty().get()) {
+            notificationPane.visibleProperty().set(true);
+            fileDetailPane.setLayoutY(360);
+        } else {
+            notificationPane.visibleProperty().set(false);
+            fileDetailPane.setLayoutY(34);
+        }
 
     }
 }

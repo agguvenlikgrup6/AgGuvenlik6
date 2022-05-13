@@ -7,11 +7,9 @@ import java.util.ResourceBundle;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.sharing.MemberSelector;
-import com.dropbox.core.v2.sharing.SharedLinkMetadata;
-import com.dropbox.core.v2.sharing.SharedLinkSettings;
 
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
-import org.uludag.bmb.operations.dropbox.DbClient;
+import org.uludag.bmb.operations.dropbox.Client;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -59,7 +57,7 @@ public class ShareWindowController implements Initializable {
         try {
             for (TableViewDataProperty f : fileList) {
                 // client.getClient().sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
-                DbClient.client.sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
+                Client.client.sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
             }
             alert.setHeaderText("Dosya Paylaşımı Başarı İle Sonuçlandı.\nPaylaşılan Hesaplar:");
             alert.setContentText(emailList.getText());
@@ -93,7 +91,5 @@ public class ShareWindowController implements Initializable {
     public void setFileList(ObservableList<TableViewDataProperty> fileList) {
         this.fileList = fileList;
         this.setFiles(fileList);
-
     }
-
 }

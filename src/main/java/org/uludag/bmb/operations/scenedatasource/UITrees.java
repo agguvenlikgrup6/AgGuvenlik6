@@ -12,7 +12,7 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
-import org.uludag.bmb.operations.dropbox.DbClient;
+import org.uludag.bmb.operations.dropbox.Client;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,7 +26,7 @@ public class UITrees {
             List<String> folders = new ArrayList<String>();
             ListFolderResult result;
             try {
-                result = DbClient.client.files().listFolderBuilder(path)
+                result = Client.client.files().listFolderBuilder(path)
                         .withIncludeDeleted(false)
                         .withRecursive(true)
                         .start();
@@ -81,7 +81,7 @@ public class UITrees {
         List<String> files = new ArrayList<String>();
         ListFolderResult result;
         try {
-            result = DbClient.client.files().listFolder(String.join("", path));
+            result = Client.client.files().listFolder(String.join("", path));
             List<Metadata> entries = result.getEntries();
             for (Metadata metadata : entries) {
                 if (metadata instanceof FileMetadata) {
@@ -99,13 +99,13 @@ public class UITrees {
         // DbClient client = new DbClient(true);
         ListFolderResult result;
         try {
-            result = DbClient.client.files().listFolder(String.join("", path));
+            result = Client.client.files().listFolder(String.join("", path));
             List<Metadata> entries = result.getEntries();
 
             for (Metadata metadata : entries) {
                 if (metadata instanceof FileMetadata) {
                     String fileName = metadata.getName();
-                    FileMetadata fileMetadata = (FileMetadata) DbClient.client.files()
+                    FileMetadata fileMetadata = (FileMetadata) Client.client.files()
                             .getMetadata(metadata.getPathLower());
                     String filePath = fileMetadata.getPathDisplay();
                     Date fileDate = fileMetadata.getServerModified();
@@ -122,12 +122,12 @@ public class UITrees {
         ObservableList<TableViewDataProperty> files = FXCollections.observableArrayList();
         ListFolderResult result;
         try {
-            result = DbClient.client.files().listFolder(path);
+            result = Client.client.files().listFolder(path);
             List<Metadata> entries = result.getEntries();
             for (Metadata metadata : entries) {
                 if (metadata instanceof FileMetadata) {
                     String fileName = metadata.getName();
-                    FileMetadata fileMetadata = (FileMetadata) DbClient.client.files()
+                    FileMetadata fileMetadata = (FileMetadata) Client.client.files()
                             .getMetadata(metadata.getPathLower());
                     String filePath = fileMetadata.getPathDisplay();
                     Date fileDate = fileMetadata.getServerModified();
@@ -144,7 +144,7 @@ public class UITrees {
         List<String> files = new ArrayList<String>();
         ListFolderResult result;
         try {
-            result = DbClient.client.files().listFolder(String.join("", path));
+            result = Client.client.files().listFolder(String.join("", path));
             List<Metadata> entries = result.getEntries();
             for (Metadata metadata : entries) {
                 if (metadata instanceof FileMetadata) {

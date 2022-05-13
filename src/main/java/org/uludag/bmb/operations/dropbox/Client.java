@@ -7,12 +7,12 @@ import com.dropbox.core.v2.DbxClientV2;
 
 import org.uludag.bmb.PropertiesReader;
 
-public class DbClient {
-    public static final DbxClientV2 client = DbClient.getClient();
+public class Client {
+    public static final DbxClientV2 client = Client.getClient();
 
     private static DbxClientV2 getClient() {
         try {
-            DbAuth auth = new DbAuth();
+            ClientUtils auth = new ClientUtils();
             DbxCredential credential = DbxCredential.Reader.readFromFile(PropertiesReader.getProperty("authinfo"));
             DbxClientV2 client = new DbxClientV2(auth.getRequestConfig(), credential);
             client.users().getCurrentAccount();

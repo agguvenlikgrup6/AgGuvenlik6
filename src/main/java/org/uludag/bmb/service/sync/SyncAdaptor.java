@@ -9,7 +9,8 @@ import com.dropbox.core.v2.files.FileMetadata;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.operations.dropbox.DbClient;
+import org.uludag.bmb.controller.database.DatabaseController;
+import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.service.cryption.Crypto;
 
 public class SyncAdaptor extends FileAlterationListenerAdaptor {
@@ -23,15 +24,17 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
     public void onFileCreate(File file) {
         if (SyncServer.getSyncStatus()) {
             int len = ConfigController.Settings.LoadSettings().getLocalDropboxPath().length();
-            String cloudPath = file.getAbsolutePath().substring(len - 1,
+            String cloudPath = file.getAbsolutePath().substring(len,
                     file.getAbsolutePath().length() - file.getName().length());
 
             EncryptedFileData efd = Crypto.encryptFile(file);
             try {
-                FileMetadata metaData = DbClient.client.files().uploadBuilder(cloudPath + efd.name)
+                FileMetadata metaData = Client.client.files().uploadBuilder(cloudPath + efd.name)
                         .uploadAndFinish(efd.encryptedFile);
                 // database insert record
-                System.out.println("Dosya yükleme başarılı" + metaData.getPathDisplay());
+                DatabaseController dc = new DatabaseController();
+                dc.insertNotification("dosya yükleme başarılı " + metaData.getName());
+
             } catch (DbxException | IOException e) {
                 e.printStackTrace();
             }

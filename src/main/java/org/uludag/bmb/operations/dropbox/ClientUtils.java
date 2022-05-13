@@ -15,21 +15,21 @@ import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
 
-public class DbAuth {
+public class ClientUtils {
     private DbxRequestConfig requestConfig;
     private DbxAppInfo appInfo;
     private String sessionKey;
     private String redirectUri;
     private DbxStandardSessionStore session;
 
-    public DbAuth() throws FileLoadException {
+    public ClientUtils() throws FileLoadException {
         requestConfig = new DbxRequestConfig(PropertiesReader.getProperty("clientIdentifier"));
         appInfo = new DbxAppInfo("bxvnh4y5x2ar0jz");
         sessionKey = this.generateSessionKey();
         redirectUri = PropertiesReader.getProperty("redirectUri");
     }
 
-    public DbAuth(HttpServletRequest request) throws IOException, FileLoadException {
+    public ClientUtils(HttpServletRequest request) throws IOException, FileLoadException {
         this();
         session = new DbxStandardSessionStore(request.getSession(), this.sessionKey);
     }

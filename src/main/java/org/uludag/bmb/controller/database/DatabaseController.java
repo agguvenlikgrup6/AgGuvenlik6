@@ -1,6 +1,7 @@
 package org.uludag.bmb.controller.database;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -79,6 +80,32 @@ public class DatabaseController {
             PreparedStatement statement = this.conn.prepareStatement(query);
             statement.execute();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createNotificationTable() {
+        String query = "CREATE TABLE IF NOT EXISTS notifications " +
+                "(" +
+                "id integer PRIMARY KEY," +
+                "message TEXT NOT NULL" +
+                ")";
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(query);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertNotification(String notificationMessage) {
+        String query = "INSERT INTO notifications (message) values(?)";
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(query);
+            statement.setString(1, notificationMessage);
+
+            statement.execute();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
