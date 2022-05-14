@@ -19,7 +19,7 @@ public class OAuthSuccess implements HttpHandler {
         String response = "<html>\n" +
                 "\n" +
                 "<head>\n" +
-                "    <title>My Site</title>\n" +
+                "    <title>Giriş Başarılı</title>\n" +
                 "</head>\n" +
                 "\n" +
                 "<body>\n" +
