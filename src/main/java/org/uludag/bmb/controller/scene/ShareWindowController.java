@@ -46,7 +46,6 @@ public class ShareWindowController implements Initializable {
 
     @FXML
     void shareWithMails(ActionEvent event) {
-        // DbClient client = new DbClient(true);
         List<MemberSelector> members = new ArrayList<>();
         var mails = emailList.getText().split(";");
         for (String mail : mails) {
@@ -56,7 +55,6 @@ public class ShareWindowController implements Initializable {
         alert.setTitle("Dosya Paylaşım");
         try {
             for (TableViewDataProperty f : fileList) {
-                // client.getClient().sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
                 Client.client.sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
             }
             alert.setHeaderText("Dosya Paylaşımı Başarı İle Sonuçlandı.\nPaylaşılan Hesaplar:");

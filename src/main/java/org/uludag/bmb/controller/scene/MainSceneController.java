@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,12 +17,16 @@ import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.UploadErrorException;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.service.sync.SyncServer;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,6 +39,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
@@ -47,8 +53,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class MainSceneController extends Controller implements Initializable {
+    private DatabaseController dc;
+
     @FXML
     private Button btnDownload;
 
@@ -97,7 +106,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     private TableColumn<TableViewDataProperty, Boolean> ctwSyncStatus;
 
-    @FXML  
+    @FXML
     public ListView<String> notificationList;
 
     public MainSceneController() throws FileLoadException {
@@ -116,22 +125,33 @@ public class MainSceneController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
-          @Override
-          public void run() {
-            //BİLDİRİM TABLOSU KONTROL EDİLECEK GİRDİ VARSA BİLDİRİM LİSTESİNE EKLENİP
-            //DATABASE İÇERİSİNDEN SİLİNECEK
+        dc = new DatabaseController();
+        notificationList.setCellFactory(param -> new NotificationListCellFactory());
 
-          }
-        }, 0, 2, TimeUnit.SECONDS);
-
-
+        
+        Timeline notificationCycle = new Timeline(
+                new KeyFrame(Duration.seconds(2),
+                        new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                List<String> notifications = dc.getNotifications();
+                                if (notifications.size() != 0 && notifications != null) {
+                                    for (String notification : notifications) {
+                                        notificationList.getItems().add(0, notification);
+                                    }
+                                    notificationPane.setStyle("-icon-paint: linear-gradient(to bottom, red, red);");
+                                    notifications.clear();
+                                }
+                            }
+                        }));
+                        notificationCycle.setCycleCount(Timeline.INDEFINITE);
+                        notificationCycle.play();
+                        
         notificationPane.visibleProperty().set(false);
         TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         treeView.setRoot(root);
         treeView.setShowRoot(false);
-
+        
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
         ctwLastEdit.setCellValueFactory(cellData -> cellData.getValue().lastEditDate());
@@ -269,7 +289,6 @@ public class MainSceneController extends Controller implements Initializable {
 
         FileOperations.UPLOAD_FILE(uploadDirectory, selectedFile);
     }
-
 
     @FXML
     void showNotifications(MouseEvent event) {

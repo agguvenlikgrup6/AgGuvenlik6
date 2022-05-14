@@ -16,6 +16,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException, FileLoadException {
         new Thread(new SyncMonitor()).start();
         new StartupSceneController().displayScene(stage);
+
     }
 
     @Override

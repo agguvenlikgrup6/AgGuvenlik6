@@ -19,6 +19,10 @@
     -fx-shape: "M 20 0 L 0 9 L 6 0 L 0 -9z";
 }
 
+.list-cell {
+    -fx-cell-size: 60;
+}
+
 .btnClearNotification {
     -icon-paint: red;
     -fx-background-color: -icon-paint;
@@ -29,7 +33,6 @@
     -fx-max-width: -size;
 
     -fx-shape: "M -4 6 L -7 6 L 4 -6 H 7 M -7 -6 L -4 -6 L 7 6 L 4 6";
-
 }
 
 .btnClearNotification:pressed {
@@ -112,9 +115,9 @@
     -fx-background-color: black;
 }
 
-.list-cell {
+/* .list-cell {
     -fx-cell-size: 48;
-}
+} */
 
 .list-cell:filled:selected:focused,
 .list-cell:filled:selected {

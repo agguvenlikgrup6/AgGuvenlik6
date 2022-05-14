@@ -105,6 +105,7 @@
                     </tabs>
                   </TabPane>
                   <SplitPane fx:id="linkPane" layoutX="16.0" layoutY="14.0" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="744.0" styleClass="pathLinkPane" />
+                  <Button fx:id="btnNewFolder" layoutX="238.0" layoutY="60.0" mnemonicParsing="false" text="Yeni Klasör" />
         </children>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -117,14 +118,14 @@
                         <Button fx:id="btnNotificationn" layoutX="215.0" layoutY="4.0" mnemonicParsing="false" onMouseClicked="#showNotifications" styleClass="icon-button" text="Button" />
                      </children>
                   </Pane>
-                  <Pane fx:id="fileDetailPane" layoutY="34.0" prefHeight="764.0" prefWidth="250.0">
+                  <Pane fx:id="fileDetailPane" layoutY="34.0" prefHeight="764.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <children>
                   <Label alignment="CENTER" font="$x1" layoutX="49.0" layoutY="14.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" wrapText="false" />
                      </children>
                   </Pane>
                   <Pane fx:id="notificationPane" layoutY="35.0" prefHeight="323.0" prefWidth="360.0">
                      <children>
-                        <ListView fx:id="notificationList" layoutY="38.0" prefHeight="291.0" prefWidth="250.0" />
+                        <ListView fx:id="notificationList" layoutY="38.0" prefHeight="291.0" prefWidth="250.0" styleClass="notificationListView" />
                         <Label layoutX="79.0" layoutY="14.0" text="Bildirimler">
                            <font>
                               <Font size="18.0" />

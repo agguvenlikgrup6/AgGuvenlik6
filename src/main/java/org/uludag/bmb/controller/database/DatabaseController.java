@@ -1,10 +1,16 @@
 package org.uludag.bmb.controller.database;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -12,9 +18,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.sqlite.SQLiteDataSource;
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.controller.config.ConfigController;
 
 public class DatabaseController {
     public Connection conn;
@@ -60,6 +64,24 @@ public class DatabaseController {
             return records;
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<String> getNotifications() {
+        try {
+            Statement statement = this.conn.createStatement();
+            String query = "Select * From notifications";
+            ResultSet rst = statement.executeQuery(query);
+            List<String> notifications = new ArrayList<String>();
+            while (rst.next()) {
+                notifications.add(rst.getString("message"));
+            }
+            query = "Delete From notifications";
+            statement.execute(query);
+            return notifications;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
             return null;
         }
     }
@@ -132,18 +154,22 @@ public class DatabaseController {
 
     private final String getConnectionUrl(String dbName) {
         try {
-            Config settings = ConfigController.Settings.LoadSettings();
-            String localPath = settings.getLocalDropboxPath();
-            String url = "jdbc:sqlite:" + localPath;
+            String dataDir = System.getProperty("user.dir");
             String os = System.getProperty("os.name").toLowerCase();
 
             if (os.indexOf("mac") >= 0) {
-                url += "/Data/";
+                dataDir += "/Data/";
             } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
-                url += "/Data/";
+                dataDir += "/Data/";
             } else {
-                url += "\\Data\\";
+                dataDir += "\\Data\\";
             }
+            if (!Files.exists(Paths.get(dataDir))) {
+                File fileFolder = new File(dataDir);
+                fileFolder.mkdirs();
+            }
+
+            String url = "jdbc:sqlite:" + dataDir;
 
             url += dbName + ".db";
 

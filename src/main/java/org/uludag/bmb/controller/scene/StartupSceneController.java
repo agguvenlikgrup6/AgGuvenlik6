@@ -8,6 +8,7 @@ import com.dropbox.core.json.JsonReader.FileLoadException;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.oauth.OAuthFlow;
 import org.uludag.bmb.operations.dropbox.Client;
 
@@ -45,8 +46,8 @@ public class StartupSceneController extends Controller {
     public void displayScene(Stage stage) {
         try {
             if (Client.client != null) {
-                new MainSceneController().displayScene(stage);
-                // new ListViewController().displayScene(stage);
+                MainSceneController msc = new MainSceneController();
+                msc.displayScene(stage);
             } else {
                 this.stage = stage;
                 stage.setScene(scene);
@@ -98,7 +99,9 @@ public class StartupSceneController extends Controller {
             alert.setContentText("Lütfen Geçerli Bir Dizin Seçiniz");
             alert.showAndWait();
         } else {
-
+            DatabaseController dc = new DatabaseController();
+            dc.createNotificationTable();
+            dc.createRecordTable();
             new MainSceneController().displayScene(stage);
         }
     }
