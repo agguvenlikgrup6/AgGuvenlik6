@@ -46,6 +46,10 @@ public class StartupSceneController extends Controller {
     public void displayScene(Stage stage) {
         try {
             if (Client.client != null) {
+                DatabaseController dc = new DatabaseController();
+                dc.createNotificationTable();
+                dc.createRecordTable();
+                dc.createTreeCacheTable();
                 MainSceneController msc = new MainSceneController();
                 msc.displayScene(stage);
             } else {
@@ -99,9 +103,6 @@ public class StartupSceneController extends Controller {
             alert.setContentText("Lütfen Geçerli Bir Dizin Seçiniz");
             alert.showAndWait();
         } else {
-            DatabaseController dc = new DatabaseController();
-            dc.createNotificationTable();
-            dc.createRecordTable();
             new MainSceneController().displayScene(stage);
         }
     }

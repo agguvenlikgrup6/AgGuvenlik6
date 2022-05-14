@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.sqlite.SQLiteDataSource;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.database.FileRecord;
+import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 
 public class DatabaseController {
     public Connection conn;
@@ -86,6 +88,19 @@ public class DatabaseController {
         }
     }
 
+    public List<TableViewDataProperty> getTreeCache() {
+        ResultSetHandler<List<TableViewDataProperty>> rsh = new BeanListHandler<TableViewDataProperty>(
+                TableViewDataProperty.class);
+        try {
+            List<TableViewDataProperty> cache = this.queryRunner
+                    .query("SELECT * FROM treecache", rsh);
+            return cache;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public void createRecordTable() {
         String query = "CREATE TABLE IF NOT EXISTS " + this.tableName +
                 "(" +
@@ -102,6 +117,38 @@ public class DatabaseController {
             PreparedStatement statement = this.conn.prepareStatement(query);
             statement.execute();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createTreeCacheTable() {
+        String query = "CREATE TABLE IF NOT EXISTS treecache " +
+                "(" +
+                "id integer PRIMARY KEY," +
+                "filePath TEXT NOT NULL," +
+                "fileName TEXT NOT NULL," +
+                "lastEditDate TEXT NOT NULL," +
+                "syncStatus BOOLEAN NOT NULL CHECK(syncStatus IN(0,1))" +
+                ")";
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(query);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertTreeCache(TableViewDataProperty dp) {
+        String query = "INSERT INTO treecache (filePath, fileName, lastEditDate, syncStatus) values(?, ?, ?, ?)";
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(query);
+            statement.setString(1, dp.filePath().get());
+            statement.setString(2, dp.getFileName());
+            statement.setString(3, new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(dp.getLastEditDate()));
+            statement.setBoolean(4, dp.getSyncStatus());
+
+            statement.execute();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -141,7 +188,7 @@ public class DatabaseController {
             statement.setString(1, fr.getName());
             statement.setString(2, fr.getPath());
             statement.setString(3, fr.getKey());
-            statement.setString(4, fr.getEncryptedName());
+            statement.setString(4, fr.getModificationDate());
             statement.setString(5, fr.getHash());
             statement.setString(6, fr.getEncryptedName());
             statement.setInt(7, fr.getSync());

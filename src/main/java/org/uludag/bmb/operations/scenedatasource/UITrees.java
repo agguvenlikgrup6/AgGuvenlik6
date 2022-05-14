@@ -73,51 +73,6 @@ public class UITrees {
         }
     }
 
-    public static final List<String> FOLDERS(List<String> path) {
-        return null;
-    }
-
-    public static final List<String> FILES(List<String> path) {
-        List<String> files = new ArrayList<String>();
-        ListFolderResult result;
-        try {
-            result = Client.client.files().listFolder(String.join("", path));
-            List<Metadata> entries = result.getEntries();
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata) {
-                    files.add(metadata.getName());
-                }
-            }
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
-        return files;
-    }
-
-    public static final ObservableList<TableViewDataProperty> CLOUD_FILES(ArrayList<String> path) {
-        ObservableList<TableViewDataProperty> files = FXCollections.observableArrayList();
-        // DbClient client = new DbClient(true);
-        ListFolderResult result;
-        try {
-            result = Client.client.files().listFolder(String.join("", path));
-            List<Metadata> entries = result.getEntries();
-
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata) {
-                    String fileName = metadata.getName();
-                    FileMetadata fileMetadata = (FileMetadata) Client.client.files()
-                            .getMetadata(metadata.getPathLower());
-                    String filePath = fileMetadata.getPathDisplay();
-                    Date fileDate = fileMetadata.getServerModified();
-                    files.add(new TableViewDataProperty(fileName, fileDate, false, filePath));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return files;
-    }
-
     public static final ObservableList<TableViewDataProperty> CLOUD_FILES(String path) {
         ObservableList<TableViewDataProperty> files = FXCollections.observableArrayList();
         ListFolderResult result;
@@ -139,22 +94,4 @@ public class UITrees {
         }
         return files;
     }
-
-    public static final List<String> FILES(String path) {
-        List<String> files = new ArrayList<String>();
-        ListFolderResult result;
-        try {
-            result = Client.client.files().listFolder(String.join("", path));
-            List<Metadata> entries = result.getEntries();
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata) {
-                    files.add(metadata.getName());
-                }
-            }
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
-        return files;
-    }
-
 }

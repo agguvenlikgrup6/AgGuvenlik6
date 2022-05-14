@@ -8,9 +8,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
@@ -26,6 +23,7 @@ import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -39,7 +37,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
@@ -50,6 +47,8 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -78,6 +77,9 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     private Pane notificationPane;
+
+    @FXML
+    private Circle notificationDot;
 
     @FXML
     private SplitPane linkPane;
@@ -128,7 +130,6 @@ public class MainSceneController extends Controller implements Initializable {
         dc = new DatabaseController();
         notificationList.setCellFactory(param -> new NotificationListCellFactory());
 
-        
         Timeline notificationCycle = new Timeline(
                 new KeyFrame(Duration.seconds(2),
                         new EventHandler<ActionEvent>() {
@@ -138,20 +139,30 @@ public class MainSceneController extends Controller implements Initializable {
                                 if (notifications.size() != 0 && notifications != null) {
                                     for (String notification : notifications) {
                                         notificationList.getItems().add(0, notification);
+                                        notificationDot.visibleProperty().set(true);
+                                        ScaleTransition st = new ScaleTransition(Duration.millis(1000),
+                                                notificationDot);
+                                        st.setFromX(0.6);
+                                        st.setFromY(0.6);
+                                        st.setToX(1.2);
+                                        st.setToY(1.2);
+                                        st.setCycleCount(3);
+                                        st.setAutoReverse(true);
+                                        st.jumpTo(Duration.millis(200));
+                                        st.play();
                                     }
-                                    notificationPane.setStyle("-icon-paint: linear-gradient(to bottom, red, red);");
                                     notifications.clear();
                                 }
                             }
                         }));
-                        notificationCycle.setCycleCount(Timeline.INDEFINITE);
-                        notificationCycle.play();
-                        
+        notificationCycle.setCycleCount(Timeline.INDEFINITE);
+        notificationCycle.play();
+
         notificationPane.visibleProperty().set(false);
         TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         treeView.setRoot(root);
         treeView.setShowRoot(false);
-        
+
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
         ctwLastEdit.setCellValueFactory(cellData -> cellData.getValue().lastEditDate());
@@ -162,6 +173,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void clearNotifications(MouseEvent event) {
         notificationList.getItems().clear();
+        notificationDot.visibleProperty().set(false);
     }
 
     @FXML
@@ -209,7 +221,7 @@ public class MainSceneController extends Controller implements Initializable {
             path.add("/");
             Collections.reverse(path);
             Collections.reverse(pathNaked);
-            var items = UITrees.CLOUD_FILES(path);
+            var items = UITrees.CLOUD_FILES(String.join("", path));
             cloudTableView.setItems(items);
             cloudTableView.refresh();
 

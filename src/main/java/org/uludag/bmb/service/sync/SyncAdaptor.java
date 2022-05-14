@@ -2,12 +2,18 @@ package org.uludag.bmb.service.sync;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.Metadata;
 
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
+import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.dropbox.Client;
@@ -31,10 +37,16 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
             try {
                 FileMetadata metaData = Client.client.files().uploadBuilder(cloudPath + efd.name)
                         .uploadAndFinish(efd.encryptedFile);
-                // database insert record
                 DatabaseController dc = new DatabaseController();
-                dc.insertNotification("dosya yükleme başarılı " + metaData.getName());
-
+                String path = metaData.getPathDisplay().substring(0,
+                        metaData.getPathDisplay().length() - efd.name.length());
+                dc.insertRecord(new FileRecord(file.getName(),
+                        metaData.getPathDisplay().substring(0,
+                                metaData.getPathDisplay().length() - efd.name.length()),
+                        efd.key,
+                        new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(metaData.getServerModified()), "eklenmedi",
+                        efd.name, 0));
+                dc.insertNotification(path + ", dizinine " + file.getName() + " dosyası başarı ile yüklendi!");
             } catch (DbxException | IOException e) {
                 e.printStackTrace();
             }
