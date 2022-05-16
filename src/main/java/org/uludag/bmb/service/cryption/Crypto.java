@@ -84,21 +84,28 @@ public class Crypto {
 
     }
 
-    private static String decrypt(byte[] cText, SecretKey secret, byte[] iv) throws Exception {
+    private static String decryptNameWithIV(byte[] cText, SecretKey secret, byte[] iv) throws Exception {
 
         Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
         cipher.init(Cipher.DECRYPT_MODE, secret, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
         byte[] plainText = cipher.doFinal(cText);
 
-        FileOutputStream fos = new FileOutputStream("unnamed-decryp.txt");
-        fos.write(plainText);
-        fos.close();
-
         return new String(plainText, UTF_8);
 
     }
 
-    private static String decryptWithPrefixIV(byte[] cText, SecretKey secret) throws Exception {
+    private static byte[] decryptFileWithIV(byte[] cText, SecretKey secret, byte[] iv) throws Exception {
+
+        Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
+        cipher.init(Cipher.DECRYPT_MODE, secret, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
+        byte[] plainText = cipher.doFinal(cText);
+
+        return plainText;
+
+    }
+
+    public static String decryptName(byte[] cText, String secret) {
+        SecretKey key = decodeKeyFromString(secret);
 
         ByteBuffer bb = ByteBuffer.wrap(cText);
 
@@ -108,27 +115,40 @@ public class Crypto {
         byte[] cipherText = new byte[bb.remaining()];
         bb.get(cipherText);
 
-        String plainText = decrypt(cipherText, secret, iv);
-
-        return plainText;
+        String plainText;
+        try {
+            plainText = decryptNameWithIV(cipherText, key, iv);
+            return plainText;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
     }
 
-    private static SecretKey decodeKeyFromString(String keyStr) {
+    public static byte[] decryptFile(byte[] cText, String secret) {
+        SecretKey key = decodeKeyFromString(secret);
+
+        ByteBuffer bb = ByteBuffer.wrap(cText);
+
+        byte[] iv = new byte[IV_LENGTH_BYTE];
+        bb.get(iv);
+
+        byte[] cipherText = new byte[bb.remaining()];
+        bb.get(cipherText);
+
+        try {
+            return decryptFileWithIV(cipherText, key, iv);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static SecretKey decodeKeyFromString(String keyStr) {
         byte[] decodedKey = Base64.getDecoder().decode(keyStr);
         SecretKey secretKey = new SecretKeySpec(decodedKey, 0,
                 decodedKey.length, "AES");
         return secretKey;
     }
-
-    // public static void main(String[] args) throws Exception {
-    // SecretKey secretKey = CryptoUtils.getAESKey(AES_KEY_BIT);
-    // String keyString = keyToString(secretKey);
-    // SecretKey key = decodeKeyFromString(keyString);
-    // byte[] iv = CryptoUtils.getRandomNonce(IV_LENGTH_BYTE);
-    // byte[] encryptedText = Crypto.encryptWithPrefixIV(getFileBytes(new
-    // File("a")), secretKey, iv);
-    // Crypto.decryptWithPrefixIV(encryptedText, key);
-    // }
-
 }

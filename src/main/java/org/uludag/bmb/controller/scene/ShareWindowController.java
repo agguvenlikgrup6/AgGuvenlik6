@@ -55,7 +55,7 @@ public class ShareWindowController implements Initializable {
         alert.setTitle("Dosya Paylaşım");
         try {
             for (TableViewDataProperty f : fileList) {
-                Client.client.sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
+                Client.client.sharing().addFileMember(f.getFilePath() + f.getFileName(), members);
             }
             alert.setHeaderText("Dosya Paylaşımı Başarı İle Sonuçlandı.\nPaylaşılan Hesaplar:");
             alert.setContentText(emailList.getText());

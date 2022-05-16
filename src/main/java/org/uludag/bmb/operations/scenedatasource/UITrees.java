@@ -1,6 +1,8 @@
 package org.uludag.bmb.operations.scenedatasource;
 
 import java.io.FilenameFilter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +16,7 @@ import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
+import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.dropbox.Client;
 
 import javafx.collections.FXCollections;
@@ -93,6 +96,25 @@ public class UITrees {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return files;
+    }
+
+    public static final ObservableList<TableViewDataProperty> LOCAL_FILES(String path) {
+        DatabaseController dc = new DatabaseController();
+        ObservableList<TableViewDataProperty> files = FXCollections.observableArrayList();
+        List<FileRecord> fileRecords = dc.getRecordsByPath(path);
+        for (FileRecord f : fileRecords) {
+            boolean sync = false;
+            if (f.getSync() == 1)
+                sync = true;
+            try {
+                files.add(new TableViewDataProperty(f.getName(),
+                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(f.getModificationDate()), sync,
+                        f.getPath()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         return files;
     }

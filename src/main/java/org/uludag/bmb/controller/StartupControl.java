@@ -1,6 +1,8 @@
 package org.uludag.bmb.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,27 +15,36 @@ import com.dropbox.core.v2.files.Metadata;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.operations.dropbox.FileOperations;
 
 public class StartupControl {
-    public static void main(String[] args) {
-        StartupControl sc = new StartupControl();
-        sc.deletedFileControl();
-
-    }
+    // public static void main(String[] args) {
+    //     StartupControl sc = new StartupControl();
+    //     sc.deletedFileControl();
+    // }
 
     public void deletedFileControl() {
-        List<FileRecord> cloudRecords = GET_CLOUD_RECORDS();
-        List<FileRecord> localRecords = GET_LOCAL_RECORDS();
+        List<FileRecord> cloud = StartupControl.GET_CLOUD_RECORDS();
+        List<FileRecord> local = StartupControl.GET_LOCAL_RECORDS();
 
-        for (FileRecord cloudRecord : cloudRecords) {
-            boolean flag = false;
-            for (FileRecord localRecord : localRecords) {
-                if (cloudRecord.getEncryptedName() == localRecord.getEncryptedName()
-                        && cloudRecord.getPath() == localRecord.getPath()) {
-                    flag = true;
+        for (int i = 0; i < local.size(); i++) {
+            if (local.get(i).getSync() != 0) {
+                int count = 0;
+                for (FileRecord fileRecord : cloud) {
+                    if (!local.get(i).getEncryptedName().equals(fileRecord.getEncryptedName()) &&
+                            !local.get(i).getPath().equals(fileRecord.getPath())) {
+                        count++;
+                    }
                 }
+                if (count == cloud.size()) {
+                    FileOperations.DELETE_FILE(local.get(i).getPath(), local.get(i).getName());
+                    DatabaseController dc = new DatabaseController();
+                    dc.deleteRecord(local.get(i));
+                }
+                count = 0;
             }
         }
+
     }
 
     public static final List<FileRecord> GET_CLOUD_RECORDS() {
@@ -61,12 +72,14 @@ public class StartupControl {
 
     public static final List<FileRecord> GET_LOCAL_RECORDS() {
         DatabaseController dc = new DatabaseController();
-        List<FileRecord> f = dc.getAllRecords();
-        ArrayList<FileRecord> fileRecords = new ArrayList<>();
-        for (FileRecord fileRecord : f) {
-            fileRecords.add(new FileRecord(fileRecord.getEncryptedName(), fileRecord.getPath()));
+        List<FileRecord> fileRecords = dc.getAllRecords();
+        ArrayList<FileRecord> f1 = new ArrayList<>();
+        for (FileRecord f : fileRecords) {
+            f1.add(new FileRecord(f.getName(), f.getPath(), f.getKey(), f.getModificationDate(), f.getHash(),
+                    f.getEncryptedName(), f.getSync()));
         }
-        return fileRecords;
+        return f1;
     }
+    
 
 }

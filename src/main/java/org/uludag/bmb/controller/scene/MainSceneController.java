@@ -137,6 +137,14 @@ public class MainSceneController extends Controller implements Initializable {
                             public void handle(ActionEvent event) {
                                 List<String> notifications = dc.getNotifications();
                                 if (notifications.size() != 0 && notifications != null) {
+                                    try {
+                                        var items = UITrees.LOCAL_FILES(
+                                                String.join("", cloudTableView.getItems().get(0).getFilePath()));
+                                        cloudTableView.setItems(items);
+                                        cloudTableView.refresh();
+                                    } catch (IndexOutOfBoundsException e) {
+
+                                    }
                                     for (String notification : notifications) {
                                         notificationList.getItems().add(0, notification);
                                         notificationDot.visibleProperty().set(true);
@@ -218,10 +226,9 @@ public class MainSceneController extends Controller implements Initializable {
                 pathNaked.add(item.getValue() + "/");
                 item = item.getParent();
             }
-            path.add("/");
             Collections.reverse(path);
             Collections.reverse(pathNaked);
-            var items = UITrees.CLOUD_FILES(String.join("", path));
+            var items = UITrees.LOCAL_FILES(String.join("", path));
             cloudTableView.setItems(items);
             cloudTableView.refresh();
 
@@ -242,7 +249,7 @@ public class MainSceneController extends Controller implements Initializable {
         pathPart.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                cloudTableView.setItems(UITrees.CLOUD_FILES(""));
+                cloudTableView.setItems(UITrees.LOCAL_FILES("/"));
                 treeView.getSelectionModel().select(0);
                 linkPane.getItems().remove(1, linkPane.getItems().size());
             }
@@ -260,12 +267,11 @@ public class MainSceneController extends Controller implements Initializable {
                     for (int i = 0; i < pathSize - (selectedPathIndex + 1); i++) {
                         treeView.getSelectionModel().selectPrevious();
                     }
-
-                    String pathS = "/";
+                    String pathS = "";
                     for (int i = 1; i <= linkPane.getItems().indexOf(event.getSource()); i++) {
                         pathS += ((Hyperlink) linkPane.getItems().get(i)).getText();
                     }
-                    cloudTableView.setItems(UITrees.CLOUD_FILES(pathS));
+                    cloudTableView.setItems(UITrees.LOCAL_FILES("/" + pathS));
                     linkPane.getItems().remove(linkPane.getItems().indexOf(event.getSource()) + 1,
                             linkPane.getItems().size());
                 }
@@ -283,7 +289,7 @@ public class MainSceneController extends Controller implements Initializable {
             String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
 
             for (var file : selectedFiles) {
-                FileOperations.DOWNLOAD_FILE(localPath, file.getFilePath(), "/" + file.getFileName());
+                FileOperations.DOWNLOAD_FILE(localPath, file.getFilePath(), file.getFileName());
             }
         }
     }
@@ -298,8 +304,10 @@ public class MainSceneController extends Controller implements Initializable {
 
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(stage);
-
         FileOperations.UPLOAD_FILE(uploadDirectory, selectedFile);
+        // cloudTableView.getItems().add(new
+        // TableViewDataProperty(selectedFile.getName(), new
+        // Date(selectedFile.lastModified()), true, ""));
     }
 
     @FXML

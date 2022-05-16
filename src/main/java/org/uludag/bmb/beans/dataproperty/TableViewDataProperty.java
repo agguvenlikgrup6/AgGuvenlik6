@@ -42,6 +42,7 @@ public class TableViewDataProperty {
         return fileName.get();
     }
 
+
     public final void setFileName(String fileName) {
         this.fileName.set(fileName);
     }
@@ -64,8 +65,7 @@ public class TableViewDataProperty {
 
     public final String getFilePath() {
         String p = filePath.get();
-        int index = p.lastIndexOf('/');
-        return p.substring(1, index);
+        return p;
     }
 
     public final void setFilePath(String filePath) {

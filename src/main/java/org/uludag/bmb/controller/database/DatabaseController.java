@@ -46,12 +46,12 @@ public class DatabaseController {
         }
     }
 
-    public List<FileRecord> getByPathAndName(String path, String name) {
+    public FileRecord getByPathAndName(String path, String name) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
             List<FileRecord> records = this.queryRunner
                     .query(this.query + " WHERE path = '" + path + "' AND name = '" + name + "'", rsh);
-            return records;
+            return records.get(0);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -75,6 +75,18 @@ public class DatabaseController {
         try {
             List<FileRecord> records = this.queryRunner
                     .query(this.query, rsh);
+            return records;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<FileRecord> getRecordsByPath(String path) {
+        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
+        try {
+            List<FileRecord> records = this.queryRunner
+                    .query(this.query + " WHERE path='" + path + "'", rsh);
             return records;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -184,6 +196,19 @@ public class DatabaseController {
         try {
             PreparedStatement statement = this.conn.prepareStatement(query);
             statement.setString(1, notificationMessage);
+
+            statement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public final void deleteRecord(FileRecord fileRecord) {
+        String query = "DELETE FROM records WHERE name=? AND path=?";
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(query);
+            statement.setString(1, fileRecord.getName());
+            statement.setString(2, fileRecord.getPath());
 
             statement.execute();
         } catch (Exception e) {
