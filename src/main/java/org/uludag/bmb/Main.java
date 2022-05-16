@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Collection;
 import java.io.File;
@@ -25,18 +26,31 @@ public class Main {
             // byte[] abc = Files.readAllBytes(a.toPath());
             // HashTry pp = new HashTry();
             // pp.getHash(abc);
-            Collection<String> listOne = new ArrayList<>(Arrays.asList("milan","dingo","elpha","hafil","meat","iga","neeta.peeta"));
-            Collection<String> listTwo = new ArrayList<>(Arrays.asList("hafil","iga","binga","mike","dingo"));
-            Collection<String> similar = new HashSet<String>(listOne);
-            Collection<String> different = new HashSet<String>();
-            different.addAll(listOne);
-            different.addAll(listTwo);
-            similar.retainAll(listTwo);
-            different.removeAll(similar);
-            System.out.println("1-->  " + listOne);
-            System.out.println("2-->  " + listTwo);
-            System.out.println("similar-->  " + similar);
-            System.out.println("different-->  " + different);
+
+
+
+            // Collection<String> listOne = new ArrayList<>(Arrays.asList("milan","dingo","elpha","hafil","meat","iga","neeta.peeta"));
+            // Collection<String> listTwo = new ArrayList<>(Arrays.asList("hafil","iga","binga","mike","dingo"));
+            // Collection<String> similar = new HashSet<String>(listOne);
+            // Collection<String> different = new HashSet<String>();
+            // different.addAll(listOne);
+            // different.addAll(listTwo);
+            // similar.retainAll(listTwo);
+            // different.removeAll(similar);
+            // System.out.println("1-->  " + listOne);
+            // System.out.println("2-->  " + listTwo);
+            // System.out.println("similar-->  " + similar);
+            // System.out.println("different-->  " + different);
+
+            List<String> abc = new ArrayList<>(Arrays.asList("milan","dingo","elpha","hafil","meat","iga","neeta.peeta"));
+            List<String> dddd = new ArrayList<>(Arrays.asList("milan","dingo","elpha","hafil","meat","iga"));
+            List<String> abbb = new ArrayList<>(Arrays.asList("hafil","iga","binga","mike","dingo"));
+            List<List<String>> listOne = new ArrayList<>(Arrays.asList(abc,abbb));
+            List<String> listTwo = new ArrayList<>(Arrays.asList("hafil","iga","binga","mike","dingo"));
+            List<List<String>> listBuffer = new ArrayList<>(listOne);
+            //listOne.get(0).retainAll(listTwo);
+            listBuffer.get(0).removeAll(dddd);
+            System.out.println(listBuffer);
 
 
             //Crypto tt = new Crypto();
