@@ -15,49 +15,58 @@ import com.dropbox.core.v2.files.Metadata;
 
 import org.junit.Test;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
+import org.uludag.bmb.controller.StartupControl;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.operations.scenedatasource.UITrees;
 
 public class DropboxFilePathTest {
 
+    // @Test
+    // public void listDropboxFolderPaths() throws IOException, FileLoadException, ListFolderErrorException, DbxException {
+    //     ListFolderResult result = Client.client.files().listFolderBuilder("")
+    //             .withIncludeDeleted(false)
+    //             .withRecursive(true)
+    //             .start();
+
+    //     List<Metadata> entries = result.getEntries();
+
+    //     for (Metadata metadata : entries) {
+    //         if (metadata instanceof FileMetadata) {
+    //             System.out.println(metadata.getPathLower());
+    //         }
+    //     }
+    // }
+
     @Test
-    public void listDropboxFolderPaths() throws IOException, FileLoadException, ListFolderErrorException, DbxException {
-        ListFolderResult result = Client.client.files().listFolderBuilder("")
-                .withIncludeDeleted(false)
-                .withRecursive(true)
-                .start();
-
-        List<Metadata> entries = result.getEntries();
-
-        for (Metadata metadata : entries) {
-            if (metadata instanceof FileMetadata) {
-                System.out.println(metadata.getPathLower());
-            }
-        }
+    public void test2(){
+        var x = StartupControl.GET_CLOUD_RECORDS();
+        var y = StartupControl.GET_LOCAL_RECORDS();
+        System.out.println("");
     }
 
-    @Test
-    public void getAllFiles() throws IOException, FileLoadException, ListFolderErrorException, DbxException {
-        ListFolderResult result = Client.client.files().listFolderBuilder("")
-                .withIncludeDeleted(false)
-                .withRecursive(true)
-                .start();
+    // @Test
+    // public void getAllFiles() throws IOException, FileLoadException, ListFolderErrorException, DbxException {
+    //     ListFolderResult result = Client.client.files().listFolderBuilder("")
+    //             .withIncludeDeleted(false)
+    //             .withRecursive(true)
+    //             .start();
 
-        List<Metadata> entries = result.getEntries();
+    //     List<Metadata> entries = result.getEntries();
 
-        for (Metadata metadata : entries) {
-            if (metadata instanceof FileMetadata) {
-                String fileName = metadata.getName();
-                FileMetadata fileMetadata = (FileMetadata) Client.client.files()
-                        .getMetadata(metadata.getPathLower());
-                String filePath = fileMetadata.getPathDisplay();
-                filePath = filePath.substring(0, filePath.length() - fileName.length());
-                Date fileDate = fileMetadata.getServerModified();
-                DatabaseController dc = new DatabaseController();
-                dc.insertTreeCache(new TableViewDataProperty(fileName, fileDate, false, filePath));
-                System.out.println(filePath + " -- " + fileName + " -- " + fileDate);
-            }
-        }
-    }
+    //     for (Metadata metadata : entries) {
+    //         if (metadata instanceof FileMetadata) {
+    //             String fileName = metadata.getName();
+    //             FileMetadata fileMetadata = (FileMetadata) Client.client.files()
+    //                     .getMetadata(metadata.getPathLower());
+    //             String filePath = fileMetadata.getPathDisplay();
+    //             filePath = filePath.substring(0, filePath.length() - fileName.length());
+    //             Date fileDate = fileMetadata.getServerModified();
+    //             DatabaseController dc = new DatabaseController();
+    //             dc.insertTreeCache(new TableViewDataProperty(fileName, fileDate, false, filePath));
+    //             System.out.println(filePath + " -- " + fileName + " -- " + fileDate);
+    //         }
+    //     }
+    // }
 
 }

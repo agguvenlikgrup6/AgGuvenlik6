@@ -70,6 +70,18 @@ public class DatabaseController {
         }
     }
 
+    public List<FileRecord> getAllRecords() {
+        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
+        try {
+            List<FileRecord> records = this.queryRunner
+                    .query(this.query, rsh);
+            return records;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public List<String> getNotifications() {
         try {
             Statement statement = this.conn.createStatement();
@@ -226,4 +238,5 @@ public class DatabaseController {
             return null;
         }
     }
+
 }

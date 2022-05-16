@@ -1,5 +1,7 @@
 package org.uludag.bmb.beans.database;
 
+import java.io.FilenameFilter;
+
 public class FileRecord {
     private String name;
     private String path;
@@ -22,6 +24,11 @@ public class FileRecord {
         this.hash = hash;
         this.encryptedName = encryptedName;
         this.sync = sync;
+    }
+
+    public FileRecord(String encryptedName, String filePath) {
+        this.encryptedName = encryptedName;
+        this.path = filePath;
     }
 
     public String getName() {
