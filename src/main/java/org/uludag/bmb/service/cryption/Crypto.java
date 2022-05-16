@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -33,13 +34,13 @@ public class Crypto {
             SecretKey secretKey = CryptoUtils.getAESKey(AES_KEY_BIT);
             byte[] iv = CryptoUtils.getRandomNonce(IV_LENGTH_BYTE);
             byte[] encryptedFileBytes = Crypto.encryptWithPrefixIV(fileData, secretKey, iv);
-            byte[] encryptedFileNameBytes = Crypto.encryptWithPrefixIV(file.getName().getBytes(), secretKey, iv);
+            byte[] encryptedFileNameBytes = Crypto.encryptWithPrefixIV(file.getName().getBytes(StandardCharsets.UTF_8),
+                    secretKey, iv);
 
             InputStream encryptedFile = new ByteArrayInputStream(encryptedFileBytes);
-            String encryptedName = Base64.getEncoder().encodeToString(encryptedFileNameBytes);
 
-            encryptedName = encryptedName.replaceAll("/", "*");
-            String key = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+            String encryptedName = Base64.getUrlEncoder().encodeToString(encryptedFileNameBytes);
+            String key = Base64.getUrlEncoder().encodeToString(secretKey.getEncoded());
 
             return new EncryptedFileData(encryptedFile, encryptedName, key);
 
@@ -146,7 +147,7 @@ public class Crypto {
     }
 
     public static SecretKey decodeKeyFromString(String keyStr) {
-        byte[] decodedKey = Base64.getDecoder().decode(keyStr);
+        byte[] decodedKey = Base64.getUrlDecoder().decode(keyStr.getBytes(StandardCharsets.UTF_8));
         SecretKey secretKey = new SecretKeySpec(decodedKey, 0,
                 decodedKey.length, "AES");
         return secretKey;

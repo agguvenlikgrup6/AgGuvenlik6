@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.FileNameMap;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,7 +40,8 @@ public class FileOperations {
                     Client.client.files().downloadBuilder(filePath + record.getEncryptedName()).download(downloadFile);
                     downloadFile.close();
                     String decryptedName = Crypto.decryptName(
-                            Base64.getDecoder().decode(record.getEncryptedName().getBytes()), record.getKey());
+                            Base64.getUrlDecoder().decode(record.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
+                            record.getKey());
                     OutputStream decryptedFile = new FileOutputStream(localPath + filePath + decryptedName);
                     byte[] fileBytes = Crypto.decryptFile(
                             Files.readAllBytes(Paths.get(localPath + filePath + record.getEncryptedName())),
@@ -84,7 +86,7 @@ public class FileOperations {
         }
 
         String fileDirectory = localPath + uploadDirectory;
-        String fileWithPath = fileDirectory + file.getName(); // /home/oguz/Desktop/Sync/A/B/ali.txt
+        String fileWithPath = fileDirectory + file.getName();
 
         if (!Files.exists(Paths.get(fileWithPath))) {
             if (!Files.exists(Paths.get(fileDirectory))) {

@@ -18,11 +18,6 @@ import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 
 public class StartupControl {
-    // public static void main(String[] args) {
-    //     StartupControl sc = new StartupControl();
-    //     sc.deletedFileControl();
-    // }
-
     public void deletedFileControl() {
         List<FileRecord> cloud = StartupControl.GET_CLOUD_RECORDS();
         List<FileRecord> local = StartupControl.GET_LOCAL_RECORDS();
@@ -80,6 +75,5 @@ public class StartupControl {
         }
         return f1;
     }
-    
 
 }

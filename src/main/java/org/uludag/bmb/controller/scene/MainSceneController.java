@@ -3,13 +3,17 @@ package org.uludag.bmb.controller.scene;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.http.StandardHttpRequestor.Config;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.UploadErrorException;
 
@@ -19,6 +23,7 @@ import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.service.sync.SyncServer;
+import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
@@ -43,11 +48,11 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -59,6 +64,9 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     private Button btnDownload;
+
+    @FXML
+    private Button btnNewFolder;
 
     @FXML
     private Button btnUpload;
@@ -207,6 +215,35 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
+    void createNewFolder(MouseEvent event) {
+        var folderPathNode = linkPane.getItems();
+        String uploadDirectory = "/";
+        if (folderPathNode.size() != 0) {
+            for (int index = 1; index < folderPathNode.size(); index++) {
+                uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
+            }
+        }
+
+        TextInputDialog td = new TextInputDialog();
+        td.titleProperty().set("Yeni Klasör Oluştur");
+        td.setHeaderText("Yeni Klasör İsmi:");
+        td.showAndWait();
+
+        String folderName = td.getEditor().getText();
+        if (folderName != "") {
+            try {
+                Client.client.files().createFolderV2(uploadDirectory + folderName);
+                TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
+                treeView.setRoot(root);
+                treeView.setShowRoot(false);
+            } catch (DbxException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @FXML
     void deleteFile(ActionEvent event) {
         System.out.println("delete");
     }
@@ -298,16 +335,15 @@ public class MainSceneController extends Controller implements Initializable {
     void uploadItem(ActionEvent event) throws IOException, UploadErrorException, DbxException {
         var folderPathNode = linkPane.getItems();
         String uploadDirectory = "/";
-        for (int index = 1; index < folderPathNode.size(); index++) {
-            uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
+        if (folderPathNode.size() != 0) {
+            for (int index = 1; index < folderPathNode.size(); index++) {
+                uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
+            }
         }
 
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(stage);
         FileOperations.UPLOAD_FILE(uploadDirectory, selectedFile);
-        // cloudTableView.getItems().add(new
-        // TableViewDataProperty(selectedFile.getName(), new
-        // Date(selectedFile.lastModified()), true, ""));
     }
 
     @FXML
