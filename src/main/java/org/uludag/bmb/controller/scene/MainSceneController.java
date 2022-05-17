@@ -8,9 +8,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
@@ -21,11 +18,13 @@ import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
-import org.uludag.bmb.service.sync.SyncServer;
+import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
+import org.uludag.bmb.service.sync.SyncServer;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -39,17 +38,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -60,6 +60,9 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     private Button btnDownload;
+
+    @FXML
+    private Button btnNewFolder;
 
     @FXML
     private Button btnUpload;
@@ -78,6 +81,9 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     private Pane notificationPane;
+
+    @FXML
+    private Circle notificationDot;
 
     @FXML
     private SplitPane linkPane;
@@ -104,9 +110,6 @@ public class MainSceneController extends Controller implements Initializable {
     private TableColumn<TableViewDataProperty, Date> ctwLastEdit;
 
     @FXML
-    private TableColumn<TableViewDataProperty, Boolean> ctwSyncStatus;
-
-    @FXML
     public ListView<String> notificationList;
 
     public MainSceneController() throws FileLoadException {
@@ -128,7 +131,6 @@ public class MainSceneController extends Controller implements Initializable {
         dc = new DatabaseController();
         notificationList.setCellFactory(param -> new NotificationListCellFactory());
 
-        
         Timeline notificationCycle = new Timeline(
                 new KeyFrame(Duration.seconds(2),
                         new EventHandler<ActionEvent>() {
@@ -136,32 +138,52 @@ public class MainSceneController extends Controller implements Initializable {
                             public void handle(ActionEvent event) {
                                 List<String> notifications = dc.getNotifications();
                                 if (notifications.size() != 0 && notifications != null) {
+                                    try {
+                                        var items = UITrees.LOCAL_FILES(
+                                                String.join("", cloudTableView.getItems().get(0).getFilePath()));
+                                        cloudTableView.setItems(items);
+                                        cloudTableView.refresh();
+                                    } catch (IndexOutOfBoundsException e) {
+
+                                    }
                                     for (String notification : notifications) {
                                         notificationList.getItems().add(0, notification);
+                                        notificationDot.visibleProperty().set(true);
+                                        ScaleTransition st = new ScaleTransition(Duration.millis(1000),
+                                                notificationDot);
+                                        st.setFromX(0.6);
+                                        st.setFromY(0.6);
+                                        st.setToX(1.2);
+                                        st.setToY(1.2);
+                                        st.setCycleCount(3);
+                                        st.setAutoReverse(true);
+                                        st.jumpTo(Duration.millis(200));
+                                        st.play();
                                     }
-                                    notificationPane.setStyle("-icon-paint: linear-gradient(to bottom, red, red);");
                                     notifications.clear();
                                 }
                             }
                         }));
-                        notificationCycle.setCycleCount(Timeline.INDEFINITE);
-                        notificationCycle.play();
-                        
+        notificationCycle.setCycleCount(Timeline.INDEFINITE);
+        notificationCycle.play();
+
         notificationPane.visibleProperty().set(false);
         TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         treeView.setRoot(root);
         treeView.setShowRoot(false);
-        
+
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
         ctwLastEdit.setCellValueFactory(cellData -> cellData.getValue().lastEditDate());
-        ctwSyncStatus.setCellValueFactory(cellData -> cellData.getValue().syncStatus());
         ctwFilePath.setCellValueFactory(cellData -> cellData.getValue().filePath());
+        ctwCheckBox.setCellValueFactory(cellData -> cellData.getValue().selection());
+        ctwCheckBox.setEditable(false);
     }
 
     @FXML
     void clearNotifications(MouseEvent event) {
         notificationList.getItems().clear();
+        notificationDot.visibleProperty().set(false);
     }
 
     @FXML
@@ -187,8 +209,62 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
+    void createNewFolder(MouseEvent event) {
+        var folderPathNode = linkPane.getItems();
+        String uploadDirectory = "/";
+        if (folderPathNode.size() != 0) {
+            for (int index = 1; index < folderPathNode.size(); index++) {
+                uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
+            }
+        }
+
+        TextInputDialog td = new TextInputDialog();
+        td.titleProperty().set("Yeni Klasör Oluştur");
+        td.setHeaderText("Yeni Klasör İsmi:");
+        td.showAndWait();
+
+        String folderName = td.getEditor().getText();
+        if (folderName != "") {
+            try {
+                Client.client.files().createFolderV2(uploadDirectory + folderName);
+                TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
+                treeView.setRoot(root);
+                treeView.setShowRoot(false);
+            } catch (DbxException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @FXML
     void deleteFile(ActionEvent event) {
-        System.out.println("delete");
+        List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
+        for (TableViewDataProperty item : selectedItems) {
+            if (item.getSync()) {
+                FileOperations.DELETE_FROM_CLOUD(item.getFilePath(), item.getFileName());
+            } else {
+                FileOperations.DELETE_FROM_LOCAL(item.getFilePath(), item.getFileName());
+            }
+        }
+    }
+
+    @FXML
+    void changeSyncStatusOn(ActionEvent event) {
+        List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
+        for (TableViewDataProperty item : selectedItems) {
+            item.selection().get().selectedProperty().set(true);
+            dc.changeSyncStatus(item, true);
+        }
+    }
+
+    @FXML
+    void changeSyncStatusOff(ActionEvent event) {
+        List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
+        for (TableViewDataProperty item : selectedItems) {
+            item.selection().get().selectedProperty().set(false);
+            dc.changeSyncStatus(item, false);
+        }
     }
 
     @FXML
@@ -206,10 +282,9 @@ public class MainSceneController extends Controller implements Initializable {
                 pathNaked.add(item.getValue() + "/");
                 item = item.getParent();
             }
-            path.add("/");
             Collections.reverse(path);
             Collections.reverse(pathNaked);
-            var items = UITrees.CLOUD_FILES(path);
+            var items = UITrees.LOCAL_FILES(String.join("", path));
             cloudTableView.setItems(items);
             cloudTableView.refresh();
 
@@ -230,7 +305,7 @@ public class MainSceneController extends Controller implements Initializable {
         pathPart.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                cloudTableView.setItems(UITrees.CLOUD_FILES(""));
+                cloudTableView.setItems(UITrees.LOCAL_FILES("/"));
                 treeView.getSelectionModel().select(0);
                 linkPane.getItems().remove(1, linkPane.getItems().size());
             }
@@ -248,12 +323,11 @@ public class MainSceneController extends Controller implements Initializable {
                     for (int i = 0; i < pathSize - (selectedPathIndex + 1); i++) {
                         treeView.getSelectionModel().selectPrevious();
                     }
-
-                    String pathS = "/";
+                    String pathS = "";
                     for (int i = 1; i <= linkPane.getItems().indexOf(event.getSource()); i++) {
                         pathS += ((Hyperlink) linkPane.getItems().get(i)).getText();
                     }
-                    cloudTableView.setItems(UITrees.CLOUD_FILES(pathS));
+                    cloudTableView.setItems(UITrees.LOCAL_FILES("/" + pathS));
                     linkPane.getItems().remove(linkPane.getItems().indexOf(event.getSource()) + 1,
                             linkPane.getItems().size());
                 }
@@ -271,7 +345,7 @@ public class MainSceneController extends Controller implements Initializable {
             String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
 
             for (var file : selectedFiles) {
-                FileOperations.DOWNLOAD_FILE(localPath, file.getFilePath(), "/" + file.getFileName());
+                FileOperations.DOWNLOAD_FILE(localPath, file.getFilePath(), file.getFileName());
             }
         }
     }
@@ -280,13 +354,14 @@ public class MainSceneController extends Controller implements Initializable {
     void uploadItem(ActionEvent event) throws IOException, UploadErrorException, DbxException {
         var folderPathNode = linkPane.getItems();
         String uploadDirectory = "/";
-        for (int index = 1; index < folderPathNode.size(); index++) {
-            uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
+        if (folderPathNode.size() != 0) {
+            for (int index = 1; index < folderPathNode.size(); index++) {
+                uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
+            }
         }
 
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(stage);
-
         FileOperations.UPLOAD_FILE(uploadDirectory, selectedFile);
     }
 

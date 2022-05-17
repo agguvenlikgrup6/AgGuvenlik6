@@ -17,11 +17,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 public class ShareWindowController implements Initializable {
@@ -55,7 +55,7 @@ public class ShareWindowController implements Initializable {
         alert.setTitle("Dosya Paylaşım");
         try {
             for (TableViewDataProperty f : fileList) {
-                Client.client.sharing().addFileMember("/" + f.getFilePath() + "/" + f.getFileName(), members);
+                Client.client.sharing().addFileMember(f.getFilePath() + f.getFileName(), members);
             }
             alert.setHeaderText("Dosya Paylaşımı Başarı İle Sonuçlandı.\nPaylaşılan Hesaplar:");
             alert.setContentText(emailList.getText());

@@ -1,7 +1,8 @@
 package org.uludag.bmb.operations.scenedatasource;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,9 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
+import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
+import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.dropbox.Client;
 
 import javafx.collections.FXCollections;
@@ -73,88 +76,19 @@ public class UITrees {
         }
     }
 
-    public static final List<String> FOLDERS(List<String> path) {
-        return null;
-    }
-
-    public static final List<String> FILES(List<String> path) {
-        List<String> files = new ArrayList<String>();
-        ListFolderResult result;
-        try {
-            result = Client.client.files().listFolder(String.join("", path));
-            List<Metadata> entries = result.getEntries();
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata) {
-                    files.add(metadata.getName());
-                }
-            }
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
-        return files;
-    }
-
-    public static final ObservableList<TableViewDataProperty> CLOUD_FILES(ArrayList<String> path) {
+    public static final ObservableList<TableViewDataProperty> LOCAL_FILES(String path) {
+        DatabaseController dc = new DatabaseController();
         ObservableList<TableViewDataProperty> files = FXCollections.observableArrayList();
-        // DbClient client = new DbClient(true);
-        ListFolderResult result;
-        try {
-            result = Client.client.files().listFolder(String.join("", path));
-            List<Metadata> entries = result.getEntries();
-
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata) {
-                    String fileName = metadata.getName();
-                    FileMetadata fileMetadata = (FileMetadata) Client.client.files()
-                            .getMetadata(metadata.getPathLower());
-                    String filePath = fileMetadata.getPathDisplay();
-                    Date fileDate = fileMetadata.getServerModified();
-                    files.add(new TableViewDataProperty(fileName, fileDate, false, filePath));
-                }
+        List<FileRecord> fileRecords = dc.getRecordsByPath(path);
+        for (FileRecord f : fileRecords) {
+            try {
+                files.add(new TableViewDataProperty(f.getName(),
+                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(f.getModificationDate()),
+                        f.getPath(), f.getSync()));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return files;
     }
-
-    public static final ObservableList<TableViewDataProperty> CLOUD_FILES(String path) {
-        ObservableList<TableViewDataProperty> files = FXCollections.observableArrayList();
-        ListFolderResult result;
-        try {
-            result = Client.client.files().listFolder(path);
-            List<Metadata> entries = result.getEntries();
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata) {
-                    String fileName = metadata.getName();
-                    FileMetadata fileMetadata = (FileMetadata) Client.client.files()
-                            .getMetadata(metadata.getPathLower());
-                    String filePath = fileMetadata.getPathDisplay();
-                    Date fileDate = fileMetadata.getServerModified();
-                    files.add(new TableViewDataProperty(fileName, fileDate, false, filePath));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return files;
-    }
-
-    public static final List<String> FILES(String path) {
-        List<String> files = new ArrayList<String>();
-        ListFolderResult result;
-        try {
-            result = Client.client.files().listFolder(String.join("", path));
-            List<Metadata> entries = result.getEntries();
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata) {
-                    files.add(metadata.getName());
-                }
-            }
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
-        return files;
-    }
-
 }

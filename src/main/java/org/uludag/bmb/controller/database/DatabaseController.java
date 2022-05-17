@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +18,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.sqlite.SQLiteDataSource;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.database.FileRecord;
+import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 
 public class DatabaseController {
     public Connection conn;
@@ -44,14 +44,13 @@ public class DatabaseController {
         }
     }
 
-    public List<FileRecord> getByPathAndName(String path, String name) {
+    public FileRecord getByPathAndName(String path, String name) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
             List<FileRecord> records = this.queryRunner
                     .query(this.query + " WHERE path = '" + path + "' AND name = '" + name + "'", rsh);
-            return records;
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return records.get(0);
+        } catch (Exception e) {
             return null;
         }
     }
@@ -61,6 +60,30 @@ public class DatabaseController {
         try {
             List<FileRecord> records = this.queryRunner
                     .query(this.query + " WHERE encryptedName = '" + encryptedName + "'", rsh);
+            return records;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<FileRecord> getAllRecords() {
+        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
+        try {
+            List<FileRecord> records = this.queryRunner
+                    .query(this.query, rsh);
+            return records;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<FileRecord> getRecordsByPath(String path) {
+        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
+        try {
+            List<FileRecord> records = this.queryRunner
+                    .query(this.query + " WHERE path='" + path + "'", rsh);
             return records;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -132,6 +155,19 @@ public class DatabaseController {
         }
     }
 
+    public final void deleteRecord(String fileName, String filePath) {
+        String query = "DELETE FROM records WHERE name=? AND path=?";
+        try {
+            PreparedStatement statement = this.conn.prepareStatement(query);
+            statement.setString(1, fileName);
+            statement.setString(2, filePath);
+
+            statement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void insertRecord(FileRecord fr) {
         String query = "INSERT INTO " + this.tableName +
                 "(name, path, key, modificationDate, hash, encryptedName, sync) " +
@@ -141,7 +177,7 @@ public class DatabaseController {
             statement.setString(1, fr.getName());
             statement.setString(2, fr.getPath());
             statement.setString(3, fr.getKey());
-            statement.setString(4, fr.getEncryptedName());
+            statement.setString(4, fr.getModificationDate());
             statement.setString(5, fr.getHash());
             statement.setString(6, fr.getEncryptedName());
             statement.setInt(7, fr.getSync());
@@ -179,4 +215,34 @@ public class DatabaseController {
             return null;
         }
     }
+
+    public FileRecord getByEncryptedNameAndPath(String encryptedName, String path) {
+        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
+        try {
+            List<FileRecord> records = this.queryRunner
+                    .query(this.query + " WHERE path = '" + path + "' AND encryptedName = '" + encryptedName + "'",
+                            rsh);
+            if(records.size() != 0)
+                return records.get(0);
+            else 
+                return null;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    public void changeSyncStatus(TableViewDataProperty item, boolean b) {
+        String query = "UPDATE records SET sync=? WHERE name=? AND path=?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, item.getSync() ? 1 : 0);
+            statement.setString(2, item.getFileName());
+            statement.setString(3, item.getFilePath());
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

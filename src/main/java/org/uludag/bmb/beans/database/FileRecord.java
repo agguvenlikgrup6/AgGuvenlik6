@@ -24,6 +24,11 @@ public class FileRecord {
         this.sync = sync;
     }
 
+    public FileRecord(String encryptedName, String filePath) {
+        this.encryptedName = encryptedName;
+        this.path = filePath;
+    }
+
     public String getName() {
         return this.name;
     }
