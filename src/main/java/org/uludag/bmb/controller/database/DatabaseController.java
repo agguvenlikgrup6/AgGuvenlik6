@@ -4,13 +4,11 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,8 +50,7 @@ public class DatabaseController {
             List<FileRecord> records = this.queryRunner
                     .query(this.query + " WHERE path = '" + path + "' AND name = '" + name + "'", rsh);
             return records.get(0);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             return null;
         }
     }
@@ -112,19 +109,6 @@ public class DatabaseController {
         }
     }
 
-    public List<TableViewDataProperty> getTreeCache() {
-        ResultSetHandler<List<TableViewDataProperty>> rsh = new BeanListHandler<TableViewDataProperty>(
-                TableViewDataProperty.class);
-        try {
-            List<TableViewDataProperty> cache = this.queryRunner
-                    .query("SELECT * FROM treecache", rsh);
-            return cache;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public void createRecordTable() {
         String query = "CREATE TABLE IF NOT EXISTS " + this.tableName +
                 "(" +
@@ -141,38 +125,6 @@ public class DatabaseController {
             PreparedStatement statement = this.conn.prepareStatement(query);
             statement.execute();
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void createTreeCacheTable() {
-        String query = "CREATE TABLE IF NOT EXISTS treecache " +
-                "(" +
-                "id integer PRIMARY KEY," +
-                "filePath TEXT NOT NULL," +
-                "fileName TEXT NOT NULL," +
-                "lastEditDate TEXT NOT NULL," +
-                "syncStatus BOOLEAN NOT NULL CHECK(syncStatus IN(0,1))" +
-                ")";
-        try {
-            PreparedStatement statement = this.conn.prepareStatement(query);
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void insertTreeCache(TableViewDataProperty dp) {
-        String query = "INSERT INTO treecache (filePath, fileName, lastEditDate, syncStatus) values(?, ?, ?, ?)";
-        try {
-            PreparedStatement statement = this.conn.prepareStatement(query);
-            statement.setString(1, dp.filePath().get());
-            statement.setString(2, dp.getFileName());
-            statement.setString(3, new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(dp.getLastEditDate()));
-            statement.setBoolean(4, dp.getSyncStatus());
-
-            statement.execute();
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -203,12 +155,12 @@ public class DatabaseController {
         }
     }
 
-    public final void deleteRecord(FileRecord fileRecord) {
+    public final void deleteRecord(String fileName, String filePath) {
         String query = "DELETE FROM records WHERE name=? AND path=?";
         try {
             PreparedStatement statement = this.conn.prepareStatement(query);
-            statement.setString(1, fileRecord.getName());
-            statement.setString(2, fileRecord.getPath());
+            statement.setString(1, fileName);
+            statement.setString(2, filePath);
 
             statement.execute();
         } catch (Exception e) {
@@ -261,6 +213,35 @@ public class DatabaseController {
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
+        }
+    }
+
+    public FileRecord getByEncryptedNameAndPath(String encryptedName, String path) {
+        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
+        try {
+            List<FileRecord> records = this.queryRunner
+                    .query(this.query + " WHERE path = '" + path + "' AND encryptedName = '" + encryptedName + "'",
+                            rsh);
+            if(records.size() != 0)
+                return records.get(0);
+            else 
+                return null;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    public void changeSyncStatus(TableViewDataProperty item, boolean b) {
+        String query = "UPDATE records SET sync=? WHERE name=? AND path=?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, item.getSync() ? 1 : 0);
+            statement.setString(2, item.getFileName());
+            statement.setString(3, item.getFilePath());
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

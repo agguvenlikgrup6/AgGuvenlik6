@@ -71,9 +71,9 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                      <columns>
-                        <TableColumn fx:id="ctwFileName" prefWidth="187.0" text="Dosya" />
-                        <TableColumn fx:id="ctwLastEdit" prefWidth="161.0" text="Son Değişiklik" />
-                        <TableColumn fx:id="ctwSyncStatus" prefWidth="209.0" text="Senkronizasyon Durumu" />
+                        <TableColumn fx:id="ctwFileName" minWidth="-1.0" prefWidth="280.0" text="Dosya" />
+                        <TableColumn fx:id="ctwLastEdit" minWidth="-1.0" prefWidth="272.0" styleClass="ctwSync" text="Son Değişiklik" />
+                        <TableColumn fx:id="ctwCheckBox" editable="false" minWidth="-1.0" prefWidth="304.0" styleClass="ctwSync" text="Senkronizasyon" />
                         <TableColumn fx:id="ctwFilePath" prefWidth="75.0" text="PATHINFO" visible="false" />
                      </columns>
                      <contextMenu>
@@ -82,6 +82,9 @@
                               <MenuItem fx:id="ctwMenuShare" mnemonicParsing="false" onAction="#shareFile" text="Paylaş" />
                               <MenuItem fx:id="ctwMenuDownload" mnemonicParsing="false" onAction="#downloadItem" text="İndir" />
                               <MenuItem fx:id="ctwMenuDelete" mnemonicParsing="false" onAction="#deleteFile" text="Sil" />
+                              <MenuItem fx:id="ctwMenuSyncOn" mnemonicParsing="false" onAction="#changeSyncStatusOn" text="Sync Aç" />
+                              <MenuItem fx:id="ctwMenuSyncOff" mnemonicParsing="false" onAction="#changeSyncStatusOff" text="Sync Kapat" />
+
                           </items>
                         </ContextMenu>
                      </contextMenu>

@@ -1,13 +1,8 @@
 package org.uludag.bmb.controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.dropbox.core.http.SSLConfig.LoadException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
@@ -34,7 +29,7 @@ public class StartupControl {
                 if (count == cloud.size()) {
                     FileOperations.DELETE_FILE(local.get(i).getPath(), local.get(i).getName());
                     DatabaseController dc = new DatabaseController();
-                    dc.deleteRecord(local.get(i));
+                    dc.deleteRecord(local.get(i).getName(), local.get(i).getPath());
                 }
                 count = 0;
             }

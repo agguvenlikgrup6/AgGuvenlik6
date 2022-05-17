@@ -3,11 +3,9 @@ package org.uludag.bmb.operations.dropbox;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.FileNameMap;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +14,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.files.DeleteResult;
 
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.database.FileRecord;
@@ -24,6 +23,8 @@ import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.service.cryption.Crypto;
 
 public class FileOperations {
+    private static final DatabaseController dc = new DatabaseController();
+
     public static final void DOWNLOAD_FILE(String localPath, String filePath, String fileName) {
         new Thread(() -> {
             try {
@@ -34,7 +35,6 @@ public class FileOperations {
                         File fileFolder = new File(localPath + filePath);
                         fileFolder.mkdirs();
                     }
-                    DatabaseController dc = new DatabaseController();
                     FileRecord record = dc.getByPathAndName(filePath, fileName);
                     OutputStream downloadFile = new FileOutputStream(localPath + filePath + record.getEncryptedName());
                     Client.client.files().downloadBuilder(filePath + record.getEncryptedName()).download(downloadFile);
@@ -98,10 +98,44 @@ public class FileOperations {
                 InputStream is = new FileInputStream(file);
                 Path destinationPath = (Path) Paths.get(fileWithPath);
                 Files.copy(is, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    public static void DELETE_FROM_CLOUD(String path, String fileName) {
+        try {
+            FileRecord file = dc.getByPathAndName(path, fileName);
+            DeleteResult ds = Client.client.files().deleteV2(path + file.getEncryptedName());
+            dc.deleteRecord(fileName, path);
+            dc.insertNotification(path + fileName + " dosyası buluttan silindi!");
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void DELETE_FROM_LOCAL(String path, String fileName) {
+        Config config = ConfigController.Settings.LoadSettings();
+        String localPath = config.getLocalDropboxPath();
+        String filePath = localPath;
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+            filePath += "/" + path;
+        } else {
+            filePath += "\\" + path;
+        }
+        filePath += fileName;
+
+        try {
+            if(Files.deleteIfExists((Path) Paths.get(filePath))){
+                dc.insertNotification(path + fileName + " dosyası yerelden silindi!");
+            } else {
+                dc.insertNotification(path + fileName + " dosyası yerelde bulunmadığı için silinemedi!");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

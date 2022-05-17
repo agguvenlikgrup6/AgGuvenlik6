@@ -2,28 +2,50 @@ package org.uludag.bmb.beans.dataproperty;
 
 import java.util.Date;
 
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.CheckBox;
 
 public class TableViewDataProperty {
     private final StringProperty fileName;
     private final ObjectProperty<Date> lastEditDate;
-    private final BooleanProperty syncStatus;
     private final StringProperty filePath;
+    private ObjectProperty<CheckBox> selection;
 
-    public TableViewDataProperty(String fileName, Date lastEditDate, boolean syncStatus, String filePath) {
+    public TableViewDataProperty(String fileName, Date lastEditDate, String filePath, int sync) {
         this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
         this.fileName = new SimpleStringProperty(this, "fileName", fileName);
-        this.syncStatus = new SimpleBooleanProperty(this, "syncStatus", syncStatus);
+        CheckBox cb = new CheckBox();
+        cb.disableProperty().set(true);
+        if(sync == 1){
+            cb.selectedProperty().set(true);
+        }else{
+            cb.selectedProperty().set(false);
+        }
+        this.selection = new SimpleObjectProperty<>(this, "selection", cb);
         this.filePath = new SimpleStringProperty(this, "filepath", filePath);
+    }
+
+    public final boolean getSync(){
+        return this.selection.get().selectedProperty().get();
     }
 
     public final ObjectProperty<Date> lastEditDate() {
         return lastEditDate;
+    }
+
+    public ObjectProperty<CheckBox> selection() {
+        return this.selection;
+    }
+
+    public CheckBox getSelection() {
+        return this.selection.get();
+    }
+
+    public void setSelection(CheckBox selection) {
+        this.selection.set(selection);
     }
 
     public final Date getLastEditDate() {
@@ -45,18 +67,6 @@ public class TableViewDataProperty {
 
     public final void setFileName(String fileName) {
         this.fileName.set(fileName);
-    }
-
-    public final BooleanProperty syncStatus() {
-        return syncStatus;
-    }
-
-    public final Boolean getSyncStatus() {
-        return syncStatus.get();
-    }
-
-    public final void setSyncStatus(Boolean syncStatus) {
-        this.syncStatus.set(syncStatus);
     }
 
     public final StringProperty filePath() {

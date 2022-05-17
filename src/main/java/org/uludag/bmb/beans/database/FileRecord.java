@@ -1,7 +1,5 @@
 package org.uludag.bmb.beans.database;
 
-import java.io.FilenameFilter;
-
 public class FileRecord {
     private String name;
     private String path;

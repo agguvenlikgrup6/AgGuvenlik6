@@ -50,7 +50,6 @@ public class StartupSceneController extends Controller {
                 DatabaseController dc = new DatabaseController();
                 dc.createNotificationTable();
                 dc.createRecordTable();
-                dc.createTreeCacheTable();
                 StartupControl sc = new StartupControl();
                 sc.deletedFileControl();
                 MainSceneController msc = new MainSceneController();

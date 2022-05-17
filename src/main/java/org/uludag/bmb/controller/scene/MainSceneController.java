@@ -3,17 +3,13 @@ package org.uludag.bmb.controller.scene;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.dropbox.core.DbxException;
-import com.dropbox.core.http.StandardHttpRequestor.Config;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.UploadErrorException;
 
@@ -22,10 +18,10 @@ import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
-import org.uludag.bmb.service.sync.SyncServer;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
+import org.uludag.bmb.service.sync.SyncServer;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.ScaleTransition;
@@ -114,9 +110,6 @@ public class MainSceneController extends Controller implements Initializable {
     private TableColumn<TableViewDataProperty, Date> ctwLastEdit;
 
     @FXML
-    private TableColumn<TableViewDataProperty, Boolean> ctwSyncStatus;
-
-    @FXML
     public ListView<String> notificationList;
 
     public MainSceneController() throws FileLoadException {
@@ -182,8 +175,9 @@ public class MainSceneController extends Controller implements Initializable {
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
         ctwLastEdit.setCellValueFactory(cellData -> cellData.getValue().lastEditDate());
-        ctwSyncStatus.setCellValueFactory(cellData -> cellData.getValue().syncStatus());
         ctwFilePath.setCellValueFactory(cellData -> cellData.getValue().filePath());
+        ctwCheckBox.setCellValueFactory(cellData -> cellData.getValue().selection());
+        ctwCheckBox.setEditable(false);
     }
 
     @FXML
@@ -245,7 +239,32 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void deleteFile(ActionEvent event) {
-        System.out.println("delete");
+        List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
+        for (TableViewDataProperty item : selectedItems) {
+            if (item.getSync()) {
+                FileOperations.DELETE_FROM_CLOUD(item.getFilePath(), item.getFileName());
+            } else {
+                FileOperations.DELETE_FROM_LOCAL(item.getFilePath(), item.getFileName());
+            }
+        }
+    }
+
+    @FXML
+    void changeSyncStatusOn(ActionEvent event) {
+        List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
+        for (TableViewDataProperty item : selectedItems) {
+            item.selection().get().selectedProperty().set(true);
+            dc.changeSyncStatus(item, true);
+        }
+    }
+
+    @FXML
+    void changeSyncStatusOff(ActionEvent event) {
+        List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
+        for (TableViewDataProperty item : selectedItems) {
+            item.selection().get().selectedProperty().set(false);
+            dc.changeSyncStatus(item, false);
+        }
     }
 
     @FXML
