@@ -23,15 +23,26 @@
     -fx-background-color: white;
 }
 
-.check-box:selected .box {
+.ctwSync .check-box:selected .box {
     -fx-opacity: 1;
     -fx-background-color: #002fff;
+}
+
+.ctwChange .check-box:selected .box {
+    -fx-opacity: 1;
+    -fx-background-color: red;
 }
 
 .ctwSync {
     -fx-opacity: 1;
     -fx-alignment: CENTER;
 }
+
+.ctwChange {
+    -fx-opacity: 1;
+    -fx-alignment: CENTER;
+}
+
 
 .tree-cell > .tree-disclosure-node > .arrow {
     -fx-min-width: 11;

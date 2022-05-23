@@ -18,21 +18,22 @@ public class StartupControl {
         List<FileRecord> local = StartupControl.GET_LOCAL_RECORDS();
 
         for (int i = 0; i < local.size(); i++) {
-            if (local.get(i).getSync() != 0) {
-                int count = 0;
+            // if (local.get(i).getSync() != 0) {
+                boolean check = false;
                 for (FileRecord fileRecord : cloud) {
-                    if (!local.get(i).getEncryptedName().equals(fileRecord.getEncryptedName()) &&
-                            !local.get(i).getPath().equals(fileRecord.getPath())) {
-                        count++;
+                    if (local.get(i).getEncryptedName().equals(fileRecord.getEncryptedName()) &&
+                            local.get(i).getPath().equals(fileRecord.getPath())) {
+                        check = true;
                     }
                 }
-                if (count == cloud.size()) {
+                if (!check) {
                     FileOperations.DELETE_FILE(local.get(i).getPath(), local.get(i).getName());
                     DatabaseController dc = new DatabaseController();
                     dc.deleteRecord(local.get(i).getName(), local.get(i).getPath());
+                    dc.insertNotification(local.get(i).getPath() + local.get(i).getName() + " buluttan silindiği için yerelden de silindi.");
+                    // dc.insertNotification(local.get(i).getPath() + local.get(i).getName() + " buluttan silindiği için yerelden de senkronizasyona açık olduğu için silindi.");
                 }
-                count = 0;
-            }
+            // }
         }
 
     }
@@ -66,7 +67,7 @@ public class StartupControl {
         ArrayList<FileRecord> f1 = new ArrayList<>();
         for (FileRecord f : fileRecords) {
             f1.add(new FileRecord(f.getName(), f.getPath(), f.getKey(), f.getModificationDate(), f.getHash(),
-                    f.getEncryptedName(), f.getSync()));
+                    f.getEncryptedName(), f.getSync(), f.getChangeStatus()));
         }
         return f1;
     }

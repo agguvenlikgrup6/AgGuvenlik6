@@ -222,9 +222,9 @@ public class DatabaseController {
             List<FileRecord> records = this.queryRunner
                     .query(this.query + " WHERE path = '" + path + "' AND encryptedName = '" + encryptedName + "'",
                             rsh);
-            if(records.size() != 0)
+            if (records.size() != 0)
                 return records.get(0);
-            else 
+            else
                 return null;
         } catch (SQLException e) {
             return null;
@@ -238,6 +238,34 @@ public class DatabaseController {
             statement.setInt(1, item.getSync() ? 1 : 0);
             statement.setString(2, item.getFileName());
             statement.setString(3, item.getFilePath());
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void changeSyncStatus(FileRecord item, boolean b) {
+        String query = "UPDATE records SET sync=? WHERE name=? AND path=?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, b ? 1 : 0);
+            statement.setString(2, item.getName());
+            statement.setString(3, item.getPath());
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void changeChangeStatus(FileRecord item, boolean b) {
+        String query = "UPDATE records SET changeStatus=? WHERE name=? AND path=?";
+        try {
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, b ? 1 : 0);
+            statement.setString(2, item.getName());
+            statement.setString(3, item.getPath());
 
             statement.execute();
         } catch (SQLException e) {

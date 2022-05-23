@@ -84,7 +84,7 @@ public class UITrees {
             try {
                 files.add(new TableViewDataProperty(f.getName(),
                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(f.getModificationDate()),
-                        f.getPath(), f.getSync()));
+                        f.getPath(), f.getSync(), f.getChangeStatus()));
             } catch (ParseException e) {
                 e.printStackTrace();
             }

@@ -13,6 +13,7 @@ import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.service.cryption.Crypto;
 
 public class SyncAdaptor extends FileAlterationListenerAdaptor {
@@ -20,7 +21,22 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
 
     @Override
     public void onFileChange(File file) {
-        System.out.println("değişiklik");
+        String localModificationDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified());
+        FileRecord cloudRecord = dc.getByPathAndName(getCloudPath(file), file.getName());
+        String cloudModificationDate = cloudRecord.getModificationDate();
+        String localHash = FileOperations.GET_HASH(getCloudPath(file), file.getName());
+        String cloudHash = cloudRecord.getHash();
+
+        if (cloudRecord.getSync() == 1) {
+            if (!localModificationDate.equals(cloudModificationDate) && !localHash.equals(cloudHash)) {
+                dc.changeSyncStatus(cloudRecord, false);
+                dc.changeChangeStatus(cloudRecord, true);
+                dc.insertNotification(getCloudPath(file) + file.getName()
+                        + " dosyasında değişiklik oldu. Dosya senkronizasyona kapatıldı!");
+
+
+            }
+        }
     }
 
     private String getCloudPath(File file) {
@@ -45,13 +61,14 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                             .uploadAndFinish(efd.encryptedFile);
                     String path = metaData.getPathDisplay().substring(0,
                             metaData.getPathDisplay().length() - efd.name.length());
+                    String fileHash = FileOperations.GET_HASH(cloudPath, file.getName());
                     dc.insertRecord(new FileRecord(file.getName(),
                             metaData.getPathDisplay().substring(0,
                                     metaData.getPathDisplay().length() - efd.name.length()),
                             efd.key,
-                            new SimpleDateFormat("yyyy-mm-dd hh:mm:ss").format(metaData.getServerModified()),
-                            "eklenmedi",
-                            efd.name, 1));
+                            new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()),
+                            fileHash,
+                            efd.name, 1, 0));
                     dc.insertNotification(path + file.getName() + " dosyası başarı ile yüklendi!");
 
                 } catch (DbxException | IOException e) {

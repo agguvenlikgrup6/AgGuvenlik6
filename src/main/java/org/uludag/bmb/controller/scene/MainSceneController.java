@@ -110,6 +110,9 @@ public class MainSceneController extends Controller implements Initializable {
     private TableColumn<TableViewDataProperty, Date> ctwLastEdit;
 
     @FXML
+    private TableColumn<TableViewDataProperty, CheckBox> ctwChange;
+
+    @FXML
     public ListView<String> notificationList;
 
     public MainSceneController() throws FileLoadException {
@@ -139,8 +142,11 @@ public class MainSceneController extends Controller implements Initializable {
                                 List<String> notifications = dc.getNotifications();
                                 if (notifications.size() != 0 && notifications != null) {
                                     try {
-                                        var items = UITrees.LOCAL_FILES(
-                                                String.join("", cloudTableView.getItems().get(0).getFilePath()));
+                                        String path = "/";
+                                        for (int i = 1; i < linkPane.getItems().size(); i++) {
+                                            path += ((Hyperlink) linkPane.getItems().get(i)).getText();
+                                        }
+                                        var items = UITrees.LOCAL_FILES(path);
                                         cloudTableView.setItems(items);
                                         cloudTableView.refresh();
                                     } catch (IndexOutOfBoundsException e) {
@@ -178,6 +184,8 @@ public class MainSceneController extends Controller implements Initializable {
         ctwFilePath.setCellValueFactory(cellData -> cellData.getValue().filePath());
         ctwCheckBox.setCellValueFactory(cellData -> cellData.getValue().selection());
         ctwCheckBox.setEditable(false);
+        ctwChange.setCellValueFactory(cellData -> cellData.getValue().changeStatus());
+        ctwChange.setEditable(false);
     }
 
     @FXML

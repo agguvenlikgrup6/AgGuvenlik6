@@ -8,13 +8,14 @@ public class FileRecord {
     private String hash;
     private String encryptedName;
     private int sync;
+    private int changeStatus;
 
     public FileRecord() {
 
     }
 
     public FileRecord(String name, String path, String key, String modificationDate, String hash, String encryptedName,
-            int sync) {
+            int sync, int changeStatus) {
         this.name = name;
         this.path = path;
         this.key = key;
@@ -22,6 +23,7 @@ public class FileRecord {
         this.hash = hash;
         this.encryptedName = encryptedName;
         this.sync = sync;
+        this.changeStatus = changeStatus;
     }
 
     public FileRecord(String encryptedName, String filePath) {
@@ -83,6 +85,14 @@ public class FileRecord {
 
     public void setSync(int sync) {
         this.sync = sync;
+    }
+
+    public int getChangeStatus() {
+        return this.changeStatus;
+    }
+
+    public void setChangeStatus(int changeStatus) {
+        this.changeStatus = changeStatus;
     }
 
 }

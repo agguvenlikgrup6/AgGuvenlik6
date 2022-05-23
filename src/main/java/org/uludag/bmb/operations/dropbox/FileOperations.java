@@ -3,6 +3,7 @@ package org.uludag.bmb.operations.dropbox;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import com.dropbox.core.DbxException;
@@ -129,13 +132,30 @@ public class FileOperations {
         filePath += fileName;
 
         try {
-            if(Files.deleteIfExists((Path) Paths.get(filePath))){
+            if (Files.deleteIfExists((Path) Paths.get(filePath))) {
                 dc.insertNotification(path + fileName + " dosyası yerelden silindi!");
             } else {
                 dc.insertNotification(path + fileName + " dosyası yerelde bulunmadığı için silinemedi!");
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static String GET_HASH(String path, String fileName) {
+        String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
+        byte[] inputBytes;
+        try {
+            inputBytes = Files.readAllBytes((Path) Paths.get(localPath + path + fileName));
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update(inputBytes);
+            byte[] digestedBytes = messageDigest.digest();
+
+            String digestString = Base64.getUrlEncoder().encodeToString(digestedBytes);
+            return digestString;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
         }
     }
 }
