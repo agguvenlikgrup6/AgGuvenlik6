@@ -41,6 +41,7 @@ public class FileOperations {
                     FileRecord record = dc.getByPathAndName(filePath, fileName);
                     OutputStream downloadFile = new FileOutputStream(localPath + filePath + record.getEncryptedName());
                     Client.client.files().downloadBuilder(filePath + record.getEncryptedName()).download(downloadFile);
+                    dc.changeDownloadStatus(fileName, filePath, true);
                     downloadFile.close();
                     String decryptedName = Crypto.decryptName(
                             Base64.getUrlDecoder().decode(record.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
@@ -53,6 +54,8 @@ public class FileOperations {
                     decryptedFile.close();
 
                     Files.delete(Paths.get(localPath + filePath + record.getEncryptedName()));
+
+                    dc.insertNotification(filePath + fileName + " dosyası başarı ile indirildi!");
                 }
             } catch (DbxException | IOException e) {
                 e.printStackTrace();
@@ -89,22 +92,26 @@ public class FileOperations {
         }
 
         String fileDirectory = localPath + uploadDirectory;
-        String fileWithPath = fileDirectory + file.getName();
+        try {
+            String fileWithPath = fileDirectory + file.getName();
+            if (!Files.exists(Paths.get(fileWithPath))) {
+                if (!Files.exists(Paths.get(fileDirectory))) {
+                    File fileFolder = new File(fileDirectory);
+                    fileFolder.mkdirs();
+                }
 
-        if (!Files.exists(Paths.get(fileWithPath))) {
-            if (!Files.exists(Paths.get(fileDirectory))) {
-                File fileFolder = new File(fileDirectory);
-                fileFolder.mkdirs();
+                try {
+                    InputStream is = new FileInputStream(file);
+                    Path destinationPath = (Path) Paths.get(fileWithPath);
+                    Files.copy(is, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
-
-            try {
-                InputStream is = new FileInputStream(file);
-                Path destinationPath = (Path) Paths.get(fileWithPath);
-                Files.copy(is, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        } catch (Exception e) {
+            // herhangi bir dosya seçilmezse
         }
+
     }
 
     public static void DELETE_FROM_CLOUD(String path, String fileName) {
@@ -133,6 +140,7 @@ public class FileOperations {
 
         try {
             if (Files.deleteIfExists((Path) Paths.get(filePath))) {
+                dc.changeDownloadStatus(fileName, path, false);
                 dc.insertNotification(path + fileName + " dosyası yerelden silindi!");
             } else {
                 dc.insertNotification(path + fileName + " dosyası yerelde bulunmadığı için silinemedi!");
@@ -156,6 +164,19 @@ public class FileOperations {
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
+        }
+    }
+
+    public static void CHANGE_STATUS(String path, String fileName, boolean status) {
+        if (status) {
+            FileRecord record = dc.getByPathAndName(path, fileName);
+            if (record.getChangeStatus() == 1) {
+
+            } else {
+
+            }
+        } else {
+
         }
     }
 }

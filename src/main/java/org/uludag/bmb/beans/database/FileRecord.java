@@ -9,13 +9,16 @@ public class FileRecord {
     private String encryptedName;
     private int sync;
     private int changeStatus;
+    private int downloadStatus;
 
     public FileRecord() {
 
     }
 
-    public FileRecord(String name, String path, String key, String modificationDate, String hash, String encryptedName,
+    public FileRecord(int downloadStatus, String name, String path, String key, String modificationDate, String hash,
+            String encryptedName,
             int sync, int changeStatus) {
+        this.downloadStatus = downloadStatus;
         this.name = name;
         this.path = path;
         this.key = key;
@@ -95,4 +98,11 @@ public class FileRecord {
         this.changeStatus = changeStatus;
     }
 
+    public int getDownloadStatus() {
+        return this.downloadStatus;
+    }
+
+    public void setDownloadStatus(int downloadStatus){
+        this.downloadStatus = downloadStatus;
+    }
 }

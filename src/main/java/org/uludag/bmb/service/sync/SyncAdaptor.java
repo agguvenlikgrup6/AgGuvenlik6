@@ -34,7 +34,6 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                 dc.insertNotification(getCloudPath(file) + file.getName()
                         + " dosyasında değişiklik oldu. Dosya senkronizasyona kapatıldı!");
 
-
             }
         }
     }
@@ -62,7 +61,7 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                     String path = metaData.getPathDisplay().substring(0,
                             metaData.getPathDisplay().length() - efd.name.length());
                     String fileHash = FileOperations.GET_HASH(cloudPath, file.getName());
-                    dc.insertRecord(new FileRecord(file.getName(),
+                    dc.insertRecord(new FileRecord(1, file.getName(),
                             metaData.getPathDisplay().substring(0,
                                     metaData.getPathDisplay().length() - efd.name.length()),
                             efd.key,

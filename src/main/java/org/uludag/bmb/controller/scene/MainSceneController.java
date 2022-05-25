@@ -113,6 +113,9 @@ public class MainSceneController extends Controller implements Initializable {
     private TableColumn<TableViewDataProperty, CheckBox> ctwChange;
 
     @FXML
+    private TableColumn<TableViewDataProperty, CheckBox> ctwDownload;
+
+    @FXML
     public ListView<String> notificationList;
 
     public MainSceneController() throws FileLoadException {
@@ -186,6 +189,8 @@ public class MainSceneController extends Controller implements Initializable {
         ctwCheckBox.setEditable(false);
         ctwChange.setCellValueFactory(cellData -> cellData.getValue().changeStatus());
         ctwChange.setEditable(false);
+        ctwDownload.setCellValueFactory(cellData -> cellData.getValue().downloadStatus());
+        ctwDownload.setEditable(false);
     }
 
     @FXML
@@ -263,6 +268,7 @@ public class MainSceneController extends Controller implements Initializable {
         for (TableViewDataProperty item : selectedItems) {
             item.selection().get().selectedProperty().set(true);
             dc.changeSyncStatus(item, true);
+            FileOperations.CHANGE_STATUS(item.getFilePath(), item.getFileName(), true);
         }
     }
 
@@ -272,6 +278,7 @@ public class MainSceneController extends Controller implements Initializable {
         for (TableViewDataProperty item : selectedItems) {
             item.selection().get().selectedProperty().set(false);
             dc.changeSyncStatus(item, false);
+            FileOperations.CHANGE_STATUS(item.getFilePath(), item.getFileName(), false);
         }
     }
 

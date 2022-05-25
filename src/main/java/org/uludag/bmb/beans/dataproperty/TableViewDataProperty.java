@@ -2,9 +2,7 @@ package org.uludag.bmb.beans.dataproperty;
 
 import java.util.Date;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -17,7 +15,18 @@ public class TableViewDataProperty {
     private ObjectProperty<CheckBox> selection;
     private final ObjectProperty<CheckBox> changeStatus;
 
-    public TableViewDataProperty(String fileName, Date lastEditDate, String filePath, int sync, int changeStatus) {
+    private final ObjectProperty<CheckBox> downloadStatus;
+
+    public TableViewDataProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath, int sync,
+            int changeStatus) {
+        CheckBox dStatus = new CheckBox();
+        dStatus.disableProperty().set(true);
+        if (downloadStatus == 1) {
+            dStatus.selectedProperty().set(true);
+        } else {
+            dStatus.selectedProperty().set(false);
+        }
+        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", dStatus);
         this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
         this.fileName = new SimpleStringProperty(this, "fileName", fileName);
         CheckBox cb = new CheckBox();
@@ -62,6 +71,18 @@ public class TableViewDataProperty {
 
     public ObjectProperty<CheckBox> changeStatus() {
         return this.changeStatus;
+    }
+
+    public CheckBox getDownloadStatus() {
+        return this.downloadStatus.get();
+    }
+
+    public void setDownloadStatus(CheckBox downloadStatus) {
+        this.downloadStatus.set(downloadStatus);
+    }
+
+    public ObjectProperty<CheckBox> downloadStatus() {
+        return this.downloadStatus;
     }
 
     public CheckBox getSelection() {

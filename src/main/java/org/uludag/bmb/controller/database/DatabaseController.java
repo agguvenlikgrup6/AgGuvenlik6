@@ -273,4 +273,19 @@ public class DatabaseController {
         }
     }
 
+    public void changeDownloadStatus(String fileName, String path, boolean status) {
+        String query = "UPDATE records SET downloadStatus=? WHERE name=? AND path=?";
+        try {
+            FileRecord item = getByPathAndName(path, fileName);
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, status ? 1 : 0);
+            statement.setString(2, item.getName());
+            statement.setString(3, item.getPath());
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -71,7 +71,8 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                      <columns>
-                        <TableColumn fx:id="ctwFileName" minWidth="-1.0" prefWidth="280.0" text="Dosya" />
+                        <TableColumn fx:id="ctwDownload" editable="false" maxWidth="30.0" minWidth="30.0" prefWidth="20.0" resizable="false" styleClass="ctwDownload" />
+                        <TableColumn fx:id="ctwFileName" minWidth="-1.0" prefWidth="295.0" text="Dosya" />
                         <TableColumn fx:id="ctwLastEdit" minWidth="-1.0" prefWidth="272.0" styleClass="ctwSync" text="Son Değişiklik" />
                         <TableColumn fx:id="ctwCheckBox" editable="false" minWidth="-1.0" prefWidth="304.0" styleClass="ctwSync" text="Senkronizasyon" />
                         <TableColumn fx:id="ctwFilePath" prefWidth="75.0" text="PATHINFO" visible="false" />

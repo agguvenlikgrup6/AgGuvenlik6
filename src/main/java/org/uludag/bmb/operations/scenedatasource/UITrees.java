@@ -82,7 +82,7 @@ public class UITrees {
         List<FileRecord> fileRecords = dc.getRecordsByPath(path);
         for (FileRecord f : fileRecords) {
             try {
-                files.add(new TableViewDataProperty(f.getName(),
+                files.add(new TableViewDataProperty(f.getDownloadStatus(), f.getName(),
                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(f.getModificationDate()),
                         f.getPath(), f.getSync(), f.getChangeStatus()));
             } catch (ParseException e) {

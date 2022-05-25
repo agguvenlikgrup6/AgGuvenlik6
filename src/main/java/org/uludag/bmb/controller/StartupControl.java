@@ -19,20 +19,23 @@ public class StartupControl {
 
         for (int i = 0; i < local.size(); i++) {
             // if (local.get(i).getSync() != 0) {
-                boolean check = false;
-                for (FileRecord fileRecord : cloud) {
-                    if (local.get(i).getEncryptedName().equals(fileRecord.getEncryptedName()) &&
-                            local.get(i).getPath().equals(fileRecord.getPath())) {
-                        check = true;
-                    }
+            boolean check = false;
+            for (FileRecord fileRecord : cloud) {
+                if (local.get(i).getEncryptedName().equals(fileRecord.getEncryptedName()) &&
+                        local.get(i).getPath().equals(fileRecord.getPath())) {
+                    check = true;
                 }
-                if (!check) {
-                    FileOperations.DELETE_FILE(local.get(i).getPath(), local.get(i).getName());
-                    DatabaseController dc = new DatabaseController();
-                    dc.deleteRecord(local.get(i).getName(), local.get(i).getPath());
-                    dc.insertNotification(local.get(i).getPath() + local.get(i).getName() + " buluttan silindiği için yerelden de silindi.");
-                    // dc.insertNotification(local.get(i).getPath() + local.get(i).getName() + " buluttan silindiği için yerelden de senkronizasyona açık olduğu için silindi.");
-                }
+            }
+            if (!check) {
+                FileOperations.DELETE_FILE(local.get(i).getPath(), local.get(i).getName());
+                DatabaseController dc = new DatabaseController();
+                dc.deleteRecord(local.get(i).getName(), local.get(i).getPath());
+                dc.insertNotification(local.get(i).getPath() + local.get(i).getName()
+                        + " buluttan silindiği için yerelden de silindi.");
+                // dc.insertNotification(local.get(i).getPath() + local.get(i).getName() + "
+                // buluttan silindiği için yerelden de senkronizasyona açık olduğu için
+                // silindi.");
+            }
             // }
         }
 
@@ -66,7 +69,8 @@ public class StartupControl {
         List<FileRecord> fileRecords = dc.getAllRecords();
         ArrayList<FileRecord> f1 = new ArrayList<>();
         for (FileRecord f : fileRecords) {
-            f1.add(new FileRecord(f.getName(), f.getPath(), f.getKey(), f.getModificationDate(), f.getHash(),
+            f1.add(new FileRecord(f.getDownloadStatus(), f.getName(), f.getPath(), f.getKey(), f.getModificationDate(),
+                    f.getHash(),
                     f.getEncryptedName(), f.getSync(), f.getChangeStatus()));
         }
         return f1;
