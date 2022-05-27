@@ -13,6 +13,7 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.UploadErrorException;
 
+
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
@@ -38,6 +39,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
@@ -45,6 +47,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
@@ -117,6 +120,28 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     public ListView<String> notificationList;
+
+    @FXML
+    private Label lblFileName;
+
+    @FXML
+    private Label lblFileSize;
+
+    @FXML
+    private Label lblLastEdit;
+    @FXML
+    private ListView<String> shareList;
+   
+    @FXML
+    private Tooltip fileNameTTip;
+
+    @FXML
+    private Tooltip fileSizeTTip;
+
+    @FXML
+    private Tooltip lastChangeTTip;
+
+
 
     public MainSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("mainSceneFxml"),
@@ -391,4 +416,25 @@ public class MainSceneController extends Controller implements Initializable {
         }
 
     }
+    @FXML
+    void showFileDetails(MouseEvent event) {
+
+        ObservableList<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
+        for (var file : selectedFiles) {
+            lblFileName.setText(file.getFileName());
+            lblLastEdit.setText(file.getLastEditDate().toString());
+            lblFileSize.setText(String.valueOf((FileOperations.GET_METADATA(file.getFilePath(),file.getFileName()).getSize())/(1024))+" KB");
+            shareList.getItems().addAll(String.valueOf((FileOperations.GET_METADATA(file.getFilePath(), file.getFileName())).getSharingInfo()));
+            System.out.println(123);
+        }
+       
+        fileNameTTip.setText(lblFileName.getText());
+        fileSizeTTip.setText(lblFileSize.getText());
+        lastChangeTTip.setText(lblLastEdit.getText());
+        lblFileName.setTooltip(fileNameTTip);
+        lblFileSize.setTooltip(fileSizeTTip);
+        lblLastEdit.setTooltip(lastChangeTTip);
+
+    }
+    
 }
