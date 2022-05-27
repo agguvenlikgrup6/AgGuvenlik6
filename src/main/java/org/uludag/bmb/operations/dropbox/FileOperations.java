@@ -14,10 +14,17 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.DeleteResult;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.FileSharingInfo;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.database.FileRecord;
@@ -179,4 +186,28 @@ public class FileOperations {
 
         }
     }
+
+    public static FileMetadata GET_METADATA(String filePath, String fileName) {
+        FileRecord record=dc.getByPathAndName(filePath, fileName);
+        ListFolderResult result;
+        try {
+            if(filePath.equals("/")){
+                filePath="";
+            }
+            result = Client.client.files().listFolder(filePath);
+
+            List<Metadata> entries = result.getEntries();
+            for (Metadata metadata : entries) {
+                if (metadata instanceof FileMetadata && metadata.getName().equals(record.getEncryptedName())) {
+                    FileMetadata data = (FileMetadata) metadata;
+                    return data;
+
+                }
+            }
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
