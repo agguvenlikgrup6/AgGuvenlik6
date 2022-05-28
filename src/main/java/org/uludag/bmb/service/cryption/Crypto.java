@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
@@ -21,7 +24,7 @@ public class Crypto {
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;
-    private static final int AES_KEY_BIT = 256;
+    private static final int AES_KEY_BIT = 128;
 
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
@@ -149,5 +152,20 @@ public class Crypto {
         SecretKey secretKey = new SecretKeySpec(decodedKey, 0,
                 decodedKey.length, "AES");
         return secretKey;
+    }   
+
+    public class SHARE {
+        public static KeyPair CREATE_KEY_PAIR() {
+            try {
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+                kpg.initialize(4096);
+                return kpg.generateKeyPair();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                return null;
+            }
+    
+        }
+
     }
 }

@@ -11,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
-public class selectShareFolderSceneController {
+public class SelectShareFolderSceneController {
 
     @FXML
     private Button saveSharedToFolderBtn;

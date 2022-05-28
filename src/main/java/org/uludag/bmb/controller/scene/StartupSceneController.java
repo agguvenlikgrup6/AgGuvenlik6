@@ -2,7 +2,10 @@ package org.uludag.bmb.controller.scene;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyPair;
+import java.util.Base64;
 
+import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
@@ -11,7 +14,11 @@ import org.uludag.bmb.controller.StartupControl;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.oauth.OAuthFlow;
+import org.uludag.bmb.operations.database.PublicInfoOperations;
+import org.uludag.bmb.operations.database.TableOperations;
 import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.service.cryption.Crypto;
+import org.uludag.bmb.service.sync.SyncMonitor;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -47,11 +54,10 @@ public class StartupSceneController extends Controller {
     public void displayScene(Stage stage) {
         try {
             if (Client.client != null) {
-                DatabaseController dc = new DatabaseController();
-                dc.createNotificationTable();
-                dc.createRecordTable();
                 StartupControl sc = new StartupControl();
                 sc.deletedFileControl();
+                sc.downloadFileControl();
+                new Thread(new SyncMonitor()).start();
                 MainSceneController msc = new MainSceneController();
                 msc.displayScene(stage);
             } else {
@@ -73,20 +79,10 @@ public class StartupSceneController extends Controller {
         directoryChooser.setInitialDirectory(null);
 
         try {
-            String os = System.getProperty("os.name").toLowerCase();
-
             String path = directoryChooser.showDialog(null).getAbsolutePath();
-            if (os.indexOf("mac") >= 0) {
-                path += '/';
-            } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
-                path += '/';
-            } else {
-                path += "\\";
-            }
             chosenPath.setText(path);
 
             ConfigController.Settings.SaveSettings(new Config(path));
-            // DatabaseController.createLocalDatabase();
 
         } catch (NullPointerException ex) {
             chooseLocalPath(event);
@@ -105,6 +101,22 @@ public class StartupSceneController extends Controller {
             alert.setContentText("Lütfen Geçerli Bir Dizin Seçiniz");
             alert.showAndWait();
         } else {
+            TableOperations tableOperations = new TableOperations();
+
+            tableOperations.createNotificationTable();
+            tableOperations.createRecordTable();
+            tableOperations.createPrivateKeyTable();
+
+            PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
+
+            if (Client.client == null) {
+                Client.client = Client.getClient();
+            }
+
+            KeyPair keyPair = Crypto.SHARE.CREATE_KEY_PAIR();
+            publicInfoOperations.insertShareKeys(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()),
+                    Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()));
+            new Thread(new SyncMonitor()).start();
             new MainSceneController().displayScene(stage);
         }
     }

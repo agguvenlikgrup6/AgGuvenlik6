@@ -8,7 +8,6 @@ public class Config {
         this.localDropboxPath = path;
     }
 
-    // ObjectMapper deserialize işlemleri için boş constructor gerekli
     public Config(){
 
     }

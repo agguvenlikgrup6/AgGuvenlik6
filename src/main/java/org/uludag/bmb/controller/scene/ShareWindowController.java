@@ -1,93 +1,73 @@
 package org.uludag.bmb.controller.scene;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.sharing.MemberSelector;
-
+import org.uludag.bmb.beans.dataproperty.AutoCompleteComboBoxListener;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
-import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.controller.database.DatabaseController;
+import org.uludag.bmb.operations.database.PublicInfoOperations;
+import org.uludag.bmb.operations.dropbox.FileOperations;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextField;
 
 public class ShareWindowController implements Initializable {
+    private static final PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
+
     private ObservableList<TableViewDataProperty> fileList;
+    @FXML
+    private ComboBox<String> accountField;
 
     @FXML
-    private Button btnCreateLink;
+    private Button btnAddShareAccount;
 
     @FXML
     private Button btnShareWithMails;
 
     @FXML
-    private SplitPane fileNamePane;
+    private ListView<String> shareAccountList;
 
     @FXML
-    private TextArea emailList;
+    private ListView<String> shareFileList;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        List<String> emailList = publicInfoOperations.getUsersList();
+        for (String email : emailList) {
+            accountField.getItems().addAll(email);
+        }
+        new AutoCompleteComboBoxListener<>(accountField);
+    }
 
     @FXML
-    void createLink(ActionEvent event) {
-        
+    void shareAccountRemove(ActionEvent event) {
+        shareAccountList.getItems().remove(shareAccountList.getSelectionModel().getSelectedIndex());
     }
 
     @FXML
     void shareWithMails(ActionEvent event) {
-        List<MemberSelector> members = new ArrayList<>();
-        var mails = emailList.getText().split(";");
-        for (String mail : mails) {
-            members.add(MemberSelector.email(mail));
-        }
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Dosya Paylaşım");
-        try {
-            for (TableViewDataProperty f : fileList) {
-                Client.client.sharing().addFileMember(f.getFilePath() + f.getFileName(), members);
-            }
-            alert.setHeaderText("Dosya Paylaşımı Başarı İle Sonuçlandı.\nPaylaşılan Hesaplar:");
-            alert.setContentText(emailList.getText());
-            alert.showAndWait();
+        FileOperations.SHARE_FILE(shareFileList.getItems(), publicInfoOperations.getUsersList());
+    }
 
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
-            stage.close();
+    @FXML
+    void addShareAccount(ActionEvent event) {
+        shareAccountList.getItems().add(accountField.getSelectionModel().getSelectedItem());
 
-        } catch (DbxException e) {
-            alert.setHeaderText("Dosya Paylaşımı Başarısızlıkla Sonuçlandı");
-            alert.showAndWait();
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
-            stage.close();
-            e.printStackTrace();
+    }
+
+    public void setFileList(ObservableList<TableViewDataProperty> selectedFiles) {
+        for (TableViewDataProperty file : selectedFiles) {
+            shareFileList.getItems().add(file.getFilePath() + file.getFileName());
         }
     }
 
-    private void setFiles(ObservableList<TableViewDataProperty> fileList) {
-        fileNamePane.getItems().clear();
-        for (TableViewDataProperty file : fileList) {
-            fileNamePane.getItems().add(new Label(file.getFileName()));
-        }
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
-
-    public void setFileList(ObservableList<TableViewDataProperty> fileList) {
-        this.fileList = fileList;
-        this.setFiles(fileList);
-    }
 }

@@ -33,45 +33,49 @@
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="507.0" prefWidth="640.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" prefHeight="507.0" prefWidth="1000.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="479.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
       <children>
-        <Label alignment="CENTER" layoutX="41.0" layoutY="81.0" style="&#10;" text="Dosyaların paylaşılacağı hesabın mail adresini giriniz" textAlignment="CENTER">
-          <font>
-            <Font size="21.0" />
-          </font>
-        </Label>
-            <TextArea fx:id="emailList" layoutX="106.0" layoutY="150.0" prefHeight="37.0" prefWidth="429.0" />
-            <Label alignment="CENTER" layoutX="88.0" layoutY="118.0" style="&#10;" text="Birden fazla hesap için aralarına ; işareti ekleyiniz" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
+            <Button fx:id="btnShareWithMails" layoutX="707.0" layoutY="435.0" mnemonicParsing="false" onAction="#shareWithMails" prefHeight="24.0" prefWidth="109.0" text="PAYLAŞ" AnchorPane.bottomAnchor="42.0">
                <font>
-                  <Font size="18.0" />
+                  <Font name="System Bold" size="16.0" />
+               </font></Button>
+            <Label layoutX="198.0" layoutY="38.0" text="DOSYALAR">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font></Label>
+            <ListView fx:id="shareFileList" layoutX="24.0" layoutY="71.0" prefHeight="394.0" prefWidth="469.0" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="71.0" />
+            <ListView fx:id="shareAccountList" layoutX="551.0" layoutY="71.0" prefHeight="263.0" prefWidth="422.0" AnchorPane.leftAnchor="551.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="71.0">
+               <contextMenu>
+                  <ContextMenu>
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#shareAccountRemove" text="Sil" />
+                    </items>
+                  </ContextMenu>
+               </contextMenu>
+            </ListView>
+            <Label layoutX="614.0" layoutY="38.0" text="PAYLAŞILACAK HESAPLAR">
+               <font>
+                  <Font name="System Bold" size="20.0" />
                </font>
             </Label>
-            <Button fx:id="btnShareWithMails" layoutX="250.0" layoutY="205.0" mnemonicParsing="false" onAction="#shareWithMails" text="Hesaplar İle Paylaş" />
-            <Button fx:id="btnCreateLink" layoutX="222.0" layoutY="329.0" mnemonicParsing="false" onAction="#createLink" text="Paylaşım Bağlantısı Oluştur" />
-            <Label alignment="CENTER" layoutX="88.0" layoutY="280.0" style="&#10;" text="Doğrudan paylaşım bağlantısı oluşturmak için" textAlignment="CENTER">
+            <Button fx:id="btnAddShareAccount" layoutX="889.0" layoutY="349.0" mnemonicParsing="false" onAction="#addShareAccount" prefHeight="24.0" prefWidth="79.0" text="Ekle" AnchorPane.bottomAnchor="134.0" />
+            <Label layoutX="554.0" layoutY="379.0" prefHeight="43.0" prefWidth="422.0" text="Listeden Hesap Kaldırmak İçin Farenizin Sağ Tuşunu Liste Üzerindeki Hesaplarda Kullanabilirsiniz" textAlignment="CENTER" wrapText="true" AnchorPane.bottomAnchor="85.0">
                <font>
-                  <Font size="21.0" />
+                  <Font size="12.0" />
                </font>
             </Label>
-            <Label layoutX="13.0" layoutY="392.0" text="Paylaşım Bağlantısı: ">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <Separator layoutX="4.0" layoutY="229.0" prefHeight="38.0" prefWidth="631.0" />
-            <TextArea editable="false" layoutX="200.0" layoutY="384.0" prefHeight="38.0" prefWidth="429.0" />
-            <SplitPane fx:id="fileNamePane" layoutX="42.0" layoutY="34.0" prefHeight="32.0" prefWidth="557.0" styleClass="fileNamePane" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="41.0" />
-            <Label layoutX="284.0" layoutY="14.0" text="DOSYALAR" />
+            <ComboBox fx:id="accountField" layoutX="551.0" layoutY="349.0" prefHeight="24.0" prefWidth="332.0" />
       </children>
     </AnchorPane>
   </children>

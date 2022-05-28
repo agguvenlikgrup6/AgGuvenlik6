@@ -5,184 +5,81 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.sqlite.SQLiteDataSource;
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 
 public class DatabaseController {
-    public Connection conn;
-    public String url;
-    public String dbName;
-    public String tableName;
-    private String query;
+    public class Tables {
+        public String record;
+        public String notification;
+        public String privateKey;
+        public String publicInfo;
+
+        public Tables() {
+            this.record = PropertiesReader.getProperty("table_Record");
+            this.notification = PropertiesReader.getProperty("table_Notification");
+            this.privateKey = PropertiesReader.getProperty("table_privateKey");
+            this.publicInfo = PropertiesReader.getProperty("table_publicInfo");
+        }
+    }
+
+    public class Databases {
+        public String local;
+        public String cloud;
+
+        public Databases() {
+            this.local = PropertiesReader.getProperty("database_Local");
+            this.cloud = PropertiesReader.getProperty("database_Cloud");
+        }
+    }
+
+    public Tables TABLES;
+    public Databases DATABASES;
+
+    private Connection localDb;
+    private Connection cloudDb;
+    private String connectionUrl;
     private SQLiteDataSource ds;
     private QueryRunner queryRunner;
 
+    public Connection getConn() {
+        return this.localDb;
+    }
+
+    public Connection getAzureCon() {
+        return this.cloudDb;
+    }
+
+    public String getUrl() {
+        return this.connectionUrl;
+    }
+
+    public SQLiteDataSource getDs() {
+        return this.ds;
+    }
+
+    public QueryRunner getQueryRunner() {
+        return this.queryRunner;
+    }
+
     public DatabaseController() {
-        this.tableName = PropertiesReader.getProperty("dbRecordTable");
-        this.dbName = PropertiesReader.getProperty("localDatabaseName");
-        this.query = "SELECT * FROM " + this.tableName;
-        this.url = getConnectionUrl(this.dbName);
+        this.TABLES = new Tables();
+        this.DATABASES = new Databases();
+        this.connectionUrl = getConnectionUrl(this.DATABASES.local);
         this.ds = new SQLiteDataSource();
         this.queryRunner = new QueryRunner(this.ds);
-        this.ds.setUrl(this.getConnectionUrl(this.dbName));
+        this.ds.setUrl(this.connectionUrl);
         try {
-            conn = DriverManager.getConnection(this.url);
+            localDb = DriverManager.getConnection(this.connectionUrl);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-    }
 
-    public FileRecord getByPathAndName(String path, String name) {
-        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
-            List<FileRecord> records = this.queryRunner
-                    .query(this.query + " WHERE path = '" + path + "' AND name = '" + name + "'", rsh);
-            return records.get(0);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public List<FileRecord> getByEncryptedName(String encryptedName) {
-        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
-        try {
-            List<FileRecord> records = this.queryRunner
-                    .query(this.query + " WHERE encryptedName = '" + encryptedName + "'", rsh);
-            return records;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public List<FileRecord> getAllRecords() {
-        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
-        try {
-            List<FileRecord> records = this.queryRunner
-                    .query(this.query, rsh);
-            return records;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public List<FileRecord> getRecordsByPath(String path) {
-        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
-        try {
-            List<FileRecord> records = this.queryRunner
-                    .query(this.query + " WHERE path='" + path + "'", rsh);
-            return records;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public List<String> getNotifications() {
-        try {
-            Statement statement = this.conn.createStatement();
-            String query = "Select * From notifications";
-            ResultSet rst = statement.executeQuery(query);
-            List<String> notifications = new ArrayList<String>();
-            while (rst.next()) {
-                notifications.add(rst.getString("message"));
-            }
-            query = "Delete From notifications";
-            statement.execute(query);
-            return notifications;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
-    public void createRecordTable() {
-        String query = "CREATE TABLE IF NOT EXISTS " + this.tableName +
-                "(" +
-                "id integer PRIMARY KEY," +
-                "name TEXT NOT NULL," +
-                "path TEXT NOT NULL," +
-                "key TEXT NOT NULL," +
-                "modificationDate TEXT NOT NULL," +
-                "hash TEXT NOT NULL," +
-                "encryptedName TEXT NOT NULL," +
-                "sync BOOLEAN NOT NULL CHECK(sync IN(0, 1))" +
-                ")";
-        try {
-            PreparedStatement statement = this.conn.prepareStatement(query);
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void createNotificationTable() {
-        String query = "CREATE TABLE IF NOT EXISTS notifications " +
-                "(" +
-                "id integer PRIMARY KEY," +
-                "message TEXT NOT NULL" +
-                ")";
-        try {
-            PreparedStatement statement = this.conn.prepareStatement(query);
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void insertNotification(String notificationMessage) {
-        String query = "INSERT INTO notifications (message) values(?)";
-        try {
-            PreparedStatement statement = this.conn.prepareStatement(query);
-            statement.setString(1, notificationMessage);
-
-            statement.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public final void deleteRecord(String fileName, String filePath) {
-        String query = "DELETE FROM records WHERE name=? AND path=?";
-        try {
-            PreparedStatement statement = this.conn.prepareStatement(query);
-            statement.setString(1, fileName);
-            statement.setString(2, filePath);
-
-            statement.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void insertRecord(FileRecord fr) {
-        String query = "INSERT INTO " + this.tableName +
-                "(name, path, key, modificationDate, hash, encryptedName, sync) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement statement = conn.prepareStatement(query);
-            statement.setString(1, fr.getName());
-            statement.setString(2, fr.getPath());
-            statement.setString(3, fr.getKey());
-            statement.setString(4, fr.getModificationDate());
-            statement.setString(5, fr.getHash());
-            statement.setString(6, fr.getEncryptedName());
-            statement.setInt(7, fr.getSync());
-
-            statement.execute();
+            this.cloudDb = DriverManager.getConnection(this.DATABASES.cloud);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -215,77 +112,4 @@ public class DatabaseController {
             return null;
         }
     }
-
-    public FileRecord getByEncryptedNameAndPath(String encryptedName, String path) {
-        ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
-        try {
-            List<FileRecord> records = this.queryRunner
-                    .query(this.query + " WHERE path = '" + path + "' AND encryptedName = '" + encryptedName + "'",
-                            rsh);
-            if (records.size() != 0)
-                return records.get(0);
-            else
-                return null;
-        } catch (SQLException e) {
-            return null;
-        }
-    }
-
-    public void changeSyncStatus(TableViewDataProperty item, boolean b) {
-        String query = "UPDATE records SET sync=? WHERE name=? AND path=?";
-        try {
-            PreparedStatement statement = conn.prepareStatement(query);
-            statement.setInt(1, item.getSync() ? 1 : 0);
-            statement.setString(2, item.getFileName());
-            statement.setString(3, item.getFilePath());
-
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void changeSyncStatus(FileRecord item, boolean b) {
-        String query = "UPDATE records SET sync=? WHERE name=? AND path=?";
-        try {
-            PreparedStatement statement = conn.prepareStatement(query);
-            statement.setInt(1, b ? 1 : 0);
-            statement.setString(2, item.getName());
-            statement.setString(3, item.getPath());
-
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void changeChangeStatus(FileRecord item, boolean b) {
-        String query = "UPDATE records SET changeStatus=? WHERE name=? AND path=?";
-        try {
-            PreparedStatement statement = conn.prepareStatement(query);
-            statement.setInt(1, b ? 1 : 0);
-            statement.setString(2, item.getName());
-            statement.setString(3, item.getPath());
-
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void changeDownloadStatus(String fileName, String path, boolean status) {
-        String query = "UPDATE records SET downloadStatus=? WHERE name=? AND path=?";
-        try {
-            FileRecord item = getByPathAndName(path, fileName);
-            PreparedStatement statement = conn.prepareStatement(query);
-            statement.setInt(1, status ? 1 : 0);
-            statement.setString(2, item.getName());
-            statement.setString(3, item.getPath());
-
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

@@ -12,26 +12,29 @@ import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
+import org.uludag.bmb.operations.database.FileRecordOperations;
+import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.service.cryption.Crypto;
 
 public class SyncAdaptor extends FileAlterationListenerAdaptor {
-    private static final DatabaseController dc = new DatabaseController();
+    private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
+    private static final NotificationOperations notificationOperations = new NotificationOperations();
 
     @Override
     public void onFileChange(File file) {
         String localModificationDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified());
-        FileRecord cloudRecord = dc.getByPathAndName(getCloudPath(file), file.getName());
+        FileRecord cloudRecord = fileRecordOperations.getByPathAndName(getCloudPath(file), file.getName());
         String cloudModificationDate = cloudRecord.getModificationDate();
         String localHash = FileOperations.GET_HASH(getCloudPath(file), file.getName());
         String cloudHash = cloudRecord.getHash();
 
         if (cloudRecord.getSync() == 1) {
             if (!localModificationDate.equals(cloudModificationDate) && !localHash.equals(cloudHash)) {
-                dc.changeSyncStatus(cloudRecord, false);
-                dc.changeChangeStatus(cloudRecord, true);
-                dc.insertNotification(getCloudPath(file) + file.getName()
+                fileRecordOperations.UPDATE_SYNC_STATUS(cloudRecord.getPath(), cloudRecord.getName(), false);
+                fileRecordOperations.UPDATE_CHANGE_STATUS(cloudRecord.getPath(), cloudRecord.getName(), true);
+                notificationOperations.insertNotification(getCloudPath(file) + file.getName()
                         + " dosyasında değişiklik oldu. Dosya senkronizasyona kapatıldı!");
 
             }
@@ -48,8 +51,8 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
     @Override
     public void onFileCreate(File file) {
         String cloudPath = getCloudPath(file);
-        FileRecord encryptedFileRecord = dc.getByEncryptedNameAndPath(file.getName(), cloudPath);
-        FileRecord sameFileRecord = dc.getByPathAndName(cloudPath, file.getName());
+        FileRecord encryptedFileRecord = fileRecordOperations.getByPathAndEncryptedName(cloudPath, file.getName());
+        FileRecord sameFileRecord = fileRecordOperations.getByPathAndName(cloudPath, file.getName());
         if (encryptedFileRecord != null || sameFileRecord != null) {
             return;
         } else {
@@ -61,14 +64,14 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                     String path = metaData.getPathDisplay().substring(0,
                             metaData.getPathDisplay().length() - efd.name.length());
                     String fileHash = FileOperations.GET_HASH(cloudPath, file.getName());
-                    dc.insertRecord(new FileRecord(1, file.getName(),
+                    fileRecordOperations.INSERT(new FileRecord(1, file.getName(),
                             metaData.getPathDisplay().substring(0,
                                     metaData.getPathDisplay().length() - efd.name.length()),
                             efd.key,
                             new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()),
                             fileHash,
                             efd.name, 1, 0));
-                    dc.insertNotification(path + file.getName() + " dosyası başarı ile yüklendi!");
+                    notificationOperations.insertNotification(path + file.getName() + " dosyası başarı ile yüklendi!");
 
                 } catch (DbxException | IOException e) {
                     e.printStackTrace();

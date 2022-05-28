@@ -17,8 +17,6 @@ public class SyncMonitor implements Runnable {
     @Override
     public void run() {
         try {
-            System.out.println("Senkronizasyon kontrolü başladı!");
-
             Config config = ConfigController.Settings.LoadSettings();
             String localPath = config.getLocalDropboxPath();
             File rootDirectory = new File(localPath);

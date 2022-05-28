@@ -2,6 +2,7 @@ package org.uludag.bmb.operations.dropbox;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -28,12 +30,16 @@ import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.database.FileRecord;
+import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
+import org.uludag.bmb.operations.database.FileRecordOperations;
+import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.service.cryption.Crypto;
 
 public class FileOperations {
-    private static final DatabaseController dc = new DatabaseController();
+    private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
+    private static final NotificationOperations notificationOperations = new NotificationOperations();
 
     public static final void DOWNLOAD_FILE(String localPath, String filePath, String fileName) {
         new Thread(() -> {
@@ -45,10 +51,11 @@ public class FileOperations {
                         File fileFolder = new File(localPath + filePath);
                         fileFolder.mkdirs();
                     }
-                    FileRecord record = dc.getByPathAndName(filePath, fileName);
+                    FileRecord record = fileRecordOperations.getByPathAndName(filePath, fileName);
                     OutputStream downloadFile = new FileOutputStream(localPath + filePath + record.getEncryptedName());
                     Client.client.files().downloadBuilder(filePath + record.getEncryptedName()).download(downloadFile);
-                    dc.changeDownloadStatus(fileName, filePath, true);
+                    fileRecordOperations.UPDATE_DOWNLOAD_STATUS(filePath, fileName, true);
+                    fileRecordOperations.UPDATE_SYNC_STATUS(filePath, fileName, true);
                     downloadFile.close();
                     String decryptedName = Crypto.decryptName(
                             Base64.getUrlDecoder().decode(record.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
@@ -62,7 +69,7 @@ public class FileOperations {
 
                     Files.delete(Paths.get(localPath + filePath + record.getEncryptedName()));
 
-                    dc.insertNotification(filePath + fileName + " dosyası başarı ile indirildi!");
+                    notificationOperations.insertNotification(filePath + fileName + " dosyası başarı ile indirildi!");
                 }
             } catch (DbxException | IOException e) {
                 e.printStackTrace();
@@ -116,17 +123,16 @@ public class FileOperations {
                 }
             }
         } catch (Exception e) {
-            // herhangi bir dosya seçilmezse
         }
 
     }
 
     public static void DELETE_FROM_CLOUD(String path, String fileName) {
         try {
-            FileRecord file = dc.getByPathAndName(path, fileName);
+            FileRecord file = fileRecordOperations.getByPathAndName(path, fileName);
             DeleteResult ds = Client.client.files().deleteV2(path + file.getEncryptedName());
-            dc.deleteRecord(fileName, path);
-            dc.insertNotification(path + fileName + " dosyası buluttan silindi!");
+            fileRecordOperations.DELETE(fileName, path);
+            notificationOperations.insertNotification(path + fileName + " dosyası buluttan silindi!");
         } catch (DbxException e) {
             e.printStackTrace();
         }
@@ -147,10 +153,13 @@ public class FileOperations {
 
         try {
             if (Files.deleteIfExists((Path) Paths.get(filePath))) {
-                dc.changeDownloadStatus(fileName, path, false);
-                dc.insertNotification(path + fileName + " dosyası yerelden silindi!");
+                if (fileRecordOperations.getByPathAndName(path, fileName) != null) {
+                    fileRecordOperations.UPDATE_DOWNLOAD_STATUS(path, fileName, false);
+                }
+                notificationOperations.insertNotification(path + fileName + " dosyası yerelden silindi!");
             } else {
-                dc.insertNotification(path + fileName + " dosyası yerelde bulunmadığı için silinemedi!");
+                notificationOperations
+                        .insertNotification(path + fileName + " dosyası yerelde bulunmadığı için silinemedi!");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -174,31 +183,49 @@ public class FileOperations {
         }
     }
 
-    public static void CHANGE_STATUS(String path, String fileName, boolean status) {
+    public static void CHANGE_STATUS(TableViewDataProperty item, boolean status) {
         if (status) {
-            FileRecord record = dc.getByPathAndName(path, fileName);
-            if (record.getChangeStatus() == 1) {
-
+            String filePath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
+            filePath += item.getFilePath() + item.getFileName();
+            if (item.getChangeStatus()) {
+                try {
+                    InputStream is = new FileInputStream(new File(filePath));
+                    DELETE_FROM_LOCAL(item.getFilePath(), item.getFileName());
+                    DELETE_FROM_CLOUD(item.getFilePath(), item.getFileName());
+                    Path destinationPath = (Path) Paths.get(filePath);
+                    Files.copy(is, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
-
+                FileRecord record = fileRecordOperations.getByPathAndName(item.getFilePath(), item.getFileName());
+                if (!record.getModificationDate()
+                        .equals(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(item.getLastEditDate()))) {
+                    item.setChangeStatus(true);
+                    fileRecordOperations.UPDATE_CHANGE_STATUS(item.getFilePath(), item.getFileName(), true);
+                    CHANGE_STATUS(item, status);
+                }
             }
+            fileRecordOperations.UPDATE_SYNC_STATUS(item.getFilePath(), item.getFileName(), true);
         } else {
-
+            fileRecordOperations.UPDATE_SYNC_STATUS(item.getFilePath(), item.getFileName(), false);
         }
     }
 
     public static FileMetadata GET_METADATA(String filePath, String fileName) {
-        FileRecord record=dc.getByPathAndName(filePath, fileName);
+        FileRecord record = fileRecordOperations.getByPathAndName(filePath,
+                fileName);
         ListFolderResult result;
         try {
-            if(filePath.equals("/")){
-                filePath="";
+            if (filePath.equals("/")) {
+                filePath = "";
             }
             result = Client.client.files().listFolder(filePath);
 
             List<Metadata> entries = result.getEntries();
             for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata && metadata.getName().equals(record.getEncryptedName())) {
+                if (metadata instanceof FileMetadata &&
+                        metadata.getName().equals(record.getEncryptedName())) {
                     FileMetadata data = (FileMetadata) metadata;
                     return data;
 
@@ -208,6 +235,10 @@ public class FileOperations {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void SHARE_FILE(List<String> files, List<String> usersList) {
+
     }
 
 }

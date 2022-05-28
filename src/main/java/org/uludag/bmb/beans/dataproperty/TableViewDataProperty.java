@@ -12,45 +12,23 @@ public class TableViewDataProperty {
     private final StringProperty fileName;
     private final ObjectProperty<Date> lastEditDate;
     private final StringProperty filePath;
-    private ObjectProperty<CheckBox> selection;
+    private ObjectProperty<CheckBox> syncStatus;
     private final ObjectProperty<CheckBox> changeStatus;
-
     private final ObjectProperty<CheckBox> downloadStatus;
 
-    public TableViewDataProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath, int sync,
+    public TableViewDataProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath,
+            int syncStatus,
             int changeStatus) {
-        CheckBox dStatus = new CheckBox();
-        dStatus.disableProperty().set(true);
-        if (downloadStatus == 1) {
-            dStatus.selectedProperty().set(true);
-        } else {
-            dStatus.selectedProperty().set(false);
-        }
-        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", dStatus);
+        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", new CheckBoxWithStatus(downloadStatus));
         this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
         this.fileName = new SimpleStringProperty(this, "fileName", fileName);
-        CheckBox cb = new CheckBox();
-        cb.disableProperty().set(true);
-        if (sync == 1) {
-            cb.selectedProperty().set(true);
-        } else {
-            cb.selectedProperty().set(false);
-        }
-        this.selection = new SimpleObjectProperty<>(this, "selection", cb);
+        this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CheckBoxWithStatus(syncStatus));
         this.filePath = new SimpleStringProperty(this, "filepath", filePath);
-
-        CheckBox cb1 = new CheckBox();
-        cb1.disableProperty().set(true);
-        if (changeStatus == 1) {
-            cb1.selectedProperty().set(true);
-        } else {
-            cb1.selectedProperty().set(false);
-        }
-        this.changeStatus = new SimpleObjectProperty<>(this, "changeStatus", cb1);
+        this.changeStatus = new SimpleObjectProperty<>(this, "changeStatus", new CheckBoxWithStatus(changeStatus));
     }
 
     public final boolean getSync() {
-        return this.selection.get().selectedProperty().get();
+        return this.syncStatus.get().selectedProperty().get();
     }
 
     public final ObjectProperty<Date> lastEditDate() {
@@ -58,15 +36,15 @@ public class TableViewDataProperty {
     }
 
     public ObjectProperty<CheckBox> selection() {
-        return this.selection;
+        return this.syncStatus;
     }
 
-    public CheckBox getChangeStatus() {
-        return this.changeStatus.get();
+    public boolean getChangeStatus() {
+        return this.changeStatus.get().selectedProperty().get();
     }
 
-    public void setChangeStatus(CheckBox changeStatus) {
-        this.changeStatus.set(changeStatus);
+    public void setChangeStatus(Boolean changeStatus) {
+        this.changeStatus.get().selectedProperty().set(changeStatus);;
     }
 
     public ObjectProperty<CheckBox> changeStatus() {
@@ -86,11 +64,11 @@ public class TableViewDataProperty {
     }
 
     public CheckBox getSelection() {
-        return this.selection.get();
+        return this.syncStatus.get();
     }
 
     public void setSelection(CheckBox selection) {
-        this.selection.set(selection);
+        this.syncStatus.set(selection);
     }
 
     public final Date getLastEditDate() {

@@ -20,10 +20,4 @@ public class EncryptedFileData {
         this.key = secretKey;
         
     }
-
-    public EncryptedFileData(FileMetadata metadata, String name, String key) {
-        this.metadata = metadata;
-        this.name = name;
-        this.key = key;
-    }
 }

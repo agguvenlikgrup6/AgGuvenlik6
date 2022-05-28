@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
+import javax.swing.Action;
+
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.SaveUrlResult;
@@ -24,6 +26,7 @@ import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
+import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
@@ -66,7 +69,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MainSceneController extends Controller implements Initializable {
-    private DatabaseController dc;
+    private NotificationOperations notificationOperations;
 
     @FXML
     private Button btnDownload;
@@ -170,7 +173,7 @@ public class MainSceneController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        dc = new DatabaseController();
+        notificationOperations = new NotificationOperations();
         notificationList.setCellFactory(param -> new NotificationListCellFactory());
 
         Timeline notificationCycle = new Timeline(
@@ -178,7 +181,7 @@ public class MainSceneController extends Controller implements Initializable {
                         new EventHandler<ActionEvent>() {
                             @Override
                             public void handle(ActionEvent event) {
-                                List<String> notifications = dc.getNotifications();
+                                List<String> notifications = notificationOperations.getNotifications();
                                 if (notifications.size() != 0 && notifications != null) {
                                     try {
                                         String path = "/";
@@ -207,6 +210,7 @@ public class MainSceneController extends Controller implements Initializable {
                                     }
                                     notifications.clear();
                                 }
+
                             }
                         }));
         notificationCycle.setCycleCount(Timeline.INDEFINITE);
@@ -216,23 +220,17 @@ public class MainSceneController extends Controller implements Initializable {
         TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         treeView.setRoot(root);
         treeView.setShowRoot(false);
-        
+
         List<SharedFileMetadata> entries;
         try {
             entries = Client.client.sharing().listReceivedFiles().getEntries();
             for (SharedFileMetadata entrie : entries) {
                 String sharedFileNames = entrie.getName();
                 sharedFilesList.getItems().add(sharedFileNames);
-                System.out.println(123);
             }
-            // SaveUrlResult urla=Client.client.files().saveUrl("/Test/" + entries.get(0).getName(), entries.get(0).getPreviewUrl());
-            System.out.println(123);
         } catch (DbxException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        System.out.println("");
-        
 
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
@@ -320,8 +318,7 @@ public class MainSceneController extends Controller implements Initializable {
         List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
         for (TableViewDataProperty item : selectedItems) {
             item.selection().get().selectedProperty().set(true);
-            dc.changeSyncStatus(item, true);
-            FileOperations.CHANGE_STATUS(item.getFilePath(), item.getFileName(), true);
+            FileOperations.CHANGE_STATUS(item, true);
         }
     }
 
@@ -330,14 +327,12 @@ public class MainSceneController extends Controller implements Initializable {
         List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
         for (TableViewDataProperty item : selectedItems) {
             item.selection().get().selectedProperty().set(false);
-            dc.changeSyncStatus(item, false);
-            FileOperations.CHANGE_STATUS(item.getFilePath(), item.getFileName(), false);
+            FileOperations.CHANGE_STATUS(item, false);
         }
     }
 
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
-        System.out.println(SyncServer.getSyncStatus());
         ArrayList<String> path = new ArrayList<String>();
         ArrayList<String> pathNaked = new ArrayList<String>();
 
@@ -447,10 +442,9 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void showFileDetails(MouseEvent event) {
-
-        TableViewDataProperty selectedFiles = cloudTableView.getSelectionModel().getSelectedItem();
-        String fileExtension = selectedFiles.getFileName().split(Pattern.quote("."))[1];
         try {
+            TableViewDataProperty selectedFiles = cloudTableView.getSelectionModel().getSelectedItem();
+            String fileExtension = selectedFiles.getFileName().split(Pattern.quote("."))[1];
             if (fileExtension.equals("png") || fileExtension.equals("jpg") || fileExtension.equals("jpeg")
                     || fileExtension.equals("mp4") || fileExtension.equals("mp3") || fileExtension.equals("svg")) {
                 File icon = new File(MainSceneController.class.getResource("/icons/mediaIcon.png").getPath());
@@ -465,41 +459,34 @@ public class MainSceneController extends Controller implements Initializable {
                 File icon = new File(MainSceneController.class.getResource("/icons/defaultIcon.png").getPath());
                 fileIcon.setImage(new Image(new FileInputStream(icon)));
             }
-        } catch (FileNotFoundException e) {
-        }
-
-        shareList.getItems().clear();
-        lblFileName.setText(selectedFiles.getFileName());
-        lblLastEdit.setText(selectedFiles.getLastEditDate().toString());
-        lblFileSize.setText(String.valueOf(
-                (FileOperations.GET_METADATA(selectedFiles.getFilePath(), selectedFiles.getFileName()).getSize())
-                        / (1024))
-                + " KB");
-        String idShared = FileOperations.GET_METADATA(selectedFiles.getFilePath(), selectedFiles.getFileName()).getId();
-        try {
-            List<UserFileMembershipInfo> sharedPeople = Client.client.sharing().listFileMembers(idShared).getUsers();
+            shareList.getItems().clear();
+            lblFileName.setText(selectedFiles.getFileName());
+            lblLastEdit.setText(selectedFiles.getLastEditDate().toString());
+            lblFileSize.setText(String.valueOf(
+                    (FileOperations.GET_METADATA(selectedFiles.getFilePath(), selectedFiles.getFileName()).getSize())
+                            / (1024))
+                    + " KB");
+            String idShared = FileOperations.GET_METADATA(selectedFiles.getFilePath(), selectedFiles.getFileName())
+                    .getId();
+            List<UserFileMembershipInfo> sharedPeople = Client.client.sharing().listFileMembers(idShared)
+                    .getUsers();
             for (UserFileMembershipInfo membershipInfo : sharedPeople) {
                 shareList.getItems().add(membershipInfo.getUser().getEmail());
             }
-        } catch (DbxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        // sharedPeople1.get(0).getUser().getEmail();
-        System.out.println(123);
 
-        fileNameTTip.setText(lblFileName.getText());
-        fileSizeTTip.setText(lblFileSize.getText());
-        lastChangeTTip.setText(lblLastEdit.getText());
-        lblFileName.setTooltip(fileNameTTip);
-        lblFileSize.setTooltip(fileSizeTTip);
-        lblLastEdit.setTooltip(lastChangeTTip);
+            fileNameTTip.setText(lblFileName.getText());
+            fileSizeTTip.setText(lblFileSize.getText());
+            lastChangeTTip.setText(lblLastEdit.getText());
+            lblFileName.setTooltip(fileNameTTip);
+            lblFileSize.setTooltip(fileSizeTTip);
+            lblLastEdit.setTooltip(lastChangeTTip);
+        } catch (Exception e) {
+        }
 
     }
 
     @FXML
     void saveSharedFile(ActionEvent event) {
-       System.out.println("kaydettim hadi bakam");
+        System.out.println("kaydettim hadi bakam");
     }
-
 }
