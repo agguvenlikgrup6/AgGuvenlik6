@@ -26,6 +26,9 @@ public class Main {
             // byte[] abc = Files.readAllBytes(a.toPath());
             // HashTry pp = new HashTry();
             // pp.getHash(abc);
+            String aaa = "a**a";
+            aaa = aaa.replace('*', '/');
+            System.out.println(aaa);
 
 
 
@@ -42,15 +45,15 @@ public class Main {
             // System.out.println("similar-->  " + similar);
             // System.out.println("different-->  " + different);
 
-            List<String> abc = new ArrayList<>(Arrays.asList("milan","dingo","elpha","hafil","meat","iga","neeta.peeta"));
-            List<String> dddd = new ArrayList<>(Arrays.asList("milan","dingo","elpha","hafil","meat","iga"));
-            List<String> abbb = new ArrayList<>(Arrays.asList("hafil","iga","binga","mike","dingo"));
-            List<List<String>> listOne = new ArrayList<>(Arrays.asList(abc,abbb));
-            List<String> listTwo = new ArrayList<>(Arrays.asList("hafil","iga","binga","mike","dingo"));
-            List<List<String>> listBuffer = new ArrayList<>(listOne);
-            //listOne.get(0).retainAll(listTwo);
-            listBuffer.get(0).removeAll(dddd);
-            System.out.println(listBuffer);
+            // List<String> abc = new ArrayList<>(Arrays.asList("milan","dingo","elpha","hafil","meat","iga","neeta.peeta"));
+            // List<String> dddd = new ArrayList<>(Arrays.asList("milan","dingo","elpha","hafil","meat","iga"));
+            // List<String> abbb = new ArrayList<>(Arrays.asList("hafil","iga","binga","mike","dingo"));
+            // List<List<String>> listOne = new ArrayList<>(Arrays.asList(abc,abbb));
+            // List<String> listTwo = new ArrayList<>(Arrays.asList("hafil","iga","binga","mike","dingo"));
+            // List<List<String>> listBuffer = new ArrayList<>(listOne);
+            // //listOne.get(0).retainAll(listTwo);
+            // listBuffer.get(0).removeAll(dddd);
+            // System.out.println(listBuffer);
 
 
             //Crypto tt = new Crypto();
