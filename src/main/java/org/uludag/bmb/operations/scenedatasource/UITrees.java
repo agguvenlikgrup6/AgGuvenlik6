@@ -14,7 +14,6 @@ import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
-import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 

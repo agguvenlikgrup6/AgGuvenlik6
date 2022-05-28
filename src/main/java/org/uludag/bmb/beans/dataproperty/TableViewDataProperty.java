@@ -19,7 +19,8 @@ public class TableViewDataProperty {
     public TableViewDataProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath,
             int syncStatus,
             int changeStatus) {
-        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", new CheckBoxWithStatus(downloadStatus));
+        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus",
+                new CheckBoxWithStatus(downloadStatus));
         this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
         this.fileName = new SimpleStringProperty(this, "fileName", fileName);
         this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CheckBoxWithStatus(syncStatus));
@@ -44,7 +45,8 @@ public class TableViewDataProperty {
     }
 
     public void setChangeStatus(Boolean changeStatus) {
-        this.changeStatus.get().selectedProperty().set(changeStatus);;
+        this.changeStatus.get().selectedProperty().set(changeStatus);
+        ;
     }
 
     public ObjectProperty<CheckBox> changeStatus() {
@@ -96,8 +98,7 @@ public class TableViewDataProperty {
     }
 
     public final String getFilePath() {
-        String p = filePath.get();
-        return p;
+        return filePath.get();
     }
 
     public final void setFilePath(String filePath) {

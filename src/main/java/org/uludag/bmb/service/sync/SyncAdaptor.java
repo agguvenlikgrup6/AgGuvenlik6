@@ -11,7 +11,6 @@ import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.dropbox.Client;

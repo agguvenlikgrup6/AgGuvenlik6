@@ -2,9 +2,7 @@ package org.uludag.bmb.operations.dropbox;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,25 +12,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.DeleteResult;
 import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.FileSharingInfo;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
-import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.service.cryption.Crypto;
