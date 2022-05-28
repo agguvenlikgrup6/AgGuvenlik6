@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -461,7 +462,7 @@ public class MainSceneController extends Controller implements Initializable {
             }
             shareList.getItems().clear();
             lblFileName.setText(selectedFiles.getFileName());
-            lblLastEdit.setText(selectedFiles.getLastEditDate().toString());
+            lblLastEdit.setText(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(selectedFiles.getLastEditDate()));
             lblFileSize.setText(String.valueOf(
                     (FileOperations.GET_METADATA(selectedFiles.getFilePath(), selectedFiles.getFileName()).getSize())
                             / (1024))

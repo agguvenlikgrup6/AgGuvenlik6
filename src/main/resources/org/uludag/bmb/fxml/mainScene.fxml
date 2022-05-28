@@ -72,7 +72,7 @@
                         </ContextMenu>
                      </contextMenu>
                   </ListView>
-                  <Label layoutX="49.0" layoutY="386.0" prefHeight="27.0" prefWidth="152.0" text="Paylaşılan Dosyalar">
+                  <Label layoutX="31.0" layoutY="386.0" prefHeight="27.0" prefWidth="189.0" text="Paylaşılan Dosyalar">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -125,43 +125,43 @@
                   </Pane>
                   <Pane fx:id="fileDetailPane" layoutY="34.0" prefHeight="764.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <children>
-                  <Label alignment="CENTER" font="$x1" layoutX="49.0" layoutY="14.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" wrapText="false" />
-                        <Label layoutX="14.0" layoutY="346.0" prefHeight="17.0" prefWidth="64.0" text="Dosya Adı">
+                  <Label alignment="CENTER" font="$x1" layoutX="49.0" layoutY="21.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" wrapText="false" />
+                        <Label layoutX="5.0" layoutY="346.0" prefHeight="17.0" prefWidth="80.0" text="Dosya Adı">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Label layoutX="14.0" layoutY="373.0" prefHeight="17.0" prefWidth="64.0" text="Boyut">
+                        <Label layoutX="5.0" layoutY="373.0" prefHeight="17.0" prefWidth="64.0" text="Boyut">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Label layoutX="14.0" layoutY="401.0" prefHeight="17.0" prefWidth="80.0" text="Son Değişiklik">
+                        <Label layoutX="5.0" layoutY="401.0" prefHeight="17.0" prefWidth="106.0" text="Son Değişiklik">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Label fx:id="lblFileName" layoutX="125.0" layoutY="346.0" prefHeight="17.0" prefWidth="112.0" text="Dosya Adı">
+                        <Label fx:id="lblFileName" layoutX="109.0" layoutY="346.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
                            <tooltip>
                               <Tooltip fx:id="fileNameTTip" text="Dosya Adı" />
                            </tooltip>
                         </Label>
-                        <Label fx:id="lblFileSize" layoutX="125.0" layoutY="373.0" prefHeight="17.0" prefWidth="112.0" text="Dosya Adı">
+                        <Label fx:id="lblFileSize" layoutX="109.0" layoutY="373.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
                            <tooltip>
                               <Tooltip fx:id="fileSizeTTip" text="Dosya Boyutu" />
                            </tooltip>
                         </Label>
-                        <Label fx:id="lblLastEdit" layoutX="125.0" layoutY="401.0" prefHeight="17.0" prefWidth="112.0" text="Dosya Adı">
+                        <Label fx:id="lblLastEdit" layoutX="109.0" layoutY="401.0" prefHeight="17.0" prefWidth="152.0" text="Dosya Adı">
                            <tooltip>
                               <Tooltip fx:id="lastChangeTTip" text="Son Değişiklik" />
                            </tooltip>
                         </Label>
                         <ListView fx:id="shareList" layoutX="25.0" layoutY="509.0" prefHeight="200.0" prefWidth="200.0" styleClass="sharedAccountList" />
-                        <Label layoutX="38.0" layoutY="482.0" prefHeight="27.0" prefWidth="175.0" text="Paylaşılan Hesaplar">
+                        <Label layoutX="59.0" layoutY="482.0" prefHeight="27.0" prefWidth="132.0" text="Dosya Üyeleri" textAlignment="CENTER">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
                         <Separator layoutY="457.0" prefHeight="0.0" prefWidth="250.0" />
                         <Separator layoutY="320.0" prefHeight="3.0" prefWidth="250.0" />
-                        <ImageView fx:id="fileIcon" fitHeight="180.0" fitWidth="180.0" layoutX="35.0" layoutY="105.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="fileIcon" fitHeight="180.0" fitWidth="180.0" layoutX="35.0" layoutY="82.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </Pane>
                   <Pane fx:id="notificationPane" layoutY="35.0" prefHeight="323.0" prefWidth="360.0">
