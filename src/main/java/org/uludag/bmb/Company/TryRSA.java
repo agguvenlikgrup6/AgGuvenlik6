@@ -26,6 +26,7 @@ public class TryRSA {
     
         }
     }
+    //Sadece public alır şifreleme ve çözme yapar.
     public void initJustPub(String pubk){
         try{
             X509EncodedKeySpec keySpecPublic = new X509EncodedKeySpec(decode(pubk));
@@ -35,6 +36,7 @@ public class TryRSA {
         catch(Exception ignored) {
         }
     }
+    //Sadece private alır şifreleme ve çözme yapar.
     public void initJustPri(String prik){
         try{
             PKCS8EncodedKeySpec keySpecPrivate = new PKCS8EncodedKeySpec(decode(prik));
