@@ -38,11 +38,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
@@ -65,7 +67,7 @@
                      <contextMenu>
                         <ContextMenu>
                           <items>
-                            <MenuItem mnemonicParsing="false" text="Kaydet" />
+                            <MenuItem fx:id="saveSharedFileContext" mnemonicParsing="false" onAction="#saveSharedFile" text="Kaydet" />
                           </items>
                         </ContextMenu>
                      </contextMenu>
@@ -124,9 +126,18 @@
                   <Pane fx:id="fileDetailPane" layoutY="34.0" prefHeight="764.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <children>
                   <Label alignment="CENTER" font="$x1" layoutX="49.0" layoutY="14.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" wrapText="false" />
-                        <Label layoutX="14.0" layoutY="346.0" prefHeight="17.0" prefWidth="64.0" text="Dosya Adı" />
-                        <Label layoutX="14.0" layoutY="373.0" prefHeight="17.0" prefWidth="64.0" text="Boyut" />
-                        <Label layoutX="14.0" layoutY="401.0" prefHeight="17.0" prefWidth="80.0" text="Son Değişiklik" />
+                        <Label layoutX="14.0" layoutY="346.0" prefHeight="17.0" prefWidth="64.0" text="Dosya Adı">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font></Label>
+                        <Label layoutX="14.0" layoutY="373.0" prefHeight="17.0" prefWidth="64.0" text="Boyut">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font></Label>
+                        <Label layoutX="14.0" layoutY="401.0" prefHeight="17.0" prefWidth="80.0" text="Son Değişiklik">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font></Label>
                         <Label fx:id="lblFileName" layoutX="125.0" layoutY="346.0" prefHeight="17.0" prefWidth="112.0" text="Dosya Adı">
                            <tooltip>
                               <Tooltip fx:id="fileNameTTip" text="Dosya Adı" />
@@ -142,12 +153,15 @@
                               <Tooltip fx:id="lastChangeTTip" text="Son Değişiklik" />
                            </tooltip>
                         </Label>
-                        <ListView fx:id="shareList" layoutX="25.0" layoutY="456.0" prefHeight="200.0" prefWidth="200.0" />
-                        <Label layoutX="38.0" layoutY="429.0" prefHeight="27.0" prefWidth="175.0" text="Paylaşılan Hesaplar">
+                        <ListView fx:id="shareList" layoutX="25.0" layoutY="509.0" prefHeight="200.0" prefWidth="200.0" styleClass="sharedAccountList" />
+                        <Label layoutX="38.0" layoutY="482.0" prefHeight="27.0" prefWidth="175.0" text="Paylaşılan Hesaplar">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
+                        <Separator layoutY="457.0" prefHeight="0.0" prefWidth="250.0" />
+                        <Separator layoutY="320.0" prefHeight="3.0" prefWidth="250.0" />
+                        <ImageView fx:id="fileIcon" fitHeight="180.0" fitWidth="180.0" layoutX="35.0" layoutY="105.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </Pane>
                   <Pane fx:id="notificationPane" layoutY="35.0" prefHeight="323.0" prefWidth="360.0">

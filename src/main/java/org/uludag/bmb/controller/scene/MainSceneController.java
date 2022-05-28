@@ -1,6 +1,8 @@
 package org.uludag.bmb.controller.scene;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -8,11 +10,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
+import com.dropbox.core.v2.files.SaveUrlResult;
 import com.dropbox.core.v2.files.UploadErrorException;
-
+import com.dropbox.core.v2.sharing.SharedFileMetadata;
+import com.dropbox.core.v2.sharing.UserFileMembershipInfo;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
@@ -50,6 +55,8 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -131,7 +138,7 @@ public class MainSceneController extends Controller implements Initializable {
     private Label lblLastEdit;
     @FXML
     private ListView<String> shareList;
-   
+
     @FXML
     private Tooltip fileNameTTip;
 
@@ -141,7 +148,11 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     private Tooltip lastChangeTTip;
 
+    @FXML
+    private ImageView fileIcon;
 
+    @FXML
+    private ListView<String> sharedFilesList;
 
     public MainSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("mainSceneFxml"),
@@ -205,6 +216,23 @@ public class MainSceneController extends Controller implements Initializable {
         TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         treeView.setRoot(root);
         treeView.setShowRoot(false);
+        
+        List<SharedFileMetadata> entries;
+        try {
+            entries = Client.client.sharing().listReceivedFiles().getEntries();
+            for (SharedFileMetadata entrie : entries) {
+                String sharedFileNames = entrie.getName();
+                sharedFilesList.getItems().add(sharedFileNames);
+                System.out.println(123);
+            }
+            // SaveUrlResult urla=Client.client.files().saveUrl("/Test/" + entries.get(0).getName(), entries.get(0).getPreviewUrl());
+            System.out.println(123);
+        } catch (DbxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        System.out.println("");
+        
 
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
@@ -416,18 +444,50 @@ public class MainSceneController extends Controller implements Initializable {
         }
 
     }
+
     @FXML
     void showFileDetails(MouseEvent event) {
 
-        ObservableList<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
-        for (var file : selectedFiles) {
-            lblFileName.setText(file.getFileName());
-            lblLastEdit.setText(file.getLastEditDate().toString());
-            lblFileSize.setText(String.valueOf((FileOperations.GET_METADATA(file.getFilePath(),file.getFileName()).getSize())/(1024))+" KB");
-            shareList.getItems().addAll(String.valueOf((FileOperations.GET_METADATA(file.getFilePath(), file.getFileName())).getSharingInfo()));
-            System.out.println(123);
+        TableViewDataProperty selectedFiles = cloudTableView.getSelectionModel().getSelectedItem();
+        String fileExtension = selectedFiles.getFileName().split(Pattern.quote("."))[1];
+        try {
+            if (fileExtension.equals("png") || fileExtension.equals("jpg") || fileExtension.equals("jpeg")
+                    || fileExtension.equals("mp4") || fileExtension.equals("mp3") || fileExtension.equals("svg")) {
+                File icon = new File(MainSceneController.class.getResource("/icons/mediaIcon.png").getPath());
+                fileIcon.setImage(new Image(new FileInputStream(icon)));
+            } else if (fileExtension.equals("pdf")) {
+                File icon = new File(MainSceneController.class.getResource("/icons/pdfIcon.png").getPath());
+                fileIcon.setImage(new Image(new FileInputStream(icon)));
+            } else if (fileExtension.equals("txt") || fileExtension.equals("docx") || fileExtension.equals("doc")) {
+                File icon = new File(MainSceneController.class.getResource("/icons/textIcon.png").getPath());
+                fileIcon.setImage(new Image(new FileInputStream(icon)));
+            } else {
+                File icon = new File(MainSceneController.class.getResource("/icons/defaultIcon.png").getPath());
+                fileIcon.setImage(new Image(new FileInputStream(icon)));
+            }
+        } catch (FileNotFoundException e) {
         }
-       
+
+        shareList.getItems().clear();
+        lblFileName.setText(selectedFiles.getFileName());
+        lblLastEdit.setText(selectedFiles.getLastEditDate().toString());
+        lblFileSize.setText(String.valueOf(
+                (FileOperations.GET_METADATA(selectedFiles.getFilePath(), selectedFiles.getFileName()).getSize())
+                        / (1024))
+                + " KB");
+        String idShared = FileOperations.GET_METADATA(selectedFiles.getFilePath(), selectedFiles.getFileName()).getId();
+        try {
+            List<UserFileMembershipInfo> sharedPeople = Client.client.sharing().listFileMembers(idShared).getUsers();
+            for (UserFileMembershipInfo membershipInfo : sharedPeople) {
+                shareList.getItems().add(membershipInfo.getUser().getEmail());
+            }
+        } catch (DbxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // sharedPeople1.get(0).getUser().getEmail();
+        System.out.println(123);
+
         fileNameTTip.setText(lblFileName.getText());
         fileSizeTTip.setText(lblFileSize.getText());
         lastChangeTTip.setText(lblLastEdit.getText());
@@ -436,5 +496,10 @@ public class MainSceneController extends Controller implements Initializable {
         lblLastEdit.setTooltip(lastChangeTTip);
 
     }
-    
+
+    @FXML
+    void saveSharedFile(ActionEvent event) {
+       System.out.println("kaydettim hadi bakam");
+    }
+
 }
