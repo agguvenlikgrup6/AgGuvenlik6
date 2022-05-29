@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
@@ -39,6 +40,9 @@ public class ShareWindowController implements Initializable {
     @FXML
     private ListView<String> shareFileList;
 
+    @FXML
+    private Label pathInfo;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         List<String> emailList = publicInfoOperations.getUsersList();
@@ -55,7 +59,7 @@ public class ShareWindowController implements Initializable {
 
     @FXML
     void shareWithMails(ActionEvent event) {
-        FileOperations.SHARE_FILE(shareFileList.getItems(), publicInfoOperations.getUsersList());
+        FileOperations.SHARE_FILE(fileList, shareAccountList.getItems());
     }
 
     @FXML
@@ -65,8 +69,9 @@ public class ShareWindowController implements Initializable {
     }
 
     public void setFileList(ObservableList<TableViewDataProperty> selectedFiles) {
+        this.fileList = selectedFiles;
         for (TableViewDataProperty file : selectedFiles) {
-            shareFileList.getItems().add(file.getFilePath() + file.getFileName());
+            shareFileList.getItems().add( file.getFileName());
         }
     }
 

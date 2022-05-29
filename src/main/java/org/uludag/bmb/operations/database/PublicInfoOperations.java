@@ -61,4 +61,51 @@ public class PublicInfoOperations {
         }
     }
 
+    public String getUserPublicKey(String email) {
+        try {
+            String query = "SELECT publicKey FROM " + this.databaseController.TABLES.publicInfo + " WHERE email=?";
+            PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
+            statement.setString(1, email);
+            String publicKey = "";
+            ResultSet rst = statement.executeQuery();
+            while (rst.next()) {
+                publicKey = rst.getString("publicKey");
+            }
+            return publicKey;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public String getPrivateKey() {
+        String privateKeyQuery = "SELECT privateKey FROM " + this.databaseController.TABLES.privateKey;
+        String privateKey = "";
+        try {
+            PreparedStatement statement = this.databaseController.getConn().prepareStatement(privateKeyQuery);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                privateKey = rs.getString("privateKey");
+            }
+            return privateKey;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void insertSharedFileKey(String recieverEmail, String fileKey, String encryptedFileName) {
+        String query = "INSERT INTO " + this.databaseController.TABLES.sharedFilesKeyTable 
+                + "(email, fileKey, encryptedName) VALUES(?,?,?)";
+        try {
+            PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
+            statement.setString(1, recieverEmail);
+            statement.setString(2, fileKey);
+            statement.setString(3, encryptedFileName);
+
+            statement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

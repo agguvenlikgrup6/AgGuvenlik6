@@ -3,6 +3,7 @@ package org.uludag.bmb.controller.scene;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.util.Base64;
 
 import com.dropbox.core.DbxException;

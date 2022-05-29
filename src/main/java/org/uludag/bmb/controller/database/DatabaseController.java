@@ -17,12 +17,14 @@ public class DatabaseController {
         public String notification;
         public String privateKey;
         public String publicInfo;
+        public String sharedFilesKeyTable;
 
         public Tables() {
             this.record = PropertiesReader.getProperty("table_Record");
             this.notification = PropertiesReader.getProperty("table_Notification");
             this.privateKey = PropertiesReader.getProperty("table_privateKey");
             this.publicInfo = PropertiesReader.getProperty("table_publicInfo");
+            this.sharedFilesKeyTable = PropertiesReader.getProperty("table_sharedKeyPeople");
         }
     }
 

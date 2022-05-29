@@ -18,8 +18,10 @@ module org.uludag.bmb {
    requires java.net.http;
    requires commons.dbutils;
    requires commons.dbcp2;
+   requires org.bouncycastle.provider;
 
    opens org.uludag.bmb.service.sync to java.net.http, commons.dbutils;
+   opens org.uludag.bmb.service.cryption to org.bouncycastle.provider;
    opens org.uludag.bmb to javafx.fxml, javafx.controls, javafx.base, javafx.graphics, commons.dbutils;
    opens org.uludag.bmb.beans.database to commons.dbutils;
    opens org.uludag.bmb.controller.scene to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;

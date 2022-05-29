@@ -110,7 +110,6 @@
                   </TableView>
                   <SplitPane fx:id="linkPane" layoutX="16.0" layoutY="14.0" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="744.0" styleClass="pathLinkPane" />
                   <Button fx:id="btnNewFolder" layoutX="238.0" layoutY="60.0" mnemonicParsing="false" onMouseClicked="#createNewFolder" prefHeight="24.0" prefWidth="31.0" style="-fx-background-color: black;" styleClass="newFolder" />
-                  <Button layoutX="289.0" layoutY="60.0" mnemonicParsing="false" onAction="#changeSyncStatusOn" text="Button" />
         </children>
                <padding>
                   <Insets left="5.0" right="5.0" />

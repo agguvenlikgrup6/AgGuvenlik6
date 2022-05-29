@@ -29,11 +29,15 @@ import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
+import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.service.cryption.Crypto;
+
+import javafx.collections.ObservableList;
 
 public class FileOperations {
     private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
     private static final NotificationOperations notificationOperations = new NotificationOperations();
+    private static final PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
 
     public static final void DOWNLOAD_FILE(String localPath, String filePath, String fileName) {
         new Thread(() -> {
@@ -232,8 +236,20 @@ public class FileOperations {
         return null;
     }
 
-    public static void SHARE_FILE(List<String> files, List<String> usersList) {
+    public static void SHARE_FILE(ObservableList<TableViewDataProperty> fileList, List<String> userEmailList) {
+        String pathInfo = fileList.get(0).getFilePath();
+        String myPrivateKey = publicInfoOperations.getPrivateKey();
+        for (String recieverEmail : userEmailList) {
+            String recieverPublicKey = publicInfoOperations.getUserPublicKey(recieverEmail);
+            for (TableViewDataProperty file : fileList) {
+                String fileKey = fileRecordOperations.getByPathAndName(pathInfo, file.getFileName()).getKey();
 
+                String firstEncryptKey = Crypto.KEY_EXCHANGE.encrypt(fileKey, myPrivateKey);
+                String secondEncryptKey = Crypto.KEY_EXCHANGE.encrypt(firstEncryptKey, recieverPublicKey);
+                String encryptedFileName = fileRecordOperations.getByPathAndName(file.getFilePath(), file.getFileName()).getEncryptedName();
+                publicInfoOperations.insertSharedFileKey(recieverEmail, secondEncryptKey, encryptedFileName);
+            }
+        }
     }
 
 }
