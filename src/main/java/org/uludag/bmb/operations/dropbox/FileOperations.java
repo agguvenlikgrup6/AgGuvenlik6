@@ -3,6 +3,7 @@ package org.uludag.bmb.operations.dropbox;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -75,18 +76,17 @@ public class FileOperations {
         String localPath = config.getLocalDropboxPath();
         String filePath = localPath;
         String os = System.getProperty("os.name").toLowerCase();
-
-        if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
-            filePath += "/";
-        } else {
-            filePath += "\\";
+        if (!path.equals("/")) {
+            if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+                filePath += "/";
+            } else {
+                filePath += "\\";
+            }
         }
-        filePath += fileName;
+        filePath += path + fileName;
 
         File file = new File(filePath);
-        if (file.delete()) {
-            System.out.println("dosya silindi");
-        }
+        file.delete();
     }
 
     public static final void UPLOAD_FILE(String uploadDirectory, File file) {
@@ -125,7 +125,8 @@ public class FileOperations {
             FileRecord file = fileRecordOperations.getByPathAndName(path, fileName);
             DeleteResult ds = Client.client.files().deleteV2(path + file.getEncryptedName());
             fileRecordOperations.DELETE(fileName, path);
-            notificationOperations.insertNotification(path + fileName + " dosyası buluttan silindi!");
+            FileOperations.DELETE_FILE(path, fileName);
+            notificationOperations.insertNotification(path + fileName + " dosyası buluttan ve yerelden silindi!");
         } catch (DbxException e) {
             e.printStackTrace();
         }
@@ -192,8 +193,9 @@ public class FileOperations {
                 }
             } else {
                 FileRecord record = fileRecordOperations.getByPathAndName(item.getFilePath(), item.getFileName());
+                File file = new File(filePath);
                 if (!record.getModificationDate()
-                        .equals(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(item.getLastEditDate()))) {
+                        .equals(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()))) {
                     item.setChangeStatus(true);
                     fileRecordOperations.UPDATE_CHANGE_STATUS(item.getFilePath(), item.getFileName(), true);
                     CHANGE_STATUS(item, status);

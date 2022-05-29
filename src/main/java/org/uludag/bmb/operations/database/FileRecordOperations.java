@@ -82,8 +82,8 @@ public class FileRecordOperations {
 
     public void INSERT(FileRecord fr) {
         String query = "INSERT INTO " + this.databaseController.TABLES.record +
-                "(name, path, key, modificationDate, hash, encryptedName, sync) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                "(name, path, key, modificationDate, hash, encryptedName, sync, changeStatus, downloadStatus) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
             statement.setString(1, fr.getName());
@@ -93,6 +93,8 @@ public class FileRecordOperations {
             statement.setString(5, fr.getHash());
             statement.setString(6, fr.getEncryptedName());
             statement.setInt(7, fr.getSync());
+            statement.setInt(8, fr.getChangeStatus());
+            statement.setInt(9, fr.getDownloadStatus());
 
             statement.execute();
         } catch (SQLException e) {

@@ -11,9 +11,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.ServiceLoader;
 import java.util.regex.Pattern;
-
-import javax.swing.Action;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
@@ -488,6 +487,27 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void saveSharedFile(ActionEvent event) {
+        String selectedFiles = sharedFilesList.getSelectionModel().getSelectedItem();
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(Controller.class.getResource("/selectShareFolderScene.fxml"));
+            fxmlLoader.setController(new SelectShareFolderSceneController());
+            SelectShareFolderSceneController controller = fxmlLoader.getController();
+            Parent root = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Dosyayı Aktar");
+            Scene newScene = new Scene(root);
+            // newScene.getStylesheets().add(PropertiesReader.getProperty("shareSceneCss"));
+            stage.setScene(newScene);
+            stage.show();
+
+            controller.setFileList(selectedFiles);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int selectedIndex = sharedFilesList.getSelectionModel().getSelectedIndex();
+        sharedFilesList.getItems().remove(selectedIndex);
         System.out.println("kaydettim hadi bakam");
     }
 }

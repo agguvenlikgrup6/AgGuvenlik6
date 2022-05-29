@@ -65,7 +65,8 @@
 }
 
 .ctwDownload.column-header {
-    -fx-background-image: url("../icons/download.png");
+    /* -fx-background-image: url("/icons/download.png"); */
+    -fx-background-image: url("https://w7.pngwing.com/pngs/596/75/png-transparent-download-now-download-icon-download-button-download-logo-flat-icon-flat-logo-flat-image-button-flat-round-thumbnail.png");
     -fx-background-position: center center;
     -fx-background-size: 50;
 }

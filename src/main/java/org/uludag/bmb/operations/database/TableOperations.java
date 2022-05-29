@@ -22,7 +22,9 @@ public class TableOperations {
                 "modificationDate TEXT NOT NULL," +
                 "hash TEXT NOT NULL," +
                 "encryptedName TEXT NOT NULL," +
-                "sync BOOLEAN NOT NULL CHECK(sync IN(0, 1))" +
+                "sync BOOLEAN NOT NULL CHECK(sync IN(0, 1))," +
+                "downloadStatus BOOLEAN NOT NULL CHECK(downloadStatus IN(0,1))," +
+                "changeStatus BOOLEAN NOT NULL CHECK(changeStatus IN(0,1))" +
                 ")";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
