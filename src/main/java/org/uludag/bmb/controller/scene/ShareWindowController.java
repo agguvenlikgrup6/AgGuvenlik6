@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import org.uludag.bmb.beans.dataproperty.AutoCompleteComboBoxListener;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.database.DatabaseController;
+import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 
@@ -14,16 +15,18 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class ShareWindowController implements Initializable {
     private static final PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
-
+    private static final NotificationOperations notificationOperations = new NotificationOperations();
     private ObservableList<TableViewDataProperty> fileList;
     @FXML
     private ComboBox<String> accountField;
@@ -59,7 +62,17 @@ public class ShareWindowController implements Initializable {
 
     @FXML
     void shareWithMails(ActionEvent event) {
-        FileOperations.SHARE_FILE(fileList, shareAccountList.getItems());
+        if (FileOperations.SHARE_FILE(fileList, shareAccountList.getItems())) {
+            for (TableViewDataProperty file : fileList) {
+                notificationOperations.insertNotification(
+                        file.getFilePath() + file.getFileName() + " dosyası seçili hesaplar ile paylaşıldı!");
+            }
+        } else {
+            notificationOperations.insertNotification("Paylaşım Hatası!");
+        }
+        Node source = (Node) event.getSource();
+        Stage stage = (Stage) source.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
@@ -71,7 +84,7 @@ public class ShareWindowController implements Initializable {
     public void setFileList(ObservableList<TableViewDataProperty> selectedFiles) {
         this.fileList = selectedFiles;
         for (TableViewDataProperty file : selectedFiles) {
-            shareFileList.getItems().add( file.getFileName());
+            shareFileList.getItems().add(file.getFileName());
         }
     }
 

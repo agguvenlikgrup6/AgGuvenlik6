@@ -1,11 +1,15 @@
 package org.uludag.bmb.operations.dropbox;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,14 +18,18 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.DeleteResult;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.sharing.MemberSelector;
 
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.database.FileRecord;
@@ -236,20 +244,35 @@ public class FileOperations {
         return null;
     }
 
-    public static void SHARE_FILE(ObservableList<TableViewDataProperty> fileList, List<String> userEmailList) {
-        String pathInfo = fileList.get(0).getFilePath();
-        String myPrivateKey = publicInfoOperations.getPrivateKey();
-        for (String recieverEmail : userEmailList) {
-            String recieverPublicKey = publicInfoOperations.getUserPublicKey(recieverEmail);
-            for (TableViewDataProperty file : fileList) {
-                String fileKey = fileRecordOperations.getByPathAndName(pathInfo, file.getFileName()).getKey();
+    public static boolean SHARE_FILE(ObservableList<TableViewDataProperty> fileList, List<String> userEmailList) {
+        try {
+            String pathInfo = fileList.get(0).getFilePath();
+            String myPrivateKey = publicInfoOperations.getPrivateKey();
+            for (String recieverEmail : userEmailList) {
+                String recieverPublicKey = publicInfoOperations.getUserPublicKey(recieverEmail);
+                for (TableViewDataProperty file : fileList) {
+                    FileRecord record = fileRecordOperations.getByPathAndName(pathInfo, file.getFileName());
+                    String fileKey = record.getKey();
+                    String firstEncryptKey = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileKey, myPrivateKey);
+                    String firstPart = firstEncryptKey.substring(0, 490);
+                    String secondPart = firstEncryptKey.substring(490, firstEncryptKey.length());
+                    String secondEncryptKeyPart1 = Crypto.KEY_EXCHANGE.encryptWithPublic(firstPart, recieverPublicKey);
+                    String secondEncryptKeyPart2 = Crypto.KEY_EXCHANGE.encryptWithPublic(secondPart, recieverPublicKey);
+                    String secondEncryptKey = secondEncryptKeyPart1 + secondEncryptKeyPart2;
+                    String encryptedFileName = fileRecordOperations
+                            .getByPathAndName(file.getFilePath(), file.getFileName())
+                            .getEncryptedName();
+                    publicInfoOperations.insertSharedFileKey(recieverEmail, secondEncryptKey, encryptedFileName);
 
-                String firstEncryptKey = Crypto.KEY_EXCHANGE.encrypt(fileKey, myPrivateKey);
-                String secondEncryptKey = Crypto.KEY_EXCHANGE.encrypt(firstEncryptKey, recieverPublicKey);
-                String encryptedFileName = fileRecordOperations.getByPathAndName(file.getFilePath(), file.getFileName()).getEncryptedName();
-                publicInfoOperations.insertSharedFileKey(recieverEmail, secondEncryptKey, encryptedFileName);
+                    List<MemberSelector> member = new ArrayList<>();
+                    member.add(MemberSelector.email(recieverEmail));
+                    Client.client.sharing().addFileMember(record.getPath() + record.getEncryptedName(), member);
+                }
             }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
-
 }
