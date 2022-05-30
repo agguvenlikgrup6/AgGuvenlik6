@@ -19,6 +19,7 @@ module org.uludag.bmb {
    requires commons.dbutils;
    requires commons.dbcp2;
    requires org.bouncycastle.provider;
+   requires com.microsoft.sqlserver.jdbc;
 
    opens org.uludag.bmb.service.sync to java.net.http, commons.dbutils;
    opens org.uludag.bmb.service.cryption to org.bouncycastle.provider;

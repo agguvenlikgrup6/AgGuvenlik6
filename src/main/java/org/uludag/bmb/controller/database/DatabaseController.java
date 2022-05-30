@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+
 import org.apache.commons.dbutils.QueryRunner;
 import org.sqlite.SQLiteDataSource;
 import org.uludag.bmb.PropertiesReader;
@@ -44,8 +46,14 @@ public class DatabaseController {
     private Connection localDb;
     private Connection cloudDb;
     private String connectionUrl;
-    private SQLiteDataSource ds;
-    private QueryRunner queryRunner;
+    private SQLiteDataSource sqliteDataSource;
+    private SQLServerDataSource azureDataSource;
+    private QueryRunner localQueryRunner;
+    private QueryRunner azureQueryRunner;
+
+    public QueryRunner getAzureQueryRunner(){
+        return this.azureQueryRunner;
+    }
 
     public Connection getConn() {
         return this.localDb;
@@ -60,20 +68,22 @@ public class DatabaseController {
     }
 
     public SQLiteDataSource getDs() {
-        return this.ds;
+        return this.sqliteDataSource;
     }
 
-    public QueryRunner getQueryRunner() {
-        return this.queryRunner;
+    public QueryRunner getLocalQueryRunner() {
+        return this.localQueryRunner;
     }
 
     public DatabaseController() {
         this.TABLES = new Tables();
         this.DATABASES = new Databases();
         this.connectionUrl = getConnectionUrl(this.DATABASES.local);
-        this.ds = new SQLiteDataSource();
-        this.queryRunner = new QueryRunner(this.ds);
-        this.ds.setUrl(this.connectionUrl);
+        this.sqliteDataSource = new SQLiteDataSource();
+        this.azureDataSource = new SQLServerDataSource();
+        this.localQueryRunner = new QueryRunner(this.sqliteDataSource);
+        this.sqliteDataSource.setUrl(this.connectionUrl);
+        this.azureDataSource.setURL(this.DATABASES.cloud);
         try {
             localDb = DriverManager.getConnection(this.connectionUrl);
         } catch (SQLException ex) {

@@ -246,27 +246,28 @@ public class FileOperations {
 
     public static boolean SHARE_FILE(ObservableList<TableViewDataProperty> fileList, List<String> userEmailList) {
         try {
-            String pathInfo = fileList.get(0).getFilePath();
+            String filePath = fileList.get(0).getFilePath();
             String myPrivateKey = publicInfoOperations.getPrivateKey();
             for (String recieverEmail : userEmailList) {
                 String recieverPublicKey = publicInfoOperations.getUserPublicKey(recieverEmail);
-                for (TableViewDataProperty file : fileList) {
-                    FileRecord record = fileRecordOperations.getByPathAndName(pathInfo, file.getFileName());
-                    String fileKey = record.getKey();
-                    String firstEncryptKey = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileKey, myPrivateKey);
-                    String firstPart = firstEncryptKey.substring(0, 490);
-                    String secondPart = firstEncryptKey.substring(490, firstEncryptKey.length());
-                    String secondEncryptKeyPart1 = Crypto.KEY_EXCHANGE.encryptWithPublic(firstPart, recieverPublicKey);
-                    String secondEncryptKeyPart2 = Crypto.KEY_EXCHANGE.encryptWithPublic(secondPart, recieverPublicKey);
-                    String secondEncryptKey = secondEncryptKeyPart1 + secondEncryptKeyPart2;
+                for (TableViewDataProperty shareFile : fileList) {
+                    FileRecord file = fileRecordOperations.getByPathAndName(filePath, shareFile.getFileName());
+                    String fileAESKey = file.getKey();
+                    String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileAESKey, myPrivateKey);
+                    String AESfirstPart = encryptedAES.substring(0, 490);
+                    String AESsecondPart = encryptedAES.substring(490, encryptedAES.length());
+                    String secondEncryptedAES1 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESfirstPart, recieverPublicKey);
+                    String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart,
+                            recieverPublicKey);
                     String encryptedFileName = fileRecordOperations
-                            .getByPathAndName(file.getFilePath(), file.getFileName())
+                            .getByPathAndName(shareFile.getFilePath(), shareFile.getFileName())
                             .getEncryptedName();
-                    publicInfoOperations.insertSharedFileKey(recieverEmail, secondEncryptKey, encryptedFileName);
+                    publicInfoOperations.insertSharedFileKey(recieverEmail, secondEncryptedAES1, secondEncryptedAES2,
+                            encryptedFileName);
 
                     List<MemberSelector> member = new ArrayList<>();
                     member.add(MemberSelector.email(recieverEmail));
-                    Client.client.sharing().addFileMember(record.getPath() + record.getEncryptedName(), member);
+                    Client.client.sharing().addFileMember(file.getPath() + file.getEncryptedName(), member);
                 }
             }
             return true;

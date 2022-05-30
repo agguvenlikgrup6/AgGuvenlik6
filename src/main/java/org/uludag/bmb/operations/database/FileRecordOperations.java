@@ -32,7 +32,7 @@ public class FileRecordOperations {
     public FileRecord getByPathAndName(String filePath, String fileName) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
-            List<FileRecord> records = this.databaseController.getQueryRunner()
+            List<FileRecord> records = this.databaseController.getLocalQueryRunner()
                     .query("SELECT * FROM " + this.databaseController.TABLES.record
                             + " WHERE path = '" + filePath + "' AND name = '"
                             + fileName + "'", rsh);
@@ -45,7 +45,7 @@ public class FileRecordOperations {
     public List<FileRecord> getByEncryptedName(String encryptedName) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
-            List<FileRecord> records = this.databaseController.getQueryRunner()
+            List<FileRecord> records = this.databaseController.getLocalQueryRunner()
                     .query("SELECT * FROM " + this.databaseController.TABLES.record + " WHERE encryptedName = '"
                             + encryptedName + "'", rsh);
             return records;
@@ -58,7 +58,7 @@ public class FileRecordOperations {
     public List<FileRecord> getAll() {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
-            List<FileRecord> records = this.databaseController.getQueryRunner()
+            List<FileRecord> records = this.databaseController.getLocalQueryRunner()
                     .query("SELECT * FROM " + this.databaseController.TABLES.record, rsh);
             return records;
         } catch (SQLException e) {
@@ -70,7 +70,7 @@ public class FileRecordOperations {
     public List<FileRecord> getByPath(String path) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
-            List<FileRecord> records = this.databaseController.getQueryRunner()
+            List<FileRecord> records = this.databaseController.getLocalQueryRunner()
                     .query("SELECT * FROM " + this.databaseController.TABLES.record + " WHERE path='" + path + "'",
                             rsh);
             return records;
@@ -105,7 +105,7 @@ public class FileRecordOperations {
     public FileRecord getByPathAndEncryptedName(String path, String encryptedName) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
-            List<FileRecord> records = this.databaseController.getQueryRunner()
+            List<FileRecord> records = this.databaseController.getLocalQueryRunner()
                     .query("SELECT * FROM " + this.databaseController.TABLES.record
                             + " WHERE path = '"
                             + path

@@ -1,7 +1,6 @@
 package org.uludag.bmb.controller.scene;
 
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +10,6 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.util.StringUtil;
 import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
-import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
@@ -49,25 +47,19 @@ public class SelectShareFolderSceneController implements Initializable {
         this.fileName = fileName;
     }
 
-    private void setFiles(ObservableList<String> fileList) {
-
-    }
-
     @FXML
     void saveSharedToFolder(ActionEvent event) {
-        System.out.println(123);
         List<SharedFileMetadata> entries;
         try {
             entries = Client.client.sharing().listReceivedFiles().getEntries();
             for (SharedFileMetadata entry : entries) {
                 if (entry.getName().equals(fileName)) {
                     Client.client.files().saveUrl(cloudPathTXT.getText() + fileName, entry.getPreviewUrl());
-                    
+
                 }
             }
 
         } catch (DbxException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         System.out.println("");
@@ -98,5 +90,3 @@ public class SelectShareFolderSceneController implements Initializable {
     }
 
 }
-
-

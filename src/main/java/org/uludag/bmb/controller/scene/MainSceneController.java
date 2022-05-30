@@ -22,14 +22,17 @@ import com.dropbox.core.v2.sharing.SharedFileMetadata;
 import com.dropbox.core.v2.sharing.UserFileMembershipInfo;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.database.SharedFile;
 import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.database.NotificationOperations;
+import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
+import org.uludag.bmb.service.cryption.Crypto;
 import org.uludag.bmb.service.sync.SyncServer;
 
 import javafx.animation.KeyFrame;
@@ -70,6 +73,7 @@ import javafx.util.Duration;
 
 public class MainSceneController extends Controller implements Initializable {
     private NotificationOperations notificationOperations;
+    private PublicInfoOperations publicInfoOperations;
 
     @FXML
     private Button btnDownload;
@@ -174,6 +178,7 @@ public class MainSceneController extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         notificationOperations = new NotificationOperations();
+        publicInfoOperations = new PublicInfoOperations();
         notificationList.setCellFactory(param -> new NotificationListCellFactory());
 
         Timeline notificationCycle = new Timeline(
@@ -224,9 +229,10 @@ public class MainSceneController extends Controller implements Initializable {
         List<SharedFileMetadata> entries;
         try {
             entries = Client.client.sharing().listReceivedFiles().getEntries();
-            for (SharedFileMetadata entrie : entries) {
-                String sharedFileNames = entrie.getName();
-                sharedFilesList.getItems().add(sharedFileNames);
+            for (SharedFileMetadata entry : entries) {
+                SharedFile sharedFile = publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
+                String decryptedName = Crypto.SHARE.DECRYPT_NAME(sharedFile);
+                sharedFilesList.getItems().add(decryptedName);
             }
         } catch (DbxException e) {
             e.printStackTrace();

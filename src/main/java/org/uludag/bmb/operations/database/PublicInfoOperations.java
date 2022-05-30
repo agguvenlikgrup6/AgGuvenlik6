@@ -7,6 +7,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.uludag.bmb.beans.database.SharedFile;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.dropbox.Client;
 
@@ -42,6 +45,18 @@ public class PublicInfoOperations {
             statement.execute();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public SharedFile getSharedFileByEncryptedName(String encryptedName) {
+        ResultSetHandler<List<SharedFile>> rsh = new BeanListHandler<SharedFile>(SharedFile.class);
+        try {
+            List<SharedFile> sharedFiles = this.databaseController.getAzureQueryRunner()
+                    .query("SELECT * FROM " + this.databaseController.TABLES.sharedFilesKeyTable
+                            + " WHERE encryptedName = '" + encryptedName, rsh);
+            return sharedFiles.get(0);
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -94,14 +109,16 @@ public class PublicInfoOperations {
         }
     }
 
-    public void insertSharedFileKey(String recieverEmail, String fileKey, String encryptedFileName) {
-        String query = "INSERT INTO " + this.databaseController.TABLES.sharedFilesKeyTable 
-                + "(email, fileKey, encryptedName) VALUES(?,?,?)";
+    public void insertSharedFileKey(String recieverEmail, String fileKeyPart1, String fileKeyPart2,
+            String encryptedFileName) {
+        String query = "INSERT INTO " + this.databaseController.TABLES.sharedFilesKeyTable
+                + "(email, fileKeyPart1, fileKeyPart2, encryptedName) VALUES(?,?,?,?)";
         try {
             PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
             statement.setString(1, recieverEmail);
-            statement.setString(2, fileKey);
-            statement.setString(3, encryptedFileName);
+            statement.setString(2, fileKeyPart1);
+            statement.setString(3, fileKeyPart2);
+            statement.setString(4, encryptedFileName);
 
             statement.execute();
         } catch (Exception e) {

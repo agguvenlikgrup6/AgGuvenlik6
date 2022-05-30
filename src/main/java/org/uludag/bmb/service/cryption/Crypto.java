@@ -36,8 +36,12 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
+import org.uludag.bmb.beans.database.SharedFile;
+import org.uludag.bmb.operations.database.PublicInfoOperations;
+import org.uludag.bmb.operations.dropbox.FileOperations;
 
 public class Crypto {
+    private static final PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;
@@ -184,6 +188,24 @@ public class Crypto {
 
         }
 
+        public static String DECRYPT_NAME(SharedFile sharedFile) {
+            try {
+                String myPrivateKey = publicInfoOperations.getPrivateKey();
+                String senderPublicKey = publicInfoOperations.getUserPublicKey(sharedFile.getEmail());
+                String decryptedKeyPart1 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart1(), myPrivateKey);
+                String decryptedKeyPart2 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart2(), myPrivateKey);
+                String decryptedKey = decryptedKeyPart1 + decryptedKeyPart2;
+                String secondDecryptedKey = KEY_EXCHANGE.decryptWithPublic(decryptedKey, senderPublicKey);
+
+                String decryptedFileName = Crypto.decryptName(sharedFile.getEncryptedName().getBytes(), secondDecryptedKey);
+
+                return decryptedFileName;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
     }
 
     public class KEY_EXCHANGE {
@@ -212,7 +234,7 @@ public class Crypto {
         public static String encryptWithPublic(String message, String key) {
             try {
                 byte[] messageToBytes = message.getBytes();
-                
+
                 Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
                 cipher.init(Cipher.ENCRYPT_MODE, getPublicKey(key));
                 byte[] encryptedBytes = cipher.doFinal(messageToBytes);
@@ -240,8 +262,22 @@ public class Crypto {
             return Base64.getUrlEncoder().encodeToString(data);
         }
 
-        public static String decrypt(String encryptedMessage, String key) {
-            PrivateKey privateKey = null;
+        public static String decryptWithPublic(String encryptedMessage, String key) {
+            PublicKey publicKey = getPublicKey(key);
+            try {
+                byte[] encryptedBytes = decode(encryptedMessage);
+                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                cipher.init(Cipher.DECRYPT_MODE, publicKey);
+                byte[] decryptedMessage = cipher.doFinal(encryptedBytes);
+                return new String(decryptedMessage, "UTF8");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        public static String decryptWithPrivate(String encryptedMessage, String key) {
+            PrivateKey privateKey = getPrivateKey(key);
             try {
                 byte[] encryptedBytes = decode(encryptedMessage);
                 Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
