@@ -3,10 +3,12 @@ package org.uludag.bmb.service.sync;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.regex.Pattern;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
 
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.FileRecord;
@@ -44,6 +46,13 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
         int len = ConfigController.Settings.LoadSettings().getLocalDropboxPath().length();
         String cloudPath = file.getAbsolutePath().substring(len,
                 file.getAbsolutePath().length() - file.getName().length());
+        String os = System.getProperty("os.name").toLowerCase();
+        if (cloudPath.contains("\\")) {
+            if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+            } else {
+                cloudPath = cloudPath.replace("\\", "/");
+            }
+        }
         return cloudPath;
     }
 

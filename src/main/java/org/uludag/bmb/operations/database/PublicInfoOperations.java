@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dropbox.core.DbxException;
+
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.uludag.bmb.beans.crypto.FilePreview;
@@ -22,10 +24,17 @@ public class PublicInfoOperations {
     }
 
     public void insertShareKeys(String publicKey, String privateKey) {
-        String privateKeyQuery = "INSERT INTO " + this.databaseController.TABLES.privateKey + " (privateKey) values(?)";
+        String email = "";
+        try {
+            email = Client.client.users().getCurrentAccount().getEmail();
+        } catch (DbxException e1) {
+            e1.printStackTrace();
+        }
+        String privateKeyQuery = "INSERT INTO " + this.databaseController.TABLES.privateKey + " (privateKey, email) values(?, ?)";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(privateKeyQuery);
             statement.setString(1, privateKey);
+            statement.setString(2, email);
 
             statement.execute();
         } catch (SQLException e) {
@@ -118,16 +127,33 @@ public class PublicInfoOperations {
         }
     }
 
-    public void insertSharedFileKey(String recieverEmail, String fileKeyPart1, String fileKeyPart2,
+    public String getUserEmail(){
+        String emailQuery = "SELECT email FROM " + this.databaseController.TABLES.privateKey;
+        String email = "";
+        try {
+            PreparedStatement statement = this.databaseController.getConn().prepareStatement(emailQuery);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                email = rs.getString("email");
+            }
+            return email;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void insertSharedFileKey(String recieverEmail, String senderEmail, String fileKeyPart1, String fileKeyPart2,
             String encryptedFileName) {
         String query = "INSERT INTO " + this.databaseController.TABLES.sharedFilesKeyTable
-                + "(email, fileKeyPart1, fileKeyPart2, encryptedName) VALUES(?,?,?,?)";
+                + "(recieverEmail, senderEmail,encryptedName, fileKeyPart1, fileKeyPart2) VALUES(?,?,?,?,?)";
         try {
             PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
             statement.setString(1, recieverEmail);
-            statement.setString(2, fileKeyPart1);
-            statement.setString(3, fileKeyPart2);
-            statement.setString(4, encryptedFileName);
+            statement.setString(2, senderEmail);
+            statement.setString(3, encryptedFileName);
+            statement.setString(4, fileKeyPart1);
+            statement.setString(5, fileKeyPart2);
 
             statement.execute();
         } catch (Exception e) {

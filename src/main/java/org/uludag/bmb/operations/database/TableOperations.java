@@ -3,7 +3,10 @@ package org.uludag.bmb.operations.database;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import com.dropbox.core.DbxException;
+
 import org.uludag.bmb.controller.database.DatabaseController;
+import org.uludag.bmb.operations.dropbox.Client;
 
 public class TableOperations {
     private DatabaseController databaseController;
@@ -71,7 +74,8 @@ public class TableOperations {
         String query = "CREATE TABLE IF NOT EXISTS " +
                 this.databaseController.TABLES.privateKey +
                 "(" +
-                "privateKey TEXT NOT NULL" +
+                "privateKey TEXT NOT NULL," +
+                "email TEXT NOT NULL" + 
                 ")";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);

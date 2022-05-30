@@ -262,7 +262,9 @@ public class FileOperations {
                     String encryptedFileName = fileRecordOperations
                             .getByPathAndName(shareFile.getFilePath(), shareFile.getFileName())
                             .getEncryptedName();
-                    publicInfoOperations.insertSharedFileKey(recieverEmail, secondEncryptedAES1, secondEncryptedAES2,
+                    publicInfoOperations.insertSharedFileKey(recieverEmail,
+                            publicInfoOperations.getUserEmail(), secondEncryptedAES1,
+                            secondEncryptedAES2,
                             encryptedFileName);
 
                     List<MemberSelector> member = new ArrayList<>();
