@@ -235,11 +235,13 @@ public class MainSceneController extends Controller implements Initializable {
                 List<SharedFileMetadata> entries;
                 try {
                     entries = Client.client.sharing().listReceivedFiles().getEntries();
-                    for (SharedFileMetadata entry : entries) {
-                        SharedFile sharedFile = publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
-                        Crypto.SHARE.DECRYPT_PREVIEW(sharedFile);
-                        String decryptedName = fileRecordOperations.getSharedRecordPreview(entry.getName()).getDecryptedName();
-                        sharedFilesList.getItems().add(decryptedName);
+                    if(entries.size() != 0){
+                        for (SharedFileMetadata entry : entries) {
+                            SharedFile sharedFile = publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
+                            Crypto.SHARE.DECRYPT_PREVIEW(sharedFile);
+                            String decryptedName = fileRecordOperations.getSharedRecordPreview(entry.getName()).getDecryptedName();
+                            sharedFilesList.getItems().add(decryptedName);
+                        }
                     }
                 } catch (DbxException e) {
                     e.printStackTrace();
