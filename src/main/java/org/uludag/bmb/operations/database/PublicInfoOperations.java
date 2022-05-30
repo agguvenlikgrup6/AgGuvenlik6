@@ -49,13 +49,20 @@ public class PublicInfoOperations {
     }
 
     public SharedFile getSharedFileByEncryptedName(String encryptedName) {
-        ResultSetHandler<List<SharedFile>> rsh = new BeanListHandler<SharedFile>(SharedFile.class);
         try {
-            List<SharedFile> sharedFiles = this.databaseController.getAzureQueryRunner()
-                    .query("SELECT * FROM " + this.databaseController.TABLES.sharedFilesKeyTable
-                            + " WHERE encryptedName = '" + encryptedName + "'", rsh);
+            String query = "SELECT * FROM " + this.databaseController.TABLES.sharedFilesKeyTable
+                    + " WHERE encryptedName=?";
+            PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
+            statement.setString(1, encryptedName);
+            ResultSet rst = statement.executeQuery();
+            List<SharedFile> sharedFiles = new ArrayList<SharedFile>();
+            while (rst.next()) {
+                sharedFiles.add(new SharedFile(rst.getString("email"), rst.getString("encryptedName"),
+                        rst.getString("fileKeyPart1"), rst.getString("fileKeyPart2")));
+            }
             return sharedFiles.get(0);
-        } catch (Exception e) {
+        } catch (SQLException ex) {
+            ex.printStackTrace();
             return null;
         }
     }
