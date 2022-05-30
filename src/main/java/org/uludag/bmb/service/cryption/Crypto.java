@@ -41,6 +41,7 @@ import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 
 public class Crypto {
+    private static String RSA_MODE = "RSA/ECB/PKCS1Padding";
     private static final PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
@@ -179,7 +180,7 @@ public class Crypto {
         public static KeyPair CREATE_KEY_PAIR() {
             try {
                 KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-                kpg.initialize(4096);
+                kpg.initialize(2048);
                 return kpg.generateKeyPair();
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
@@ -212,7 +213,8 @@ public class Crypto {
         private static PublicKey getPublicKey(String pubk) {
             try {
                 X509EncodedKeySpec keySpecPublic = new X509EncodedKeySpec(decode(pubk));
-                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                
+                KeyFactory keyFactory = KeyFactory.getInstance(RSA_MODE);
                 return keyFactory.generatePublic(keySpecPublic);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -223,7 +225,7 @@ public class Crypto {
         private static PrivateKey getPrivateKey(String prik) {
             try {
                 PKCS8EncodedKeySpec keySpecPrivate = new PKCS8EncodedKeySpec(decode(prik));
-                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                KeyFactory keyFactory = KeyFactory.getInstance(RSA_MODE);
                 return keyFactory.generatePrivate(keySpecPrivate);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -234,8 +236,7 @@ public class Crypto {
         public static String encryptWithPublic(String message, String key) {
             try {
                 byte[] messageToBytes = message.getBytes();
-
-                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                Cipher cipher = Cipher.getInstance(RSA_MODE);
                 cipher.init(Cipher.ENCRYPT_MODE, getPublicKey(key));
                 byte[] encryptedBytes = cipher.doFinal(messageToBytes);
                 return encode(encryptedBytes);
@@ -248,7 +249,7 @@ public class Crypto {
         public static String encryptWithPrivate(String message, String key) {
             try {
                 byte[] messageToBytes = message.getBytes();
-                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                Cipher cipher = Cipher.getInstance(RSA_MODE);
                 cipher.init(Cipher.ENCRYPT_MODE, getPrivateKey(key));
                 byte[] encryptedBytes = cipher.doFinal(messageToBytes);
                 return encode(encryptedBytes);
@@ -266,10 +267,10 @@ public class Crypto {
             PublicKey publicKey = getPublicKey(key);
             try {
                 byte[] encryptedBytes = decode(encryptedMessage);
-                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                Cipher cipher = Cipher.getInstance(RSA_MODE);
                 cipher.init(Cipher.DECRYPT_MODE, publicKey);
                 byte[] decryptedMessage = cipher.doFinal(encryptedBytes);
-                return new String(decryptedMessage, "UTF8");
+                return new String(decryptedMessage);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -280,10 +281,10 @@ public class Crypto {
             PrivateKey privateKey = getPrivateKey(key);
             try {
                 byte[] encryptedBytes = decode(encryptedMessage);
-                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                Cipher cipher = Cipher.getInstance(RSA_MODE);
                 cipher.init(Cipher.DECRYPT_MODE, privateKey);
                 byte[] decryptedMessage = cipher.doFinal(encryptedBytes);
-                return new String(decryptedMessage, "UTF8");
+                return new String(decryptedMessage);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
