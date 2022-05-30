@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.uludag.bmb.beans.crypto.FilePreview;
 import org.uludag.bmb.beans.database.SharedFile;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.dropbox.Client;
@@ -57,7 +58,8 @@ public class PublicInfoOperations {
             ResultSet rst = statement.executeQuery();
             List<SharedFile> sharedFiles = new ArrayList<SharedFile>();
             while (rst.next()) {
-                sharedFiles.add(new SharedFile(rst.getString("email"), rst.getString("encryptedName"),
+                sharedFiles.add(new SharedFile(rst.getString("recieverEmail"), rst.getString("senderEmail"),
+                        rst.getString("encryptedName"),
                         rst.getString("fileKeyPart1"), rst.getString("fileKeyPart2")));
             }
             return sharedFiles.get(0);
@@ -126,6 +128,23 @@ public class PublicInfoOperations {
             statement.setString(2, fileKeyPart1);
             statement.setString(3, fileKeyPart2);
             statement.setString(4, encryptedFileName);
+
+            statement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertRecordPreview(FilePreview filePreview) {
+        String query = "INSERT INTO " + this.databaseController.TABLES.sharedRecordTable
+                + "(recieverEmail, senderEmail, encryptedName, decryptedName, fileKey) VALUES(?,?,?,?,?)";
+        try {
+            PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
+            statement.setString(1, filePreview.getRecieverEmail());
+            statement.setString(2, filePreview.getSenderEmail());
+            statement.setString(3, filePreview.getEncryptedName());
+            statement.setString(4, filePreview.getDecryptedName());
+            statement.setString(5, filePreview.getSecondDecryptedKey());
 
             statement.execute();
         } catch (Exception e) {

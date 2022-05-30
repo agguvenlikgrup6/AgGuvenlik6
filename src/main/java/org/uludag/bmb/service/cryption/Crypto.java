@@ -36,13 +36,16 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
+import org.uludag.bmb.beans.crypto.FilePreview;
 import org.uludag.bmb.beans.database.SharedFile;
+import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 
 public class Crypto {
     private static String RSA_MODE = "RSA/ECB/PKCS1Padding";
     private static final PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
+    private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;
@@ -189,10 +192,10 @@ public class Crypto {
 
         }
 
-        public static String DECRYPT_NAME(SharedFile sharedFile) {
+        public static void DECRYPT_PREVIEW(SharedFile sharedFile) {
             try {
                 String myPrivateKey = publicInfoOperations.getPrivateKey();
-                String senderPublicKey = publicInfoOperations.getUserPublicKey("bmb4016grup6@gmail.com");
+                String senderPublicKey = publicInfoOperations.getUserPublicKey(sharedFile.getSenderEmail());
                 String decryptedKeyPart1 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart1(), myPrivateKey);
                 String decryptedKeyPart2 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart2(), myPrivateKey);
                 String decryptedKey = decryptedKeyPart1 + decryptedKeyPart2;
@@ -202,10 +205,12 @@ public class Crypto {
                         Base64.getUrlDecoder().decode(sharedFile.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
                         secondDecryptedKey);
 
-                return decryptedFileName;
+                publicInfoOperations.insertRecordPreview(new FilePreview(sharedFile.getRecieverEmail(),
+                        sharedFile.getSenderEmail(), sharedFile.getEncryptedName(), decryptedFileName,
+                        secondDecryptedKey));
+
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
             }
         }
 

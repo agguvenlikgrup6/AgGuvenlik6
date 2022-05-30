@@ -34,6 +34,24 @@ public class TableOperations {
         }
     }
 
+    public void createSharedRecordTable() {
+        String query = "CREATE TABLE IF NOT EXISTS " + this.databaseController.TABLES.sharedRecordTable +
+                "(" +
+                "id integer PRIMARY KEY," +
+                "senderEmail TEXT NOT NULL," +
+                "encryptedName TEXT NOT NULL," +
+                "decryptedName TEXT NOT NULL," +
+                "fileName TEXT NOT NULL," +
+                "key TEXT NOT NULL" +
+                ")";
+        try {
+            PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void createNotificationTable() {
         String query = "CREATE TABLE IF NOT EXISTS " +
                 this.databaseController.TABLES.notification +

@@ -1,19 +1,26 @@
-package org.uludag.bmb.beans.database;
+package org.uludag.bmb.beans.crypto;
 
-public class SharedFile {
+public class FilePreview {
     private String recieverEmail;
     private String senderEmail;
     private String encryptedName;
-    private String fileKeyPart1;
-    private String fileKeyPart2;
+    private String secondDecryptedKey;
+    private String decryptedName;
 
-    public SharedFile(String recieverEmail, String senderEmail, String encryptedName, String fileKeyPart1,
-            String fileKeyPart2) {
+    public FilePreview(String recieverEmail, String senderEmail, String encryptedName, String decryptedName, String secondDecryptedKey) {
         this.recieverEmail = recieverEmail;
         this.senderEmail = senderEmail;
         this.encryptedName = encryptedName;
-        this.fileKeyPart1 = fileKeyPart1;
-        this.fileKeyPart2 = fileKeyPart2;
+        this.decryptedName = decryptedName;
+        this.secondDecryptedKey = secondDecryptedKey;
+    }
+
+    public String getDecryptedName(){
+        return this.decryptedName;
+    }
+
+    public void setDecryptedName(String decryptedName){
+        this.decryptedName = decryptedName;
     }
 
     public String getRecieverEmail() {
@@ -40,19 +47,12 @@ public class SharedFile {
         this.encryptedName = encryptedName;
     }
 
-    public String getFileKeyPart1() {
-        return this.fileKeyPart1;
+    public String getSecondDecryptedKey() {
+        return this.secondDecryptedKey;
     }
 
-    public void setFileKeyPart1(String fileKeyPart1) {
-        this.fileKeyPart1 = fileKeyPart1;
+    public void setSecondDecryptedKey(String secondDecryptedKey) {
+        this.secondDecryptedKey = secondDecryptedKey;
     }
 
-    public String getFileKeyPart2() {
-        return this.fileKeyPart2;
-    }
-
-    public void setFileKeyPart2(String fileKeyPart2) {
-        this.fileKeyPart2 = fileKeyPart2;
-    }
 }

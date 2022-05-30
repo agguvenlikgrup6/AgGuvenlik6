@@ -27,6 +27,7 @@ import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.controller.database.DatabaseController;
+import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.operations.dropbox.Client;
@@ -74,6 +75,7 @@ import javafx.util.Duration;
 public class MainSceneController extends Controller implements Initializable {
     private NotificationOperations notificationOperations;
     private PublicInfoOperations publicInfoOperations;
+    private FileRecordOperations fileRecordOperations;
 
     @FXML
     private Button btnDownload;
@@ -179,6 +181,7 @@ public class MainSceneController extends Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         notificationOperations = new NotificationOperations();
         publicInfoOperations = new PublicInfoOperations();
+        fileRecordOperations = new FileRecordOperations();
         notificationList.setCellFactory(param -> new NotificationListCellFactory());
 
         Timeline notificationCycle = new Timeline(
@@ -226,17 +229,23 @@ public class MainSceneController extends Controller implements Initializable {
         treeView.setRoot(root);
         treeView.setShowRoot(false);
 
-        List<SharedFileMetadata> entries;
-        try {
-            entries = Client.client.sharing().listReceivedFiles().getEntries();
-            for (SharedFileMetadata entry : entries) {
-                SharedFile sharedFile = publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
-                String decryptedName = Crypto.SHARE.DECRYPT_NAME(sharedFile);
-                sharedFilesList.getItems().add(decryptedName);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                List<SharedFileMetadata> entries;
+                try {
+                    entries = Client.client.sharing().listReceivedFiles().getEntries();
+                    for (SharedFileMetadata entry : entries) {
+                        SharedFile sharedFile = publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
+                        Crypto.SHARE.DECRYPT_PREVIEW(sharedFile);
+                        String decryptedName = fileRecordOperations.getSharedRecordPreview(entry.getName()).getDecryptedName();
+                        sharedFilesList.getItems().add(decryptedName);
+                    }
+                } catch (DbxException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
+        });
 
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
@@ -503,7 +512,6 @@ public class MainSceneController extends Controller implements Initializable {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Dosyayı Aktar");
             Scene newScene = new Scene(root);
-            // newScene.getStylesheets().add(PropertiesReader.getProperty("shareSceneCss"));
             stage.setScene(newScene);
             stage.show();
 

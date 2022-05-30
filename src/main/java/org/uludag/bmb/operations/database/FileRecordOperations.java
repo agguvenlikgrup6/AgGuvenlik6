@@ -6,7 +6,10 @@ import java.util.List;
 
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.uludag.bmb.beans.crypto.FilePreview;
 import org.uludag.bmb.beans.database.FileRecord;
+import org.uludag.bmb.beans.database.SharedFile;
+import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.database.DatabaseController;
 
 public class FileRecordOperations {
@@ -164,6 +167,21 @@ public class FileRecordOperations {
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public FilePreview getSharedRecordPreview(String encryptedName) {
+        ResultSetHandler<List<FilePreview>> rsh = new BeanListHandler<FilePreview>(FilePreview.class);
+        try {
+            List<FilePreview> records = this.databaseController.getLocalQueryRunner()
+                    .query("SELECT * FROM " + this.databaseController.TABLES.sharedRecordTable
+                            + " WHERE encryptedName='" + encryptedName + "'", rsh);
+            if (records.size() != 0)
+                return records.get(0);
+            else
+                return null;
+        } catch (SQLException e) {
+            return null;
         }
     }
 }

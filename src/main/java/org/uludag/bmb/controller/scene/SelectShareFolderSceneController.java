@@ -48,13 +48,13 @@ public class SelectShareFolderSceneController implements Initializable {
     }
 
     @FXML
-    void saveSharedToFolder(ActionEvent event) {
+    void saveSharedFileToLocal(ActionEvent event) {
         List<SharedFileMetadata> entries;
         try {
             entries = Client.client.sharing().listReceivedFiles().getEntries();
             for (SharedFileMetadata entry : entries) {
                 if (entry.getName().equals(fileName)) {
-                    Client.client.files().saveUrl(cloudPathTXT.getText() + fileName, entry.getPreviewUrl());
+                    // Client.client.files().saveUrl(cloudPathTXT.getText() + fileName, entry.getPreviewUrl());
 
                 }
             }

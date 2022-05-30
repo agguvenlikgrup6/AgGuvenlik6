@@ -106,6 +106,7 @@ public class StartupSceneController extends Controller {
 
             tableOperations.createNotificationTable();
             tableOperations.createRecordTable();
+            tableOperations.createSharedRecordTable();
             tableOperations.createPrivateKeyTable();
 
             PublicInfoOperations publicInfoOperations = new PublicInfoOperations();

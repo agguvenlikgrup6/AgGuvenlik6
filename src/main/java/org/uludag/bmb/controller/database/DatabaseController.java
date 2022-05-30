@@ -20,6 +20,7 @@ public class DatabaseController {
         public String privateKey;
         public String publicInfo;
         public String sharedFilesKeyTable;
+        public String sharedRecordTable;
 
         public Tables() {
             this.record = PropertiesReader.getProperty("table_Record");
@@ -27,6 +28,7 @@ public class DatabaseController {
             this.privateKey = PropertiesReader.getProperty("table_privateKey");
             this.publicInfo = PropertiesReader.getProperty("table_publicInfo");
             this.sharedFilesKeyTable = PropertiesReader.getProperty("table_sharedKeyPeople");
+            this.sharedRecordTable = PropertiesReader.getProperty("table_sharedRecord");
         }
     }
 
