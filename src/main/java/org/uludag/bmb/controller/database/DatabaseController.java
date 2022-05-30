@@ -84,6 +84,7 @@ public class DatabaseController {
         this.localQueryRunner = new QueryRunner(this.sqliteDataSource);
         this.sqliteDataSource.setUrl(this.connectionUrl);
         this.azureDataSource.setURL(this.DATABASES.cloud);
+        this.azureQueryRunner = new QueryRunner(this.azureDataSource);
         try {
             localDb = DriverManager.getConnection(this.connectionUrl);
         } catch (SQLException ex) {

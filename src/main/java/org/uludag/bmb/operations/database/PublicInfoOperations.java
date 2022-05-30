@@ -53,7 +53,7 @@ public class PublicInfoOperations {
         try {
             List<SharedFile> sharedFiles = this.databaseController.getAzureQueryRunner()
                     .query("SELECT * FROM " + this.databaseController.TABLES.sharedFilesKeyTable
-                            + " WHERE encryptedName = '" + encryptedName, rsh);
+                            + " WHERE encryptedName = '" + encryptedName + "'", rsh);
             return sharedFiles.get(0);
         } catch (Exception e) {
             return null;
