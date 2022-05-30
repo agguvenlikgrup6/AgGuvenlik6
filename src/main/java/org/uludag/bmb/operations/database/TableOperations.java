@@ -44,8 +44,7 @@ public class TableOperations {
                 "senderEmail TEXT NOT NULL," +
                 "encryptedName TEXT NOT NULL," +
                 "decryptedName TEXT NOT NULL," +
-                "fileName TEXT NOT NULL," +
-                "key TEXT NOT NULL" +
+                "fileKey TEXT NOT NULL" +
                 ")";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);

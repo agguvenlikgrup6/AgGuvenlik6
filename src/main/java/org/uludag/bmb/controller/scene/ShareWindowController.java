@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 
 import org.uludag.bmb.beans.dataproperty.AutoCompleteComboBoxListener;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
-import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.operations.dropbox.FileOperations;
@@ -20,11 +19,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class ShareWindowController implements Initializable {
+public class ShareWindowController extends PopupSceneController implements Initializable {
+    public ShareWindowController(String sceneFXML, String sceneTitle) {
+        super(sceneFXML, sceneTitle);
+    }
+
     private static final PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
     private static final NotificationOperations notificationOperations = new NotificationOperations();
     private ObservableList<TableViewDataProperty> fileList;

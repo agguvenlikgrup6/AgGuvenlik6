@@ -163,14 +163,13 @@ public class PublicInfoOperations {
 
     public void insertRecordPreview(FilePreview filePreview) {
         String query = "INSERT INTO " + this.databaseController.TABLES.sharedRecordTable
-                + "(recieverEmail, senderEmail, encryptedName, decryptedName, fileKey) VALUES(?,?,?,?,?)";
+                + "(senderEmail, encryptedName, decryptedName, fileKey) VALUES(?,?,?,?)";
         try {
-            PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
-            statement.setString(1, filePreview.getRecieverEmail());
-            statement.setString(2, filePreview.getSenderEmail());
-            statement.setString(3, filePreview.getEncryptedName());
-            statement.setString(4, filePreview.getDecryptedName());
-            statement.setString(5, filePreview.getSecondDecryptedKey());
+            PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
+            statement.setString(1, filePreview.getSenderEmail());
+            statement.setString(2, filePreview.getEncryptedName());
+            statement.setString(3, filePreview.getDecryptedName());
+            statement.setString(4, filePreview.getSecondDecryptedKey());
 
             statement.execute();
         } catch (Exception e) {

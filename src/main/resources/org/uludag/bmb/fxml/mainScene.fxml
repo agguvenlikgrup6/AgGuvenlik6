@@ -67,7 +67,7 @@
                      <contextMenu>
                         <ContextMenu>
                           <items>
-                            <MenuItem fx:id="saveSharedFileContext" mnemonicParsing="false" onAction="#saveSharedFile" text="Kaydet" />
+                            <MenuItem fx:id="saveSharedFileContext" mnemonicParsing="false" onAction="#saveSelectedSharedFile" text="Kaydet" />
                           </items>
                         </ContextMenu>
                      </contextMenu>
@@ -81,9 +81,9 @@
         </AnchorPane>
       <AnchorPane id="Content" fx:id="middlePane" maxWidth="1.7976931348623157E308" minHeight="-1.0" minWidth="400.0" prefWidth="794.0" style="-fx-background-color: white;">
         <children>
-                  <Button id="upload" fx:id="btnUpload" layoutX="8.0" layoutY="59.0" mnemonicParsing="false" onAction="#uploadItem" prefHeight="25.0" prefWidth="106.0" styleClass="btnMainMenu" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="59.0" />
-                  <Button id="download" fx:id="btnDownload" layoutX="130.0" layoutY="59.0" mnemonicParsing="false" onAction="#downloadItem" prefHeight="25.0" prefWidth="95.0" styleClass="btnMainMenu" text=" Download" textFill="WHITE" AnchorPane.leftAnchor="130.0" AnchorPane.topAnchor="59.0" />
-                  <TableView fx:id="cloudTableView" layoutX="10.0" layoutY="103.0" onMouseClicked="#showFileDetails" prefHeight="695.0" prefWidth="784.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="103.0">
+                  <Button id="upload" fx:id="btnUpload" layoutX="8.0" layoutY="59.0" mnemonicParsing="false" onAction="#uploadSelectedFile" prefHeight="25.0" prefWidth="106.0" styleClass="btnMainMenu" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="59.0" />
+                  <Button id="download" fx:id="btnDownload" layoutX="130.0" layoutY="59.0" mnemonicParsing="false" onAction="#downloadSelectedFile" prefHeight="25.0" prefWidth="95.0" styleClass="btnMainMenu" text=" Download" textFill="WHITE" AnchorPane.leftAnchor="130.0" AnchorPane.topAnchor="59.0" />
+                  <TableView fx:id="cloudTableView" layoutX="10.0" layoutY="103.0" onMouseClicked="#showSelectedFileDetails" prefHeight="695.0" prefWidth="784.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="103.0">
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
@@ -98,9 +98,9 @@
                      <contextMenu>
                         <ContextMenu>
                           <items>
-                              <MenuItem fx:id="ctwMenuShare" mnemonicParsing="false" onAction="#shareFile" text="Paylaş" />
-                              <MenuItem fx:id="ctwMenuDownload" mnemonicParsing="false" onAction="#downloadItem" text="İndir" />
-                              <MenuItem fx:id="ctwMenuDelete" mnemonicParsing="false" onAction="#deleteFile" text="Sil" />
+                              <MenuItem fx:id="ctwMenuShare" mnemonicParsing="false" onAction="#shareSelectedFiles" text="Paylaş" />
+                              <MenuItem fx:id="ctwMenuDownload" mnemonicParsing="false" onAction="#downloadSelectedFile" text="İndir" />
+                              <MenuItem fx:id="ctwMenuDelete" mnemonicParsing="false" onAction="#deleteSelectedFiles" text="Sil" />
                               <MenuItem fx:id="ctwMenuSyncOn" mnemonicParsing="false" onAction="#changeSyncStatusOn" text="Sync Aç" />
                               <MenuItem fx:id="ctwMenuSyncOff" mnemonicParsing="false" onAction="#changeSyncStatusOff" text="Sync Kapat" />
 

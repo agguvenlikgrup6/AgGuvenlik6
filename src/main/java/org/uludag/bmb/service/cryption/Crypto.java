@@ -205,8 +205,7 @@ public class Crypto {
                         Base64.getUrlDecoder().decode(sharedFile.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
                         secondDecryptedKey);
 
-                publicInfoOperations.insertRecordPreview(new FilePreview(sharedFile.getRecieverEmail(),
-                        sharedFile.getSenderEmail(), sharedFile.getEncryptedName(), decryptedFileName,
+                publicInfoOperations.insertRecordPreview(new FilePreview(sharedFile.getSenderEmail(), sharedFile.getEncryptedName(), decryptedFileName,
                         secondDecryptedKey));
 
             } catch (Exception e) {

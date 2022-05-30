@@ -59,6 +59,12 @@ public class StartupSceneController extends Controller {
                 sc.deletedFileControl();
                 sc.downloadFileControl();
                 new Thread(new SyncMonitor()).start();
+                TableOperations tableOperations = new TableOperations();
+
+                tableOperations.createNotificationTable();
+                tableOperations.createRecordTable();
+                tableOperations.createSharedRecordTable();
+                tableOperations.createPrivateKeyTable();
                 MainSceneController msc = new MainSceneController();
                 msc.displayScene(stage);
             } else {
@@ -116,7 +122,8 @@ public class StartupSceneController extends Controller {
             }
 
             KeyPair keyPair = Crypto.SHARE.CREATE_KEY_PAIR();
-            publicInfoOperations.insertShareKeys(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()),
+            publicInfoOperations.insertShareKeys(
+                    Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()),
                     Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()));
             new Thread(new SyncMonitor()).start();
             new MainSceneController().displayScene(stage);

@@ -13,7 +13,6 @@ import com.dropbox.core.v2.sharing.SharedFileMetadata;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,7 +22,10 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 
-public class SelectShareFolderSceneController implements Initializable {
+public class SelectShareFolderSceneController extends PopupSceneController implements Initializable{
+    public SelectShareFolderSceneController(String sceneFXML, String sceneTitle) {
+        super(sceneFXML, sceneTitle);
+    }
 
     @FXML
     private Button saveSharedToFolderBtn;
@@ -88,5 +90,4 @@ public class SelectShareFolderSceneController implements Initializable {
             System.out.println(123);
         }
     }
-
 }

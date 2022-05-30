@@ -1,18 +1,16 @@
 package org.uludag.bmb.beans.crypto;
 
 public class FilePreview {
-    private String recieverEmail;
     private String senderEmail;
     private String encryptedName;
-    private String secondDecryptedKey;
+    private String key;
     private String decryptedName;
 
-    public FilePreview(String recieverEmail, String senderEmail, String encryptedName, String decryptedName, String secondDecryptedKey) {
-        this.recieverEmail = recieverEmail;
+    public FilePreview(String senderEmail, String encryptedName, String decryptedName, String key) {
         this.senderEmail = senderEmail;
         this.encryptedName = encryptedName;
         this.decryptedName = decryptedName;
-        this.secondDecryptedKey = secondDecryptedKey;
+        this.key = key;
     }
 
     public String getDecryptedName(){
@@ -21,14 +19,6 @@ public class FilePreview {
 
     public void setDecryptedName(String decryptedName){
         this.decryptedName = decryptedName;
-    }
-
-    public String getRecieverEmail() {
-        return this.recieverEmail;
-    }
-
-    public void setRecieverEmail(String recieverEmail) {
-        this.recieverEmail = recieverEmail;
     }
 
     public String getSenderEmail() {
@@ -48,11 +38,11 @@ public class FilePreview {
     }
 
     public String getSecondDecryptedKey() {
-        return this.secondDecryptedKey;
+        return this.key;
     }
 
     public void setSecondDecryptedKey(String secondDecryptedKey) {
-        this.secondDecryptedKey = secondDecryptedKey;
+        this.key = secondDecryptedKey;
     }
 
 }

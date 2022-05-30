@@ -2,7 +2,6 @@ package org.uludag.bmb.controller.scene;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -11,30 +10,20 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
-import com.dropbox.core.v2.files.SaveUrlResult;
 import com.dropbox.core.v2.files.UploadErrorException;
-import com.dropbox.core.v2.sharing.SharedFileMetadata;
 import com.dropbox.core.v2.sharing.UserFileMembershipInfo;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.database.SharedFile;
 import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.controller.database.DatabaseController;
-import org.uludag.bmb.operations.database.FileRecordOperations;
-import org.uludag.bmb.operations.database.NotificationOperations;
-import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
-import org.uludag.bmb.service.cryption.Crypto;
-import org.uludag.bmb.service.sync.SyncServer;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.ScaleTransition;
@@ -44,10 +33,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
@@ -68,15 +54,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MainSceneController extends Controller implements Initializable {
-    private NotificationOperations notificationOperations;
-    private PublicInfoOperations publicInfoOperations;
-    private FileRecordOperations fileRecordOperations;
-
     @FXML
     private Button btnDownload;
 
@@ -145,6 +126,7 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     private Label lblLastEdit;
+
     @FXML
     private ListView<String> shareList;
 
@@ -179,9 +161,6 @@ public class MainSceneController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        notificationOperations = new NotificationOperations();
-        publicInfoOperations = new PublicInfoOperations();
-        fileRecordOperations = new FileRecordOperations();
         notificationList.setCellFactory(param -> new NotificationListCellFactory());
 
         Timeline notificationCycle = new Timeline(
@@ -229,25 +208,24 @@ public class MainSceneController extends Controller implements Initializable {
         treeView.setRoot(root);
         treeView.setShowRoot(false);
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                List<SharedFileMetadata> entries;
-                try {
-                    entries = Client.client.sharing().listReceivedFiles().getEntries();
-                    if(entries.size() != 0){
-                        for (SharedFileMetadata entry : entries) {
-                            SharedFile sharedFile = publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
-                            Crypto.SHARE.DECRYPT_PREVIEW(sharedFile);
-                            String decryptedName = fileRecordOperations.getSharedRecordPreview(entry.getName()).getDecryptedName();
-                            sharedFilesList.getItems().add(decryptedName);
-                        }
-                    }
-                } catch (DbxException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        // List<SharedFileMetadata> entries;
+        // try {
+        // entries = Client.client.sharing().listReceivedFiles().getEntries();
+        // if (entries.size() != 0) {
+        // for (SharedFileMetadata entry : entries) {
+        // SharedFile sharedFile =
+        // publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
+        // Crypto.SHARE.DECRYPT_PREVIEW(sharedFile);
+        // String decryptedName =
+        // fileRecordOperations.getSharedRecordPreview(entry.getName())
+        // .getDecryptedName();
+        // sharedFilesList.getItems().add(decryptedName);
+        // //paylaşılan dosyadan çıkılacak
+        // }
+        // }
+        // } catch (DbxException e) {
+        // e.printStackTrace();
+        // }
 
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
@@ -265,28 +243,15 @@ public class MainSceneController extends Controller implements Initializable {
     void clearNotifications(MouseEvent event) {
         notificationList.getItems().clear();
         notificationDot.visibleProperty().set(false);
+        notificationPane.visibleProperty().set(false);
+        fileDetailPane.setLayoutY(34);
     }
 
     @FXML
-    void shareFile(ActionEvent event) {
+    void shareSelectedFiles(ActionEvent event) {
         ObservableList<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(Controller.class.getResource("/shareScene.fxml"));
-            fxmlLoader.setController(new ShareWindowController());
-            ShareWindowController controller = fxmlLoader.getController();
-            Parent root = (Parent) fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Dosya Paylaş");
-            Scene newScene = new Scene(root);
-            newScene.getStylesheets().add(PropertiesReader.getProperty("shareSceneCss"));
-            stage.setScene(newScene);
-            stage.show();
-
-            controller.setFileList(selectedFiles);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ShareWindowController shareWindowController = new ShareWindowController("shareScene", "Dosya Paylaş");
+        shareWindowController.setFileList(selectedFiles);
     }
 
     @FXML
@@ -319,13 +284,13 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
-    void deleteFile(ActionEvent event) {
-        List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
-        for (TableViewDataProperty item : selectedItems) {
-            if (item.getSync()) {
-                FileOperations.DELETE_FROM_CLOUD(item.getFilePath(), item.getFileName());
+    void deleteSelectedFiles(ActionEvent event) {
+        List<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
+        for (TableViewDataProperty file : selectedFiles) {
+            if (file.getSync()) {
+                FileOperations.DELETE_FROM_CLOUD(file.getFilePath(), file.getFileName());
             } else {
-                FileOperations.DELETE_FROM_LOCAL(item.getFilePath(), item.getFileName());
+                FileOperations.DELETE_FROM_LOCAL(file.getFilePath(), file.getFileName());
             }
         }
     }
@@ -371,13 +336,13 @@ public class MainSceneController extends Controller implements Initializable {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    addToPathLink(pathNaked);
+                    showPath(pathNaked);
                 }
             });
         }
     }
 
-    private void addToPathLink(ArrayList<String> path) {
+    private void showPath(ArrayList<String> path) {
         linkPane.getItems().clear();
 
         Hyperlink pathPart = new Hyperlink("Dropbox/");
@@ -419,7 +384,7 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
-    void downloadItem(ActionEvent event) {
+    void downloadSelectedFile(ActionEvent event) {
         ObservableList<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
         if (selectedFiles.size() != 0) {
             String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
@@ -431,7 +396,7 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
-    void uploadItem(ActionEvent event) throws IOException, UploadErrorException, DbxException {
+    void uploadSelectedFile(ActionEvent event) throws IOException, UploadErrorException, DbxException {
         var folderPathNode = linkPane.getItems();
         String uploadDirectory = "/";
         if (folderPathNode.size() != 0) {
@@ -458,7 +423,7 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
-    void showFileDetails(MouseEvent event) {
+    void showSelectedFileDetails(MouseEvent event) {
         try {
             TableViewDataProperty selectedFiles = cloudTableView.getSelectionModel().getSelectedItem();
             String fileExtension = selectedFiles.getFileName().split(Pattern.quote("."))[1];
@@ -503,27 +468,14 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
-    void saveSharedFile(ActionEvent event) {
-        String selectedFiles = sharedFilesList.getSelectionModel().getSelectedItem();
+    void saveSelectedSharedFile(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(Controller.class.getResource("/selectShareFolderScene.fxml"));
-            fxmlLoader.setController(new SelectShareFolderSceneController());
-            SelectShareFolderSceneController controller = fxmlLoader.getController();
-            Parent root = (Parent) fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Dosyayı Aktar");
-            Scene newScene = new Scene(root);
-            stage.setScene(newScene);
-            stage.show();
-
-            controller.setFileList(selectedFiles);
-
+            String fileToSave = sharedFilesList.getSelectionModel().getSelectedItem();
+            SelectShareFolderSceneController selectShareFolderSceneController = new SelectShareFolderSceneController(
+                    "selectShareFolderScene", "Paylaşılan Dosyayı Kaydet");
+            selectShareFolderSceneController.setFileList(fileToSave);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        int selectedIndex = sharedFilesList.getSelectionModel().getSelectedIndex();
-        sharedFilesList.getItems().remove(selectedIndex);
-        System.out.println("kaydettim hadi bakam");
     }
 }
