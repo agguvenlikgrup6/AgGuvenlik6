@@ -254,8 +254,8 @@ public class FileOperations {
                     FileRecord file = fileRecordOperations.getByPathAndName(filePath, shareFile.getFileName());
                     String fileAESKey = file.getKey();
                     String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileAESKey, myPrivateKey);
-                    String AESfirstPart = encryptedAES.substring(0, 490);
-                    String AESsecondPart = encryptedAES.substring(490, encryptedAES.length());
+                    String AESfirstPart = encryptedAES.substring(0, 200);
+                    String AESsecondPart = encryptedAES.substring(200, encryptedAES.length());
                     String secondEncryptedAES1 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESfirstPart, recieverPublicKey);
                     String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart,
                             recieverPublicKey);

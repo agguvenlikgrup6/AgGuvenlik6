@@ -192,13 +192,15 @@ public class Crypto {
         public static String DECRYPT_NAME(SharedFile sharedFile) {
             try {
                 String myPrivateKey = publicInfoOperations.getPrivateKey();
-                String senderPublicKey = publicInfoOperations.getUserPublicKey(sharedFile.getEmail());
+                String senderPublicKey = publicInfoOperations.getUserPublicKey("bmb4016grup6@gmail.com");
                 String decryptedKeyPart1 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart1(), myPrivateKey);
                 String decryptedKeyPart2 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart2(), myPrivateKey);
                 String decryptedKey = decryptedKeyPart1 + decryptedKeyPart2;
                 String secondDecryptedKey = KEY_EXCHANGE.decryptWithPublic(decryptedKey, senderPublicKey);
 
-                String decryptedFileName = Crypto.decryptName(sharedFile.getEncryptedName().getBytes(), secondDecryptedKey);
+                String decryptedFileName = Crypto.decryptName(
+                        Base64.getUrlDecoder().decode(sharedFile.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
+                        secondDecryptedKey);
 
                 return decryptedFileName;
             } catch (Exception e) {
@@ -213,8 +215,8 @@ public class Crypto {
         private static PublicKey getPublicKey(String pubk) {
             try {
                 X509EncodedKeySpec keySpecPublic = new X509EncodedKeySpec(decode(pubk));
-                
-                KeyFactory keyFactory = KeyFactory.getInstance(RSA_MODE);
+
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                 return keyFactory.generatePublic(keySpecPublic);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -225,7 +227,7 @@ public class Crypto {
         private static PrivateKey getPrivateKey(String prik) {
             try {
                 PKCS8EncodedKeySpec keySpecPrivate = new PKCS8EncodedKeySpec(decode(prik));
-                KeyFactory keyFactory = KeyFactory.getInstance(RSA_MODE);
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                 return keyFactory.generatePrivate(keySpecPrivate);
             } catch (Exception e) {
                 e.printStackTrace();

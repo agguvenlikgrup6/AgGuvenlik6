@@ -226,17 +226,17 @@ public class MainSceneController extends Controller implements Initializable {
         treeView.setRoot(root);
         treeView.setShowRoot(false);
 
-        // List<SharedFileMetadata> entries;
-        // try {
-        //     entries = Client.client.sharing().listReceivedFiles().getEntries();
-        //     for (SharedFileMetadata entry : entries) {
-        //         // SharedFile sharedFile = publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
-        //         // String decryptedName = Crypto.SHARE.DECRYPT_NAME(sharedFile);
-        //         // sharedFilesList.getItems().add(decryptedName);
-        //     }
-        // } catch (DbxException e) {
-        //     e.printStackTrace();
-        // }
+        List<SharedFileMetadata> entries;
+        try {
+            entries = Client.client.sharing().listReceivedFiles().getEntries();
+            for (SharedFileMetadata entry : entries) {
+                SharedFile sharedFile = publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
+                String decryptedName = Crypto.SHARE.DECRYPT_NAME(sharedFile);
+                sharedFilesList.getItems().add(decryptedName);
+            }
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
 
         cloudTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         ctwFileName.setCellValueFactory(cellData -> cellData.getValue().fileName());
