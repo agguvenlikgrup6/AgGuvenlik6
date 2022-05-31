@@ -22,9 +22,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 
-public class SelectShareFolderSceneController extends PopupSceneController implements Initializable{
-    public SelectShareFolderSceneController(String sceneFXML, String sceneTitle) {
-        super(sceneFXML, sceneTitle);
+public class SaveSharedFileSceneController extends PopupSceneController implements Initializable{
+    public SaveSharedFileSceneController(MainSceneController mainSceneController, String sceneFXML, String sceneTitle) {
+        super(mainSceneController, sceneFXML, sceneTitle);
     }
 
     @FXML
@@ -36,17 +36,11 @@ public class SelectShareFolderSceneController extends PopupSceneController imple
     @FXML
     private TextField cloudPathTXT;
 
-    private String fileName;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         selectShareFolderTreeView.setRoot((TreeItem<String>) root);
         selectShareFolderTreeView.setShowRoot(false);
-    }
-
-    public void setFileList(String fileName) {
-        this.fileName = fileName;
     }
 
     @FXML
@@ -55,7 +49,7 @@ public class SelectShareFolderSceneController extends PopupSceneController imple
         try {
             entries = Client.client.sharing().listReceivedFiles().getEntries();
             for (SharedFileMetadata entry : entries) {
-                if (entry.getName().equals(fileName)) {
+                if (entry.getName().equals(mainSceneController.sharedFilesList.getSelectionModel().getSelectedItem())) {
                     // Client.client.files().saveUrl(cloudPathTXT.getText() + fileName, entry.getPreviewUrl());
 
                 }
@@ -86,8 +80,6 @@ public class SelectShareFolderSceneController extends PopupSceneController imple
             Collections.reverse(pathNaked);
             String pathFolder = StringUtil.join(path, "");
             cloudPathTXT.setText(pathFolder);
-
-            System.out.println(123);
         }
     }
 }

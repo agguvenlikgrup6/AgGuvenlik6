@@ -14,7 +14,7 @@ public class FileRecord {
     public FileRecord() {
 
     }
-
+    
     public FileRecord(int downloadStatus, String name, String path, String key, String modificationDate, String hash,
             String encryptedName,
             int sync, int changeStatus) {

@@ -33,7 +33,7 @@ import com.dropbox.core.v2.sharing.MemberSelector;
 
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
+import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
@@ -47,9 +47,10 @@ public class FileOperations {
     private static final NotificationOperations notificationOperations = new NotificationOperations();
     private static final PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
 
-    public static final void DOWNLOAD_FILE(String localPath, String filePath, String fileName) {
+    public static final void DOWNLOAD_FILE(String filePath, String fileName) {
         new Thread(() -> {
             try {
+                String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
                 String fileWithPath = localPath + filePath + fileName;
 
                 if (!Files.exists(Paths.get(fileWithPath))) {
@@ -132,46 +133,6 @@ public class FileOperations {
 
     }
 
-    public static void DELETE_FROM_CLOUD(String path, String fileName) {
-        try {
-            FileRecord file = fileRecordOperations.getByPathAndName(path, fileName);
-            DeleteResult ds = Client.client.files().deleteV2(path + file.getEncryptedName());
-            fileRecordOperations.DELETE(fileName, path);
-            FileOperations.DELETE_FILE(path, fileName);
-            notificationOperations.insertNotification(path + fileName + " dosyası buluttan ve yerelden silindi!");
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void DELETE_FROM_LOCAL(String path, String fileName) {
-        Config config = ConfigController.Settings.LoadSettings();
-        String localPath = config.getLocalDropboxPath();
-        String filePath = localPath;
-        String os = System.getProperty("os.name").toLowerCase();
-
-        if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
-            filePath += "/" + path;
-        } else {
-            filePath += "\\" + path;
-        }
-        filePath += fileName;
-
-        try {
-            if (Files.deleteIfExists((Path) Paths.get(filePath))) {
-                if (fileRecordOperations.getByPathAndName(path, fileName) != null) {
-                    fileRecordOperations.UPDATE_DOWNLOAD_STATUS(path, fileName, false);
-                }
-                notificationOperations.insertNotification(path + fileName + " dosyası yerelden silindi!");
-            } else {
-                notificationOperations
-                        .insertNotification(path + fileName + " dosyası yerelde bulunmadığı için silinemedi!");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static String GET_HASH(String path, String fileName) {
         String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
         byte[] inputBytes;
@@ -189,7 +150,7 @@ public class FileOperations {
         }
     }
 
-    public static void CHANGE_STATUS(TableViewDataProperty item, boolean status) {
+    public static void CHANGE_STATUS(CloudFileProperty item, boolean status) {
         if (status) {
             String filePath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
             filePath += item.getFilePath() + item.getFileName();
@@ -244,13 +205,13 @@ public class FileOperations {
         return null;
     }
 
-    public static boolean SHARE_FILE(ObservableList<TableViewDataProperty> fileList, List<String> userEmailList) {
+    public static boolean SHARE_FILE(ObservableList<CloudFileProperty> fileList, List<String> userEmailList) {
         try {
             String filePath = fileList.get(0).getFilePath();
             String myPrivateKey = publicInfoOperations.getPrivateKey();
             for (String recieverEmail : userEmailList) {
                 String recieverPublicKey = publicInfoOperations.getUserPublicKey(recieverEmail);
-                for (TableViewDataProperty shareFile : fileList) {
+                for (CloudFileProperty shareFile : fileList) {
                     FileRecord file = fileRecordOperations.getByPathAndName(filePath, shareFile.getFileName());
                     String fileAESKey = file.getKey();
                     String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileAESKey, myPrivateKey);
@@ -276,6 +237,54 @@ public class FileOperations {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static void DELETE_FILE(CloudFileProperty file) {
+        if (file.getSync()) {
+            FileOperations.DELETE_FROM_CLOUD(file.getFilePath(), file.getFileName());
+        } else {
+            FileOperations.DELETE_FROM_LOCAL(file.getFilePath(), file.getFileName());
+        }
+    }
+
+    private static void DELETE_FROM_CLOUD(String path, String fileName) {
+        try {
+            FileRecord file = fileRecordOperations.getByPathAndName(path, fileName);
+            DeleteResult ds = Client.client.files().deleteV2(path + file.getEncryptedName());
+            fileRecordOperations.DELETE(fileName, path);
+            FileOperations.DELETE_FILE(path, fileName);
+            notificationOperations.insertNotification(path + fileName + " dosyası buluttan ve yerelden silindi!");
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void DELETE_FROM_LOCAL(String path, String fileName) {
+        Config config = ConfigController.Settings.LoadSettings();
+        String localPath = config.getLocalDropboxPath();
+        String filePath = localPath;
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+            filePath += "/" + path;
+        } else {
+            filePath += "\\" + path;
+        }
+        filePath += fileName;
+
+        try {
+            if (Files.deleteIfExists((Path) Paths.get(filePath))) {
+                if (fileRecordOperations.getByPathAndName(path, fileName) != null) {
+                    fileRecordOperations.UPDATE_DOWNLOAD_STATUS(path, fileName, false);
+                }
+                notificationOperations.insertNotification(path + fileName + " dosyası yerelden silindi!");
+            } else {
+                notificationOperations
+                        .insertNotification(path + fileName + " dosyası yerelde bulunmadığı için silinemedi!");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

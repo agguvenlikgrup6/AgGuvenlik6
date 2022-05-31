@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,8 @@ import com.dropbox.core.v2.sharing.UserFileMembershipInfo;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
-import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
+import org.uludag.bmb.beans.dataproperty.StyledHyperLink;
+import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
@@ -34,6 +36,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
@@ -59,91 +62,91 @@ import javafx.util.Duration;
 
 public class MainSceneController extends Controller implements Initializable {
     @FXML
-    private Button btnDownload;
+    public Button btnDownload;
 
     @FXML
-    private Button btnNewFolder;
+    public Button btnNewFolder;
 
     @FXML
-    private Button btnUpload;
+    public Button btnUpload;
 
     @FXML
-    private Button btnClearNotifications;
+    public Button btnClearNotifications;
 
     @FXML
-    private Button btnNotificationn;
+    public Button btnNotificationn;
 
     @FXML
-    private TabPane tabPane;
+    public TabPane tabPane;
 
     @FXML
-    private TreeView<String> treeView;
+    public TreeView<String> treeView;
 
     @FXML
-    private Pane notificationPane;
+    public Pane notificationPane;
 
     @FXML
-    private Circle notificationDot;
+    public Circle notificationDot;
 
     @FXML
-    private SplitPane linkPane;
+    public SplitPane pathBar;
 
     @FXML
-    private TableView<TableViewDataProperty> cloudTableView;
+    public TableView<CloudFileProperty> cloudTableView;
 
     @FXML
-    private TableColumn<TableViewDataProperty, ArrayList<String>> ctwAccess;
+    public TableColumn<CloudFileProperty, ArrayList<String>> ctwAccess;
 
     @FXML
-    private Pane fileDetailPane;
+    public Pane fileDetailPane;
 
     @FXML
-    private TableColumn<TableViewDataProperty, CheckBox> ctwCheckBox;
+    public TableColumn<CloudFileProperty, CheckBox> ctwCheckBox;
 
     @FXML
-    private TableColumn<TableViewDataProperty, String> ctwFilePath;
+    public TableColumn<CloudFileProperty, String> ctwFilePath;
 
     @FXML
-    private TableColumn<TableViewDataProperty, String> ctwFileName;
+    public TableColumn<CloudFileProperty, String> ctwFileName;
 
     @FXML
-    private TableColumn<TableViewDataProperty, Date> ctwLastEdit;
+    public TableColumn<CloudFileProperty, Date> ctwLastEdit;
 
     @FXML
-    private TableColumn<TableViewDataProperty, CheckBox> ctwChange;
+    public TableColumn<CloudFileProperty, CheckBox> ctwChange;
 
     @FXML
-    private TableColumn<TableViewDataProperty, CheckBox> ctwDownload;
+    public TableColumn<CloudFileProperty, CheckBox> ctwDownload;
 
     @FXML
     public ListView<String> notificationList;
 
     @FXML
-    private Label lblFileName;
+    public Label lblFileName;
 
     @FXML
-    private Label lblFileSize;
+    public Label lblFileSize;
 
     @FXML
-    private Label lblLastEdit;
+    public Label lblLastEdit;
 
     @FXML
-    private ListView<String> shareList;
+    public ListView<String> shareList;
 
     @FXML
-    private Tooltip fileNameTTip;
+    public Tooltip fileNameTTip;
 
     @FXML
-    private Tooltip fileSizeTTip;
+    public Tooltip fileSizeTTip;
 
     @FXML
-    private Tooltip lastChangeTTip;
+    public Tooltip lastChangeTTip;
 
     @FXML
-    private ImageView fileIcon;
+    public ImageView fileIcon;
 
     @FXML
-    private ListView<String> sharedFilesList;
+    public ListView<String> sharedFilesList;
 
     public MainSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("mainSceneFxml"),
@@ -162,48 +165,50 @@ public class MainSceneController extends Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         notificationList.setCellFactory(param -> new NotificationListCellFactory());
-
-        Timeline notificationCycle = new Timeline(
-                new KeyFrame(Duration.seconds(2),
-                        new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent event) {
-                                List<String> notifications = notificationOperations.getNotifications();
-                                if (notifications.size() != 0 && notifications != null) {
-                                    try {
-                                        String path = "/";
-                                        for (int i = 1; i < linkPane.getItems().size(); i++) {
-                                            path += ((Hyperlink) linkPane.getItems().get(i)).getText();
-                                        }
-                                        var items = UITrees.LOCAL_FILES(path);
-                                        cloudTableView.setItems(items);
-                                        cloudTableView.refresh();
-                                    } catch (IndexOutOfBoundsException e) {
-
-                                    }
-                                    for (String notification : notifications) {
-                                        notificationList.getItems().add(0, notification);
-                                        notificationDot.visibleProperty().set(true);
-                                        ScaleTransition st = new ScaleTransition(Duration.millis(1000),
-                                                notificationDot);
-                                        st.setFromX(0.6);
-                                        st.setFromY(0.6);
-                                        st.setToX(1.2);
-                                        st.setToY(1.2);
-                                        st.setCycleCount(3);
-                                        st.setAutoReverse(true);
-                                        st.jumpTo(Duration.millis(200));
-                                        st.play();
-                                    }
-                                    notifications.clear();
-                                }
-
-                            }
-                        }));
-        notificationCycle.setCycleCount(Timeline.INDEFINITE);
-        notificationCycle.play();
-
-        notificationPane.visibleProperty().set(false);
+        /*
+         * Timeline notificationCycle = new Timeline(
+         * new KeyFrame(Duration.seconds(2),
+         * new EventHandler<ActionEvent>() {
+         * 
+         * @Override
+         * public void handle(ActionEvent event) {
+         * List<String> notifications = notificationOperations.getNotifications();
+         * if (notifications.size() != 0 && notifications != null) {
+         * try {
+         * String path = "/";
+         * for (int i = 1; i < linkPane.getItems().size(); i++) {
+         * path += ((Hyperlink) linkPane.getItems().get(i)).getText();
+         * }
+         * var items = UITrees.GET_FILES(path);
+         * cloudTableView.setItems(items);
+         * cloudTableView.refresh();
+         * } catch (IndexOutOfBoundsException e) {
+         * 
+         * }
+         * for (String notification : notifications) {
+         * notificationList.getItems().add(0, notification);
+         * notificationDot.visibleProperty().set(true);
+         * ScaleTransition st = new ScaleTransition(Duration.millis(1000),
+         * notificationDot);
+         * st.setFromX(0.6);
+         * st.setFromY(0.6);
+         * st.setToX(1.2);
+         * st.setToY(1.2);
+         * st.setCycleCount(3);
+         * st.setAutoReverse(true);
+         * st.jumpTo(Duration.millis(200));
+         * st.play();
+         * }
+         * notifications.clear();
+         * }
+         * 
+         * }
+         * }));
+         * notificationCycle.setCycleCount(Timeline.INDEFINITE);
+         * notificationCycle.play();
+         * 
+         * notificationPane.visibleProperty().set(false);
+         */
         TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         treeView.setRoot(root);
         treeView.setShowRoot(false);
@@ -248,57 +253,16 @@ public class MainSceneController extends Controller implements Initializable {
     }
 
     @FXML
-    void shareSelectedFiles(ActionEvent event) {
-        ObservableList<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
-        ShareWindowController shareWindowController = new ShareWindowController("shareScene", "Dosya Paylaş");
-        shareWindowController.setFileList(selectedFiles);
-    }
-
-    @FXML
-    void createNewFolder(MouseEvent event) {
-        var folderPathNode = linkPane.getItems();
-        String uploadDirectory = "/";
-        if (folderPathNode.size() != 0) {
-            for (int index = 1; index < folderPathNode.size(); index++) {
-                uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
-            }
-        }
-
-        TextInputDialog td = new TextInputDialog();
-        td.titleProperty().set("Yeni Klasör Oluştur");
-        td.setHeaderText("Yeni Klasör İsmi:");
-        td.showAndWait();
-
-        String folderName = td.getEditor().getText();
-        if (folderName != "") {
-            try {
-                Client.client.files().createFolderV2(uploadDirectory + folderName);
-                TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
-                treeView.setRoot(root);
-                treeView.setShowRoot(false);
-            } catch (DbxException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    @FXML
     void deleteSelectedFiles(ActionEvent event) {
-        List<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
-        for (TableViewDataProperty file : selectedFiles) {
-            if (file.getSync()) {
-                FileOperations.DELETE_FROM_CLOUD(file.getFilePath(), file.getFileName());
-            } else {
-                FileOperations.DELETE_FROM_LOCAL(file.getFilePath(), file.getFileName());
-            }
+        for (CloudFileProperty file : cloudTableView.getSelectionModel().getSelectedItems()) {
+            FileOperations.DELETE_FILE(file);
         }
     }
 
     @FXML
     void changeSyncStatusOn(ActionEvent event) {
-        List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
-        for (TableViewDataProperty item : selectedItems) {
+        List<CloudFileProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
+        for (CloudFileProperty item : selectedItems) {
             item.selection().get().selectedProperty().set(true);
             FileOperations.CHANGE_STATUS(item, true);
         }
@@ -306,8 +270,8 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void changeSyncStatusOff(ActionEvent event) {
-        List<TableViewDataProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
-        for (TableViewDataProperty item : selectedItems) {
+        List<CloudFileProperty> selectedItems = cloudTableView.getSelectionModel().getSelectedItems();
+        for (CloudFileProperty item : selectedItems) {
             item.selection().get().selectedProperty().set(false);
             FileOperations.CHANGE_STATUS(item, false);
         }
@@ -315,93 +279,51 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
-        ArrayList<String> path = new ArrayList<String>();
-        ArrayList<String> pathNaked = new ArrayList<String>();
-
         TreeItem<String> selectedFolder = (TreeItem<String>) treeView.getSelectionModel().getSelectedItem();
-        var item = selectedFolder;
-
-        if (item != null) {
-            while (item.getParent() != null) {
-                path.add(item.getValue() + "/");
-                pathNaked.add(item.getValue() + "/");
-                item = item.getParent();
+        try {
+            StringBuilder folderPath = new StringBuilder();
+            for (; selectedFolder.getParent() != null; selectedFolder = selectedFolder.getParent()) {
+                folderPath.insert(0, selectedFolder.getValue() + "/");
             }
-            Collections.reverse(path);
-            Collections.reverse(pathNaked);
-            var items = UITrees.LOCAL_FILES(String.join("", path));
-            cloudTableView.setItems(items);
+            ObservableList<CloudFileProperty> files = fileRecordOperations.getByPath(folderPath.toString());
+            cloudTableView.setItems(files);
             cloudTableView.refresh();
 
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    showPath(pathNaked);
+                    pathBar.getItems().clear();
+                    List<String> selectedBarPath = Arrays.asList(folderPath.toString().split("/"));
+                    if (selectedBarPath.size() == 0) {
+                        pathBar.getItems().add(new StyledHyperLink(pathBar, cloudTableView, ""));
+                        return;
+                    }
+                    for (String pathPart : Arrays.asList(folderPath.toString().split("/"))) {
+                        pathBar.getItems().add(new StyledHyperLink(pathBar, cloudTableView, pathPart));
+                    }
+
                 }
             });
+        } catch (NullPointerException e) {
+            // catches if item expand arrow is selected instead of selecting item
+            // so no action will take place
         }
-    }
-
-    private void showPath(ArrayList<String> path) {
-        linkPane.getItems().clear();
-
-        Hyperlink pathPart = new Hyperlink("Dropbox/");
-        pathPart.getStyleClass().add("pathPart");
-        pathPart.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                cloudTableView.setItems(UITrees.LOCAL_FILES("/"));
-                treeView.getSelectionModel().select(0);
-                linkPane.getItems().remove(1, linkPane.getItems().size());
-            }
-        });
-        linkPane.getItems().add(pathPart);
-
-        for (int i = 1; i < path.size(); i++) {
-            pathPart = new Hyperlink(path.get(i));
-            pathPart.getStyleClass().add("pathPart");
-            pathPart.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    int selectedPathIndex = linkPane.getItems().indexOf(event.getSource());
-                    int pathSize = linkPane.getItems().size();
-                    for (int i = 0; i < pathSize - (selectedPathIndex + 1); i++) {
-                        treeView.getSelectionModel().selectPrevious();
-                    }
-                    String pathS = "";
-                    for (int i = 1; i <= linkPane.getItems().indexOf(event.getSource()); i++) {
-                        pathS += ((Hyperlink) linkPane.getItems().get(i)).getText();
-                    }
-                    cloudTableView.setItems(UITrees.LOCAL_FILES("/" + pathS));
-                    linkPane.getItems().remove(linkPane.getItems().indexOf(event.getSource()) + 1,
-                            linkPane.getItems().size());
-                }
-
-            });
-            linkPane.getItems().add(pathPart);
-        }
-
     }
 
     @FXML
     void downloadSelectedFile(ActionEvent event) {
-        ObservableList<TableViewDataProperty> selectedFiles = cloudTableView.getSelectionModel().getSelectedItems();
-        if (selectedFiles.size() != 0) {
-            String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
-
-            for (var file : selectedFiles) {
-                FileOperations.DOWNLOAD_FILE(localPath, file.getFilePath(), file.getFileName());
-            }
+        for (var file : cloudTableView.getSelectionModel().getSelectedItems()) {
+            FileOperations.DOWNLOAD_FILE(file.getFilePath(), file.getFileName());
         }
     }
 
     @FXML
     void uploadSelectedFile(ActionEvent event) throws IOException, UploadErrorException, DbxException {
-        var folderPathNode = linkPane.getItems();
+        var folderPathNode = pathBar.getItems();
         String uploadDirectory = "/";
         if (folderPathNode.size() != 0) {
             for (int index = 1; index < folderPathNode.size(); index++) {
-                uploadDirectory += ((Hyperlink) linkPane.getItems().get(index)).getText().toString();
+                uploadDirectory += ((Hyperlink) pathBar.getItems().get(index)).getText().toString();
             }
         }
 
@@ -425,7 +347,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void showSelectedFileDetails(MouseEvent event) {
         try {
-            TableViewDataProperty selectedFiles = cloudTableView.getSelectionModel().getSelectedItem();
+            CloudFileProperty selectedFiles = cloudTableView.getSelectionModel().getSelectedItem();
             String fileExtension = selectedFiles.getFileName().split(Pattern.quote("."))[1];
             if (fileExtension.equals("png") || fileExtension.equals("jpg") || fileExtension.equals("jpeg")
                     || fileExtension.equals("mp4") || fileExtension.equals("mp3") || fileExtension.equals("svg")) {
@@ -469,13 +391,16 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void saveSelectedSharedFile(ActionEvent event) {
-        try {
-            String fileToSave = sharedFilesList.getSelectionModel().getSelectedItem();
-            SelectShareFolderSceneController selectShareFolderSceneController = new SelectShareFolderSceneController(
-                    "selectShareFolderScene", "Paylaşılan Dosyayı Kaydet");
-            selectShareFolderSceneController.setFileList(fileToSave);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        new SaveSharedFileSceneController(this, "saveSharedFileScene", "Paylaşılan Dosyayı Kaydet");
+    }
+
+    @FXML
+    void createNewFolder(MouseEvent event) {
+        new FolderCreationSceneController(this, "folderCreationScene", "Yeni Klasör Oluştur");
+    }
+
+    @FXML
+    void shareSelectedFiles(ActionEvent event) {
+        new ShareWindowController(this, "shareFilesScene", "Dosya Paylaş");
     }
 }

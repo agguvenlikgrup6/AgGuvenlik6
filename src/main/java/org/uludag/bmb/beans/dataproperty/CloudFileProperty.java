@@ -8,7 +8,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
 
-public class TableViewDataProperty {
+public class CloudFileProperty {
     private final StringProperty fileName;
     private final ObjectProperty<Date> lastEditDate;
     private final StringProperty filePath;
@@ -16,7 +16,7 @@ public class TableViewDataProperty {
     private final ObjectProperty<CheckBox> changeStatus;
     private final ObjectProperty<CheckBox> downloadStatus;
 
-    public TableViewDataProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath,
+    public CloudFileProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath,
             int syncStatus,
             int changeStatus) {
         this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus",

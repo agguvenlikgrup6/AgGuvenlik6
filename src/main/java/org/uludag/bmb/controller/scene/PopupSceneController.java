@@ -1,5 +1,9 @@
 package org.uludag.bmb.controller.scene;
 
+import org.uludag.bmb.operations.database.FileRecordOperations;
+import org.uludag.bmb.operations.database.NotificationOperations;
+import org.uludag.bmb.operations.database.PublicInfoOperations;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,7 +15,21 @@ public class PopupSceneController {
     protected Stage stage;
     protected Scene scene;
 
-    public PopupSceneController(String sceneFXML, String sceneTitle) {
+    protected MainSceneController mainSceneController;
+
+    protected NotificationOperations notificationOperations;
+    protected PublicInfoOperations publicInfoOperations;
+    protected FileRecordOperations fileRecordOperations;
+
+    public PopupSceneController(){
+        notificationOperations = new NotificationOperations();
+        publicInfoOperations = new PublicInfoOperations();
+        fileRecordOperations = new FileRecordOperations();
+    }
+
+    public PopupSceneController(MainSceneController mainSceneController, String sceneFXML, String sceneTitle) {
+        this();
+        this.mainSceneController = mainSceneController;
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(PopupSceneController.class.getResource("/" + sceneFXML + ".fxml"));
             fxmlLoader.setController(this);

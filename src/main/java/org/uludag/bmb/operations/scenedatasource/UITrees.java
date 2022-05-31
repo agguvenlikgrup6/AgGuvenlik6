@@ -13,7 +13,7 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
+import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 
@@ -74,21 +74,5 @@ public class UITrees {
             }
             return result;
         }
-    }
-
-    public static final ObservableList<TableViewDataProperty> LOCAL_FILES(String path) {
-        FileRecordOperations fileRecordOperations = new FileRecordOperations();
-        ObservableList<TableViewDataProperty> files = FXCollections.observableArrayList();
-        List<FileRecord> fileRecords = fileRecordOperations.getByPath(path);
-        for (FileRecord f : fileRecords) {
-            try {
-                files.add(new TableViewDataProperty(f.getDownloadStatus(), f.getName(),
-                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(f.getModificationDate()),
-                        f.getPath(), f.getSync(), f.getChangeStatus()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        return files;
     }
 }

@@ -2,6 +2,7 @@ package org.uludag.bmb.operations.database;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -9,8 +10,11 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.uludag.bmb.beans.crypto.FilePreview;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.database.SharedFile;
-import org.uludag.bmb.beans.dataproperty.TableViewDataProperty;
+import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
 import org.uludag.bmb.controller.database.DatabaseController;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class FileRecordOperations {
     private DatabaseController databaseController;
@@ -70,14 +74,20 @@ public class FileRecordOperations {
         }
     }
 
-    public List<FileRecord> getByPath(String path) {
+    public ObservableList<CloudFileProperty> getByPath(String path) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
             List<FileRecord> records = this.databaseController.getLocalQueryRunner()
                     .query("SELECT * FROM " + this.databaseController.TABLES.record + " WHERE path='" + path + "'",
                             rsh);
-            return records;
-        } catch (SQLException e) {
+            ObservableList<CloudFileProperty> fileList = FXCollections.observableArrayList();
+            for (FileRecord record : records) {
+                fileList.add(new CloudFileProperty(record.getDownloadStatus(), record.getName(),
+                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(record.getModificationDate()),
+                        record.getPath(), record.getSync(), record.getChangeStatus()));
+            }
+            return fileList;
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
