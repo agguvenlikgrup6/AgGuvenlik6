@@ -49,7 +49,7 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
         try {
             entries = Client.client.sharing().listReceivedFiles().getEntries();
             for (SharedFileMetadata entry : entries) {
-                if (entry.getName().equals(mainSceneController.sharedFilesList.getSelectionModel().getSelectedItem())) {
+                if (entry.getName().equals(mainSceneController.recievedFilesList.getSelectionModel().getSelectedItem())) {
                     // Client.client.files().saveUrl(cloudPathTXT.getText() + fileName, entry.getPreviewUrl());
 
                 }

@@ -12,23 +12,22 @@ public class CloudFileProperty {
     private final StringProperty fileName;
     private final ObjectProperty<Date> lastEditDate;
     private final StringProperty filePath;
-    private ObjectProperty<CheckBox> syncStatus;
+    private final ObjectProperty<CheckBox> syncStatus;
     private final ObjectProperty<CheckBox> changeStatus;
     private final ObjectProperty<CheckBox> downloadStatus;
 
     public CloudFileProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath,
             int syncStatus,
             int changeStatus) {
-        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus",
-                new CheckBoxWithStatus(downloadStatus));
+        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus",new CheckBoxWithStatus(downloadStatus));
+        this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CheckBoxWithStatus(syncStatus));
+        this.changeStatus = new SimpleObjectProperty<>(this, "changeStatus", new CheckBoxWithStatus(changeStatus));
         this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
         this.fileName = new SimpleStringProperty(this, "fileName", fileName);
-        this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CheckBoxWithStatus(syncStatus));
         this.filePath = new SimpleStringProperty(this, "filepath", filePath);
-        this.changeStatus = new SimpleObjectProperty<>(this, "changeStatus", new CheckBoxWithStatus(changeStatus));
     }
 
-    public final boolean getSync() {
+    public boolean getFileSyncStatus(){
         return this.syncStatus.get().selectedProperty().get();
     }
 
@@ -36,17 +35,24 @@ public class CloudFileProperty {
         return lastEditDate;
     }
 
-    public ObjectProperty<CheckBox> selection() {
+    public ObjectProperty<CheckBox> syncStatus() {
         return this.syncStatus;
     }
 
-    public boolean getChangeStatus() {
-        return this.changeStatus.get().selectedProperty().get();
+    public CheckBox getSyncStatus() {
+        return this.syncStatus.get();
+    }
+
+    public void setSyncStatus(Boolean syncStatus) {
+        this.syncStatus.get().selectedProperty().set(syncStatus);
+    }
+
+    public CheckBox getChangeStatus() {
+        return this.changeStatus.get();
     }
 
     public void setChangeStatus(Boolean changeStatus) {
         this.changeStatus.get().selectedProperty().set(changeStatus);
-        ;
     }
 
     public ObjectProperty<CheckBox> changeStatus() {

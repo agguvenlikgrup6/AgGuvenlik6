@@ -19,6 +19,10 @@ public abstract class Controller {
     protected Stage stage;
     protected Scene scene;
 
+    public Controller() {
+
+    }
+
     public Controller(String scene, int width, int heigth) {
         fxmlLoad(scene, width, heigth);
         notificationOperations = new NotificationOperations();

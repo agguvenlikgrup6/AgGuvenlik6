@@ -154,7 +154,7 @@ public class FileOperations {
         if (status) {
             String filePath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
             filePath += item.getFilePath() + item.getFileName();
-            if (item.getChangeStatus()) {
+            if (item.getFileSyncStatus()) {
                 try {
                     InputStream is = new FileInputStream(new File(filePath));
                     DELETE_FROM_LOCAL(item.getFilePath(), item.getFileName());
@@ -241,7 +241,7 @@ public class FileOperations {
     }
 
     public static void DELETE_FILE(CloudFileProperty file) {
-        if (file.getSync()) {
+        if (file.getFileSyncStatus()) {
             FileOperations.DELETE_FROM_CLOUD(file.getFilePath(), file.getFileName());
         } else {
             FileOperations.DELETE_FROM_LOCAL(file.getFilePath(), file.getFileName());

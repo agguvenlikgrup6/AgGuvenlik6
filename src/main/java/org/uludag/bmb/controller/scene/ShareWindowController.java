@@ -51,7 +51,7 @@ public class ShareWindowController extends PopupSceneController implements Initi
             accountField.getItems().addAll(email);
         }
         new AutoCompleteComboBoxListener<>(accountField);
-        for (CloudFileProperty file : mainSceneController.cloudTableView.getSelectionModel().getSelectedItems()) {
+        for (CloudFileProperty file : mainSceneController.fileListView.getSelectionModel().getSelectedItems()) {
             shareFileList.getItems().add(file.getFileName());
         }
     }
@@ -63,8 +63,8 @@ public class ShareWindowController extends PopupSceneController implements Initi
 
     @FXML
     void shareWithMails(ActionEvent event) {
-        if (FileOperations.SHARE_FILE(mainSceneController.cloudTableView.getSelectionModel().getSelectedItems(), shareAccountList.getItems())) {
-            for (CloudFileProperty file : mainSceneController.cloudTableView.getSelectionModel().getSelectedItems()) {
+        if (FileOperations.SHARE_FILE(mainSceneController.fileListView.getSelectionModel().getSelectedItems(), shareAccountList.getItems())) {
+            for (CloudFileProperty file : mainSceneController.fileListView.getSelectionModel().getSelectedItems()) {
                 notificationOperations.insertNotification(
                         file.getFilePath() + file.getFileName() + " dosyası seçili hesaplar ile paylaşıldı!");
             }

@@ -36,8 +36,8 @@ public class FolderCreationSceneController extends PopupSceneController implemen
             try {
                 Client.client.files().createFolderV2(newFolderPath + newFolderName);
                 TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
-                mainSceneController.treeView.setRoot(root);
-                mainSceneController.treeView.setShowRoot(false);
+                mainSceneController.directoriesHierarchyView.setRoot(root);
+                mainSceneController.directoriesHierarchyView.setShowRoot(false);
                 notificationOperations.insertNotification(newFolderPath + " dizininde " + newFolderName + " klasörü başarı ile oluşturuldu!");
             } catch (DbxException e) {
                 notificationOperations.insertNotification(newFolderPath + " dizininde " + newFolderName + " klasörü oluşturulamadı!");
@@ -57,10 +57,10 @@ public class FolderCreationSceneController extends PopupSceneController implemen
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         newFolderPath = "/";
-        var folderPathNode = mainSceneController.pathBar.getItems();
+        var folderPathNode = mainSceneController.selectedDirectoryPathPane.getItems();
         if (folderPathNode.size() != 0) {
             for (int index = 1; index < folderPathNode.size(); index++) {
-                newFolderPath += ((StyledHyperLink) mainSceneController.pathBar.getItems().get(index)).getText().toString();
+                newFolderPath += ((StyledHyperLink) mainSceneController.selectedDirectoryPathPane.getItems().get(index)).getText().toString();
             }
         }
     }

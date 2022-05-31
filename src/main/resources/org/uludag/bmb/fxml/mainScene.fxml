@@ -44,7 +44,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
@@ -62,8 +62,8 @@
                 <Font size="18.0" fx:id="x1" />
               </font>
             </Label>
-                  <TreeView fx:id="treeView" layoutX="10.0" layoutY="58.0" onMouseClicked="#hierarchySelectFolder" prefHeight="299.0" prefWidth="230.0" style="-fx-background-color: #fbfaf9;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="58.0" />
-                  <ListView fx:id="sharedFilesList" layoutX="10.0" layoutY="422.0" prefHeight="353.0" prefWidth="230.0">
+                  <TreeView fx:id="directoriesHierarchyView" layoutX="10.0" layoutY="58.0" onMouseClicked="#hierarchySelectFolder" prefHeight="299.0" prefWidth="230.0" style="-fx-background-color: #fbfaf9;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="58.0" />
+                  <ListView fx:id="recievedFilesList" layoutX="10.0" layoutY="422.0" prefHeight="353.0" prefWidth="230.0">
                      <contextMenu>
                         <ContextMenu>
                           <items>
@@ -83,17 +83,41 @@
         <children>
                   <Button id="upload" fx:id="btnUpload" layoutX="8.0" layoutY="59.0" mnemonicParsing="false" onAction="#uploadSelectedFile" prefHeight="25.0" prefWidth="106.0" styleClass="btnMainMenu" text="UPLOAD" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="59.0" />
                   <Button id="download" fx:id="btnDownload" layoutX="130.0" layoutY="59.0" mnemonicParsing="false" onAction="#downloadSelectedFile" prefHeight="25.0" prefWidth="95.0" styleClass="btnMainMenu" text=" Download" textFill="WHITE" AnchorPane.leftAnchor="130.0" AnchorPane.topAnchor="59.0" />
-                  <TableView fx:id="cloudTableView" layoutX="10.0" layoutY="103.0" onMouseClicked="#showSelectedFileDetails" prefHeight="695.0" prefWidth="784.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="103.0">
+                  <TableView fx:id="fileListView" layoutX="10.0" layoutY="103.0" onMouseClicked="#showSelectedFileDetails" prefHeight="695.0" prefWidth="784.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="103.0">
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                      <columns>
-                        <TableColumn fx:id="ctwDownload" editable="false" maxWidth="30.0" minWidth="30.0" prefWidth="20.0" resizable="false" styleClass="ctwDownload" />
-                        <TableColumn fx:id="ctwFileName" minWidth="-1.0" prefWidth="295.0" text="Dosya" />
-                        <TableColumn fx:id="ctwLastEdit" minWidth="-1.0" prefWidth="272.0" styleClass="ctwSync" text="Son Değişiklik" />
-                        <TableColumn fx:id="ctwCheckBox" editable="false" minWidth="-1.0" prefWidth="304.0" styleClass="ctwSync" text="Senkronizasyon" />
-                        <TableColumn fx:id="ctwFilePath" prefWidth="75.0" text="PATHINFO" visible="false" />
-                        <TableColumn fx:id="ctwChange" editable="false" minWidth="-1.0" prefWidth="304.0" styleClass="ctwChange" text="Değişiklik Durumu" />
+                        <TableColumn fx:id="fileDownloadStatusColumn" editable="false" maxWidth="30.0" minWidth="30.0" prefWidth="20.0" resizable="false" styleClass="ctwDownload">
+                           <cellValueFactory>
+                              <PropertyValueFactory property="downloadStatus" />
+                           </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="fileNameColumn" minWidth="-1.0" prefWidth="295.0" text="Dosya">
+                           <cellValueFactory>
+                              <PropertyValueFactory property="fileName" />
+                           </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="modificationDateColumn" minWidth="-1.0" prefWidth="272.0" text="Son Değişiklik">
+                           <cellValueFactory>
+                              <PropertyValueFactory property="lastEditDate" />
+                           </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="syncStatusColumn" editable="false" minWidth="-1.0" prefWidth="304.0" styleClass="ctwSync" text="Senkronizasyon">
+                           <cellValueFactory>
+                              <PropertyValueFactory property="syncStatus" />
+                           </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="filePathColumn" prefWidth="75.0" text="PATHINFO" visible="false">
+                           <cellValueFactory>
+                              <PropertyValueFactory property="filePath" />
+                           </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="fileChangeStatusColumn" editable="false" minWidth="-1.0" prefWidth="304.0" styleClass="ctwChange" text="Değişiklik Durumu">
+                           <cellValueFactory>
+                              <PropertyValueFactory property="changeStatus" />
+                           </cellValueFactory>
+                        </TableColumn>
                      </columns>
                      <contextMenu>
                         <ContextMenu>
@@ -108,7 +132,7 @@
                         </ContextMenu>
                      </contextMenu>
                   </TableView>
-                  <SplitPane fx:id="pathBar" layoutX="16.0" layoutY="14.0" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="744.0" styleClass="pathLinkPane" />
+                  <SplitPane fx:id="selectedDirectoryPathPane" layoutX="16.0" layoutY="14.0" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="744.0" styleClass="pathLinkPane" />
                   <Button fx:id="btnNewFolder" layoutX="238.0" layoutY="60.0" mnemonicParsing="false" onMouseClicked="#createNewFolder" prefHeight="24.0" prefWidth="31.0" style="-fx-background-color: black;" styleClass="newFolder" />
         </children>
                <padding>
@@ -119,7 +143,7 @@
           <children>
                   <Pane prefHeight="35.0" prefWidth="250.0" style="-fx-border-color: transparent transparent black transparent; -fx-border-width: 2;" AnchorPane.rightAnchor="0.0">
                      <children>
-                        <Button fx:id="btnNotificationn" layoutX="215.0" layoutY="4.0" mnemonicParsing="false" onMouseClicked="#showNotifications" styleClass="icon-button" text="Button" />
+                        <Button fx:id="btnShowNotification" layoutX="215.0" layoutY="4.0" mnemonicParsing="false" onMouseClicked="#showNotifications" styleClass="icon-button" text="Button" />
                         <Circle fx:id="notificationDot" disable="true" fill="#ff1f1f" layoutX="220.0" layoutY="22.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
                      </children>
                   </Pane>
@@ -138,22 +162,22 @@
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Label fx:id="lblFileName" layoutX="109.0" layoutY="346.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
+                        <Label fx:id="detailFileName" layoutX="109.0" layoutY="346.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
                            <tooltip>
-                              <Tooltip fx:id="fileNameTTip" text="Dosya Adı" />
+                              <Tooltip fx:id="toolTipFileName" text="Dosya Adı" />
                            </tooltip>
                         </Label>
-                        <Label fx:id="lblFileSize" layoutX="109.0" layoutY="373.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
+                        <Label fx:id="detailFileSize" layoutX="109.0" layoutY="373.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
                            <tooltip>
-                              <Tooltip fx:id="fileSizeTTip" text="Dosya Boyutu" />
+                              <Tooltip fx:id="toolTipFileSize" text="Dosya Boyutu" />
                            </tooltip>
                         </Label>
-                        <Label fx:id="lblLastEdit" layoutX="109.0" layoutY="401.0" prefHeight="17.0" prefWidth="152.0" text="Dosya Adı">
+                        <Label fx:id="detailModificationDate" layoutX="109.0" layoutY="401.0" prefHeight="17.0" prefWidth="152.0" text="Dosya Adı">
                            <tooltip>
-                              <Tooltip fx:id="lastChangeTTip" text="Son Değişiklik" />
+                              <Tooltip fx:id="toolTipModificationDate" text="Son Değişiklik" />
                            </tooltip>
                         </Label>
-                        <ListView fx:id="shareList" layoutX="25.0" layoutY="509.0" prefHeight="200.0" prefWidth="200.0" styleClass="sharedAccountList" />
+                        <ListView fx:id="fileSharedAccountListView" layoutX="25.0" layoutY="509.0" prefHeight="200.0" prefWidth="200.0" styleClass="sharedAccountList" />
                         <Label layoutX="59.0" layoutY="482.0" prefHeight="27.0" prefWidth="132.0" text="Dosya Üyeleri" textAlignment="CENTER">
                            <font>
                               <Font size="18.0" />
@@ -161,12 +185,12 @@
                         </Label>
                         <Separator layoutY="457.0" prefHeight="0.0" prefWidth="250.0" />
                         <Separator layoutY="320.0" prefHeight="3.0" prefWidth="250.0" />
-                        <ImageView fx:id="fileIcon" fitHeight="180.0" fitWidth="180.0" layoutX="35.0" layoutY="82.0" pickOnBounds="true" preserveRatio="true" />
+                        <Button fx:id="fileIcon" layoutX="46.0" layoutY="90.0" mnemonicParsing="false" prefHeight="165.0" prefWidth="159.0" styleClass="iconDefault" />
                      </children>
                   </Pane>
-                  <Pane fx:id="notificationPane" layoutY="35.0" prefHeight="323.0" prefWidth="360.0">
+                  <Pane fx:id="notificationPane" layoutY="35.0" prefHeight="323.0" prefWidth="360.0" visible="false">
                      <children>
-                        <ListView fx:id="notificationList" layoutY="38.0" prefHeight="291.0" prefWidth="250.0" styleClass="notificationListView" />
+                        <ListView fx:id="notificationListView" layoutY="38.0" prefHeight="291.0" prefWidth="250.0" styleClass="notificationListView" />
                         <Label layoutX="79.0" layoutY="14.0" text="Bildirimler">
                            <font>
                               <Font size="18.0" />
