@@ -1,5 +1,9 @@
 package org.uludag.bmb.beans.database;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class FileRecord {
     private String name;
     private String path;
@@ -10,14 +14,14 @@ public class FileRecord {
     private int sync;
     private int changeStatus;
     private int downloadStatus;
+    private String fileSize;
+    private String sharedAccounts;
 
     public FileRecord() {
 
     }
-    
-    public FileRecord(int downloadStatus, String name, String path, String key, String modificationDate, String hash,
-            String encryptedName,
-            int sync, int changeStatus) {
+
+    public FileRecord(int downloadStatus, String name, String path, String key, String modificationDate, String hash, String encryptedName, int sync, int changeStatus, String fileSize, String sharedAccounts) {
         this.downloadStatus = downloadStatus;
         this.name = name;
         this.path = path;
@@ -27,6 +31,24 @@ public class FileRecord {
         this.encryptedName = encryptedName;
         this.sync = sync;
         this.changeStatus = changeStatus;
+        this.fileSize = fileSize;
+        this.sharedAccounts = sharedAccounts;
+    }
+
+    public String getFileSize() {
+        return this.fileSize;
+    }
+
+    public void setFileSize(String fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public String getSharedAccounts() {
+        return this.sharedAccounts;
+    }
+
+    public void setSharedAccounts(String sharedAccounts) {
+        this.sharedAccounts = sharedAccounts;
     }
 
     public FileRecord(String encryptedName, String filePath) {
@@ -102,7 +124,7 @@ public class FileRecord {
         return this.downloadStatus;
     }
 
-    public void setDownloadStatus(int downloadStatus){
+    public void setDownloadStatus(int downloadStatus) {
         this.downloadStatus = downloadStatus;
     }
 }

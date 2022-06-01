@@ -63,14 +63,7 @@ public class ShareWindowController extends PopupSceneController implements Initi
 
     @FXML
     void shareWithMails(ActionEvent event) {
-        if (FileOperations.SHARE_FILE(mainSceneController.fileListView.getSelectionModel().getSelectedItems(), shareAccountList.getItems())) {
-            for (CloudFileProperty file : mainSceneController.fileListView.getSelectionModel().getSelectedItems()) {
-                notificationOperations.insertNotification(
-                        file.getFilePath() + file.getFileName() + " dosyası seçili hesaplar ile paylaşıldı!");
-            }
-        } else {
-            notificationOperations.insertNotification("Paylaşım Hatası!");
-        }
+        FileOperations.SHARE_FILE(mainSceneController.fileListView.getSelectionModel().getSelectedItems(), shareAccountList.getItems());
         Node source = (Node) event.getSource();
         Stage stage = (Stage) source.getScene().getWindow();
         stage.close();

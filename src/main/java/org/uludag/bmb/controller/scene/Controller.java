@@ -1,6 +1,7 @@
 package org.uludag.bmb.controller.scene;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.database.PublicInfoOperations;
@@ -25,9 +26,9 @@ public abstract class Controller {
 
     public Controller(String scene, int width, int heigth) {
         fxmlLoad(scene, width, heigth);
-        notificationOperations = new NotificationOperations();
-        publicInfoOperations = new PublicInfoOperations();
-        fileRecordOperations = new FileRecordOperations();
+        notificationOperations = Constants.NOTIFICATION_OPERATIONS;
+        publicInfoOperations = Constants.PUBLIC_INFO_OPERATIONS;
+        fileRecordOperations = Constants.FILE_RECORD_OPERATIONS;
     }
 
     public void fxmlLoad(String fxml, int sceneWidth, int sceneHeight) {

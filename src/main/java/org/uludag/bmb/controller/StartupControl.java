@@ -21,8 +21,8 @@ public class StartupControl {
     private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
 
     public void deletedFileControl() {
-        List<FileRecord> cloud = StartupControl.GET_CLOUD_RECORDS();
-        List<FileRecord> local = StartupControl.GET_LOCAL_RECORDS();
+        List<FileRecord> cloud = GET_CLOUD_RECORDS();
+        List<FileRecord> local = fileRecordOperations.getAll();
 
         for (int i = 0; i < local.size(); i++) {
             boolean check = false;
@@ -63,18 +63,6 @@ public class StartupControl {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public static final List<FileRecord> GET_LOCAL_RECORDS() {
-        DatabaseController dc = new DatabaseController();
-        List<FileRecord> fileRecords = fileRecordOperations.getAll();
-        ArrayList<FileRecord> f1 = new ArrayList<>();
-        for (FileRecord f : fileRecords) {
-            f1.add(new FileRecord(f.getDownloadStatus(), f.getName(), f.getPath(), f.getKey(), f.getModificationDate(),
-                    f.getHash(),
-                    f.getEncryptedName(), f.getSync(), f.getChangeStatus()));
-        }
-        return f1;
     }
 
     public void downloadFileControl() {

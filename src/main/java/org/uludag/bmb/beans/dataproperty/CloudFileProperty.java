@@ -1,6 +1,8 @@
 package org.uludag.bmb.beans.dataproperty;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -15,19 +17,33 @@ public class CloudFileProperty {
     private final ObjectProperty<CheckBox> syncStatus;
     private final ObjectProperty<CheckBox> changeStatus;
     private final ObjectProperty<CheckBox> downloadStatus;
+    private final StringProperty fileSize;
+    private final ObjectProperty<List<String>> sharedAccounts;
 
-    public CloudFileProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath,
-            int syncStatus,
-            int changeStatus) {
-        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus",new CheckBoxWithStatus(downloadStatus));
+    public CloudFileProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath, int syncStatus, int changeStatus, String fileSize, List<String> sharedAccounts) {
+        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", new CheckBoxWithStatus(downloadStatus));
         this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CheckBoxWithStatus(syncStatus));
         this.changeStatus = new SimpleObjectProperty<>(this, "changeStatus", new CheckBoxWithStatus(changeStatus));
         this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
         this.fileName = new SimpleStringProperty(this, "fileName", fileName);
         this.filePath = new SimpleStringProperty(this, "filepath", filePath);
+        this.fileSize = new SimpleStringProperty(this, "fileSize", fileSize);
+        this.sharedAccounts = new SimpleObjectProperty<>(this, "sharedAccounts", sharedAccounts);
     }
 
-    public boolean getFileSyncStatus(){
+    public final ObjectProperty<List<String>> sharedAccounts() {
+        return sharedAccounts;
+    }
+
+    public final List<String> getSharedAccounts() {
+        return sharedAccounts.get();
+    }
+
+    public final void setSharedAccounts(List<String> sharedAccounts) {
+        this.sharedAccounts.set(sharedAccounts);
+    }
+
+    public boolean getFileSyncStatus() {
         return this.syncStatus.get().selectedProperty().get();
     }
 
@@ -109,5 +125,17 @@ public class CloudFileProperty {
 
     public final void setFilePath(String filePath) {
         this.filePath.set(filePath);
+    }
+
+    public final StringProperty fileSize() {
+        return fileSize;
+    }
+
+    public final String getFileSize() {
+        return fileSize.get();
+    }
+
+    public void setFileSize(String fileSize) {
+        this.fileSize.set(fileSize);
     }
 }

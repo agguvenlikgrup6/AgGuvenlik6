@@ -3,6 +3,7 @@ package org.uludag.bmb.operations.database;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -84,7 +85,8 @@ public class FileRecordOperations {
             for (FileRecord record : records) {
                 fileList.add(new CloudFileProperty(record.getDownloadStatus(), record.getName(),
                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(record.getModificationDate()),
-                        record.getPath(), record.getSync(), record.getChangeStatus()));
+                        record.getPath(), record.getSync(), record.getChangeStatus(), record.getFileSize(),
+                        Arrays.asList(record.getSharedAccounts().split(";"))));
             }
             return fileList;
         } catch (Exception e) {
@@ -95,8 +97,9 @@ public class FileRecordOperations {
 
     public void INSERT(FileRecord fr) {
         String query = "INSERT INTO " + this.databaseController.TABLES.record +
-                "(name, path, key, modificationDate, hash, encryptedName, sync, changeStatus, downloadStatus) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "(name, path, key, modificationDate, hash, encryptedName, sync, changeStatus, downloadStatus, fileSize, sharedAccounts) "
+                +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
             statement.setString(1, fr.getName());
@@ -108,6 +111,8 @@ public class FileRecordOperations {
             statement.setInt(7, fr.getSync());
             statement.setInt(8, fr.getChangeStatus());
             statement.setInt(9, fr.getDownloadStatus());
+            statement.setString(10, fr.getFileSize());
+            statement.setString(11, fr.getSharedAccounts());
 
             statement.execute();
         } catch (SQLException e) {
@@ -192,6 +197,21 @@ public class FileRecordOperations {
                 return null;
         } catch (SQLException e) {
             return null;
+        }
+    }
+
+    public void UPDATE_SHARED_ACCOUNTS(List<String> userEmailList, String filePath, String fileName) {
+        String query = "UPDATE " + this.databaseController.TABLES.record
+                + " SET sharedAccounts=sharedAccounts || ? WHERE path=? AND name=?";
+        try {
+            PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
+            statement.setString(1, String.join(";", userEmailList) + ";");
+            statement.setString(2, filePath);
+            statement.setString(3, fileName);
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

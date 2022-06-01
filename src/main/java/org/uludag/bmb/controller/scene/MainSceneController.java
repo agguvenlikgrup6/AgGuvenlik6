@@ -19,6 +19,7 @@ import com.dropbox.core.v2.files.UploadErrorException;
 import com.dropbox.core.v2.sharing.UserFileMembershipInfo;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
 import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.StyledHyperLink;
@@ -200,7 +201,7 @@ public class MainSceneController extends Controller implements Initializable {
         List<CloudFileProperty> selectedItems = fileListView.getSelectionModel().getSelectedItems();
         for (CloudFileProperty item : selectedItems) {
             item.syncStatus().get().selectedProperty().set(true);
-            FileOperations.CHANGE_STATUS(item, true);
+            FileOperations.CHANGE_SYNC_STATUS(item, true);
         }
     }
 
@@ -209,7 +210,7 @@ public class MainSceneController extends Controller implements Initializable {
         List<CloudFileProperty> selectedItems = fileListView.getSelectionModel().getSelectedItems();
         for (CloudFileProperty item : selectedItems) {
             item.syncStatus().get().selectedProperty().set(false);
-            FileOperations.CHANGE_STATUS(item, false);
+            FileOperations.CHANGE_SYNC_STATUS(item, false);
         }
     }
 
@@ -232,11 +233,13 @@ public class MainSceneController extends Controller implements Initializable {
                     selectedDirectoryPathPane.getItems().clear();
                     List<String> selectedBarPath = Arrays.asList(folderPath.toString().split("/"));
                     if (selectedBarPath.size() == 0) {
-                        selectedDirectoryPathPane.getItems().add(new StyledHyperLink(selectedDirectoryPathPane, fileListView, ""));
+                        selectedDirectoryPathPane.getItems()
+                                .add(new StyledHyperLink(selectedDirectoryPathPane, fileListView, ""));
                         return;
                     }
                     for (String pathPart : Arrays.asList(folderPath.toString().split("/"))) {
-                        selectedDirectoryPathPane.getItems().add(new StyledHyperLink(selectedDirectoryPathPane, fileListView, pathPart));
+                        selectedDirectoryPathPane.getItems()
+                                .add(new StyledHyperLink(selectedDirectoryPathPane, fileListView, pathPart));
                     }
 
                 }
@@ -303,40 +306,15 @@ public class MainSceneController extends Controller implements Initializable {
                 fileIcon.getStyleClass().add("iconDefault");
                 break;
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                FileMetadata fileMetaData = FileOperations.GET_METADATA(selectedFile.getFilePath(), selectedFile.getFileName());
-                
-            }
-        });
-
-        // shareList.getItems().clear();
-        // lblFileName.setText(selectedFiles.getFileName());
-        // lblLastEdit.setText(new SimpleDateFormat("yyyy-MM-dd
-        // hh:mm:ss").format(selectedFiles.getLastEditDate()));
-        // lblFileSize.setText(String.valueOf(
-        // (FileOperations.GET_METADATA(selectedFiles.getFilePath(),
-        // selectedFiles.getFileName()).getSize())
-        // / (1024))
-        // + " KB");
-        // String idShared = FileOperations.GET_METADATA(selectedFiles.getFilePath(),
-        // selectedFiles.getFileName())
-        // .getId();
-        // List<UserFileMembershipInfo> sharedPeople =
-        // Client.client.sharing().listFileMembers(idShared)
-        // .getUsers();
-        // for (UserFileMembershipInfo membershipInfo : sharedPeople) {
-        // shareList.getItems().add(membershipInfo.getUser().getEmail());
-        // }
-
-        // fileNameTTip.setText(lblFileName.getText());
-        // fileSizeTTip.setText(lblFileSize.getText());
-        // lastChangeTTip.setText(lblLastEdit.getText());
-        // lblFileName.setTooltip(fileNameTTip);
-        // lblFileSize.setTooltip(fileSizeTTip);
-        // lblLastEdit.setTooltip(lastChangeTTip);
-
+        FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
+        detailFileName.setText(selectedFileRecord.getName());
+        detailFileSize.setText(selectedFileRecord.getFileSize());
+        detailModificationDate.setText(selectedFileRecord.getModificationDate());
+        toolTipFileName.setText(selectedFileRecord.getName());
+        toolTipFileSize.setText(selectedFileRecord.getFileSize());
+        toolTipModificationDate.setText(selectedFileRecord.getModificationDate());
+        fileSharedAccountListView.getItems().clear();
+        fileSharedAccountListView.getItems().addAll(selectedFile.getSharedAccounts());
     }
 
     @FXML

@@ -2,7 +2,10 @@ package org.uludag.bmb.service.sync;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import com.dropbox.core.DbxException;
@@ -78,7 +81,8 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                             efd.key,
                             new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()),
                             fileHash,
-                            efd.name, 1, 0));
+                            efd.name, 1, 0, String.valueOf(Files.size(Paths.get(file.getAbsolutePath())) / 1024) + " KB",
+                            "bmb4016grup6supervisor@gmail.com;"));
                     notificationOperations.insertNotification(path + file.getName() + " dosyası başarı ile yüklendi!");
 
                 } catch (DbxException | IOException e) {

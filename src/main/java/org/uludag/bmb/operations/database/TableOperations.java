@@ -27,7 +27,9 @@ public class TableOperations {
                 "encryptedName TEXT NOT NULL," +
                 "sync BOOLEAN NOT NULL CHECK(sync IN(0, 1))," +
                 "downloadStatus BOOLEAN NOT NULL CHECK(downloadStatus IN(0,1))," +
-                "changeStatus BOOLEAN NOT NULL CHECK(changeStatus IN(0,1))" +
+                "changeStatus BOOLEAN NOT NULL CHECK(changeStatus IN(0,1))," +
+                "fileSize TEXT NOT NULL," +
+                "sharedAccounts TEXT NOT NULL" + 
                 ")";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);

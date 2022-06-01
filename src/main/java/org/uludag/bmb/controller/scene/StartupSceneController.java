@@ -53,18 +53,19 @@ public class StartupSceneController extends Controller {
 
     @Override
     public void displayScene(Stage stage) {
+        TableOperations tableOperations = new TableOperations();
+
+        tableOperations.createNotificationTable();
+        tableOperations.createRecordTable();
+        tableOperations.createSharedRecordTable();
+        tableOperations.createPrivateKeyTable();
         try {
             if (Client.client != null) {
                 StartupControl sc = new StartupControl();
                 sc.deletedFileControl();
                 sc.downloadFileControl();
                 new Thread(new SyncMonitor()).start();
-                TableOperations tableOperations = new TableOperations();
 
-                tableOperations.createNotificationTable();
-                tableOperations.createRecordTable();
-                tableOperations.createSharedRecordTable();
-                tableOperations.createPrivateKeyTable();
                 MainSceneController msc = new MainSceneController();
                 msc.displayScene(stage);
             } else {

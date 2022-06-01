@@ -1,15 +1,10 @@
 package org.uludag.bmb.operations.dropbox;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -21,8 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.DeleteResult;
@@ -32,21 +25,15 @@ import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.sharing.MemberSelector;
 
 import org.uludag.bmb.beans.config.Config;
+import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.operations.database.FileRecordOperations;
-import org.uludag.bmb.operations.database.NotificationOperations;
-import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.service.cryption.Crypto;
 
 import javafx.collections.ObservableList;
 
 public class FileOperations {
-    private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
-    private static final NotificationOperations notificationOperations = new NotificationOperations();
-    private static final PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
-
     public static final void DOWNLOAD_FILE(String filePath, String fileName) {
         new Thread(() -> {
             try {
@@ -58,11 +45,11 @@ public class FileOperations {
                         File fileFolder = new File(localPath + filePath);
                         fileFolder.mkdirs();
                     }
-                    FileRecord record = fileRecordOperations.getByPathAndName(filePath, fileName);
+                    FileRecord record = Constants.FILE_RECORD_OPERATIONS.getByPathAndName(filePath, fileName);
                     OutputStream downloadFile = new FileOutputStream(localPath + filePath + record.getEncryptedName());
                     Client.client.files().downloadBuilder(filePath + record.getEncryptedName()).download(downloadFile);
-                    fileRecordOperations.UPDATE_DOWNLOAD_STATUS(filePath, fileName, true);
-                    fileRecordOperations.UPDATE_SYNC_STATUS(filePath, fileName, true);
+                    Constants.FILE_RECORD_OPERATIONS.UPDATE_DOWNLOAD_STATUS(filePath, fileName, true);
+                    Constants.FILE_RECORD_OPERATIONS.UPDATE_SYNC_STATUS(filePath, fileName, true);
                     downloadFile.close();
                     String decryptedName = Crypto.decryptName(
                             Base64.getUrlDecoder().decode(record.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
@@ -76,7 +63,8 @@ public class FileOperations {
 
                     Files.delete(Paths.get(localPath + filePath + record.getEncryptedName()));
 
-                    notificationOperations.insertNotification(filePath + fileName + " dosyası başarı ile indirildi!");
+                    Constants.NOTIFICATION_OPERATIONS
+                            .insertNotification(filePath + fileName + " dosyası başarı ile indirildi!");
                 }
             } catch (DbxException | IOException e) {
                 e.printStackTrace();
@@ -150,7 +138,7 @@ public class FileOperations {
         }
     }
 
-    public static void CHANGE_STATUS(CloudFileProperty item, boolean status) {
+    public static void CHANGE_SYNC_STATUS(CloudFileProperty item, boolean status) {
         if (status) {
             String filePath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
             filePath += item.getFilePath() + item.getFileName();
@@ -165,23 +153,24 @@ public class FileOperations {
                     e.printStackTrace();
                 }
             } else {
-                FileRecord record = fileRecordOperations.getByPathAndName(item.getFilePath(), item.getFileName());
+                FileRecord record = Constants.FILE_RECORD_OPERATIONS.getByPathAndName(item.getFilePath(),
+                        item.getFileName());
                 File file = new File(filePath);
                 if (!record.getModificationDate()
                         .equals(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()))) {
                     item.setChangeStatus(true);
-                    fileRecordOperations.UPDATE_CHANGE_STATUS(item.getFilePath(), item.getFileName(), true);
-                    CHANGE_STATUS(item, status);
+                    Constants.FILE_RECORD_OPERATIONS.UPDATE_CHANGE_STATUS(item.getFilePath(), item.getFileName(), true);
+                    CHANGE_SYNC_STATUS(item, status);
                 }
             }
-            fileRecordOperations.UPDATE_SYNC_STATUS(item.getFilePath(), item.getFileName(), true);
+            Constants.FILE_RECORD_OPERATIONS.UPDATE_SYNC_STATUS(item.getFilePath(), item.getFileName(), true);
         } else {
-            fileRecordOperations.UPDATE_SYNC_STATUS(item.getFilePath(), item.getFileName(), false);
+            Constants.FILE_RECORD_OPERATIONS.UPDATE_SYNC_STATUS(item.getFilePath(), item.getFileName(), false);
         }
     }
 
     public static FileMetadata GET_METADATA(String filePath, String fileName) {
-        FileRecord record = fileRecordOperations.getByPathAndName(filePath,
+        FileRecord record = Constants.FILE_RECORD_OPERATIONS.getByPathAndName(filePath,
                 fileName);
         ListFolderResult result;
         try {
@@ -208,11 +197,12 @@ public class FileOperations {
     public static boolean SHARE_FILE(ObservableList<CloudFileProperty> fileList, List<String> userEmailList) {
         try {
             String filePath = fileList.get(0).getFilePath();
-            String myPrivateKey = publicInfoOperations.getPrivateKey();
+            String myPrivateKey = Constants.PUBLIC_INFO_OPERATIONS.getPrivateKey();
             for (String recieverEmail : userEmailList) {
-                String recieverPublicKey = publicInfoOperations.getUserPublicKey(recieverEmail);
+                String recieverPublicKey = Constants.PUBLIC_INFO_OPERATIONS.getUserPublicKey(recieverEmail);
                 for (CloudFileProperty shareFile : fileList) {
-                    FileRecord file = fileRecordOperations.getByPathAndName(filePath, shareFile.getFileName());
+                    FileRecord file = Constants.FILE_RECORD_OPERATIONS.getByPathAndName(filePath,
+                            shareFile.getFileName());
                     String fileAESKey = file.getKey();
                     String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileAESKey, myPrivateKey);
                     String AESfirstPart = encryptedAES.substring(0, 200);
@@ -220,22 +210,25 @@ public class FileOperations {
                     String secondEncryptedAES1 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESfirstPart, recieverPublicKey);
                     String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart,
                             recieverPublicKey);
-                    String encryptedFileName = fileRecordOperations
+                    String encryptedFileName = Constants.FILE_RECORD_OPERATIONS
                             .getByPathAndName(shareFile.getFilePath(), shareFile.getFileName())
                             .getEncryptedName();
-                    publicInfoOperations.insertSharedFileKey(recieverEmail,
-                            publicInfoOperations.getUserEmail(), secondEncryptedAES1,
+                    Constants.PUBLIC_INFO_OPERATIONS.insertSharedFileKey(recieverEmail,
+                    Constants.PUBLIC_INFO_OPERATIONS.getUserEmail(), secondEncryptedAES1,
                             secondEncryptedAES2,
                             encryptedFileName);
 
                     List<MemberSelector> member = new ArrayList<>();
                     member.add(MemberSelector.email(recieverEmail));
+                    Constants.FILE_RECORD_OPERATIONS.UPDATE_SHARED_ACCOUNTS(userEmailList, shareFile.getFilePath(), shareFile.getFileName());
                     Client.client.sharing().addFileMember(file.getPath() + file.getEncryptedName(), member);
+                    Constants.NOTIFICATION_OPERATIONS.insertNotification(shareFile.getFilePath() + shareFile.getFileName() + " dosyası seçili hesaplar ile paylaşıldı!");
                 }
             }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
+            Constants.NOTIFICATION_OPERATIONS.insertNotification("Dosya Paylaşım Hatası!");
             return false;
         }
     }
@@ -250,11 +243,11 @@ public class FileOperations {
 
     private static void DELETE_FROM_CLOUD(String path, String fileName) {
         try {
-            FileRecord file = fileRecordOperations.getByPathAndName(path, fileName);
+            FileRecord file = Constants.FILE_RECORD_OPERATIONS.getByPathAndName(path, fileName);
             DeleteResult ds = Client.client.files().deleteV2(path + file.getEncryptedName());
-            fileRecordOperations.DELETE(fileName, path);
+            Constants.FILE_RECORD_OPERATIONS.DELETE(fileName, path);
             FileOperations.DELETE_FILE(path, fileName);
-            notificationOperations.insertNotification(path + fileName + " dosyası buluttan ve yerelden silindi!");
+            Constants.NOTIFICATION_OPERATIONS.insertNotification(path + fileName + " dosyası buluttan ve yerelden silindi!");
         } catch (DbxException e) {
             e.printStackTrace();
         }
@@ -275,12 +268,12 @@ public class FileOperations {
 
         try {
             if (Files.deleteIfExists((Path) Paths.get(filePath))) {
-                if (fileRecordOperations.getByPathAndName(path, fileName) != null) {
-                    fileRecordOperations.UPDATE_DOWNLOAD_STATUS(path, fileName, false);
+                if (Constants.FILE_RECORD_OPERATIONS.getByPathAndName(path, fileName) != null) {
+                    Constants.FILE_RECORD_OPERATIONS.UPDATE_DOWNLOAD_STATUS(path, fileName, false);
                 }
-                notificationOperations.insertNotification(path + fileName + " dosyası yerelden silindi!");
+                Constants.NOTIFICATION_OPERATIONS.insertNotification(path + fileName + " dosyası yerelden silindi!");
             } else {
-                notificationOperations
+                Constants.NOTIFICATION_OPERATIONS
                         .insertNotification(path + fileName + " dosyası yerelde bulunmadığı için silinemedi!");
             }
         } catch (IOException e) {
