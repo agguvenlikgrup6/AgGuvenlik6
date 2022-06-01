@@ -1,5 +1,6 @@
 package org.uludag.bmb.controller.scene;
 
+import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.database.PublicInfoOperations;
@@ -22,9 +23,9 @@ public class PopupSceneController {
     protected FileRecordOperations fileRecordOperations;
 
     public PopupSceneController(){
-        notificationOperations = new NotificationOperations();
-        publicInfoOperations = new PublicInfoOperations();
-        fileRecordOperations = new FileRecordOperations();
+        notificationOperations = Constants.notificationOperations;
+        publicInfoOperations = Constants.publicInfoOperations;
+        fileRecordOperations = Constants.fileRecordOperations;
     }
 
     public PopupSceneController(MainSceneController mainSceneController, String sceneFXML, String sceneTitle) {

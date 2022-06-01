@@ -49,6 +49,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="800.0" minWidth="1300.0" prefHeight="800.0" prefWidth="1300.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
@@ -178,14 +179,15 @@
                            </tooltip>
                         </Label>
                         <ListView fx:id="fileSharedAccountListView" layoutX="25.0" layoutY="509.0" prefHeight="200.0" prefWidth="200.0" styleClass="sharedAccountList" />
-                        <Label layoutX="59.0" layoutY="482.0" prefHeight="27.0" prefWidth="132.0" text="Dosya Üyeleri" textAlignment="CENTER">
+                        <Label layoutX="59.0" layoutY="475.0" prefHeight="27.0" prefWidth="132.0" text="Dosya Üyeleri" textAlignment="CENTER">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
                         <Separator layoutY="457.0" prefHeight="0.0" prefWidth="250.0" />
                         <Separator layoutY="320.0" prefHeight="3.0" prefWidth="250.0" />
-                        <Button fx:id="fileIcon" layoutX="46.0" layoutY="90.0" mnemonicParsing="false" prefHeight="165.0" prefWidth="159.0" styleClass="iconDefault" />
+                        <Button fx:id="fileIcon" layoutX="65.0" layoutY="121.0" mnemonicParsing="false" prefHeight="120.0" prefWidth="120.0" styleClass="iconDefault" />
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" blendMode="MULTIPLY" fill="WHITE" height="180.0" layoutX="35.0" layoutY="91.0" stroke="#19048c" strokeType="INSIDE" width="180.0" />
                      </children>
                   </Pane>
                   <Pane fx:id="notificationPane" layoutY="35.0" prefHeight="323.0" prefWidth="360.0" visible="false">

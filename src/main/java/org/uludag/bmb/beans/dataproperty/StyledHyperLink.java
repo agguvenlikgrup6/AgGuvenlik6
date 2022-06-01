@@ -43,9 +43,9 @@ public class StyledHyperLink extends Hyperlink {
             public void handle(MouseEvent event) {
                 ObservableList<CloudFileProperty> files;
                 if (path.toString().equals(""))
-                    files = fileRecordOperations.getByPath("/");
+                    files = fileRecordOperations.getRecordByPath("/");
                 else
-                    files = fileRecordOperations.getByPath(path.toString());
+                    files = fileRecordOperations.getRecordByPath(path.toString());
                 cloudTableView.setItems(files);
                 pathBar.getItems().remove(index, pathBar.getItems().size());
             }

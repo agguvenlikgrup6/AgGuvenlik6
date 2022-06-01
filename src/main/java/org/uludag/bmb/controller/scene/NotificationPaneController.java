@@ -25,7 +25,7 @@ public class NotificationPaneController {
                                         for (int i = 1; i < msc.selectedDirectoryPathPane.getItems().size(); i++) {
                                             path += ((Hyperlink) msc.selectedDirectoryPathPane.getItems().get(i)).getText();
                                         }
-                                        var items = msc.fileRecordOperations.getByPath(path);
+                                        var items = msc.fileRecordOperations.getRecordByPath(path);
                                         msc.fileListView.setItems(items);
                                         msc.fileListView.refresh();
                                     } catch (IndexOutOfBoundsException e) {

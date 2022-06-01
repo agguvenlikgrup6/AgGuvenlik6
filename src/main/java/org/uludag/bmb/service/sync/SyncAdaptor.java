@@ -29,15 +29,15 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
     @Override
     public void onFileChange(File file) {
         String localModificationDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified());
-        FileRecord cloudRecord = fileRecordOperations.getByPathAndName(getCloudPath(file), file.getName());
+        FileRecord cloudRecord = fileRecordOperations.getRecordByPathAndName(getCloudPath(file), file.getName());
         String cloudModificationDate = cloudRecord.getModificationDate();
-        String localHash = FileOperations.GET_HASH(getCloudPath(file), file.getName());
+        String localHash = FileOperations.getHash(getCloudPath(file), file.getName());
         String cloudHash = cloudRecord.getHash();
 
         if (cloudRecord.getSync() == 1) {
             if (!localModificationDate.equals(cloudModificationDate) && !localHash.equals(cloudHash)) {
-                fileRecordOperations.UPDATE_SYNC_STATUS(cloudRecord.getPath(), cloudRecord.getName(), false);
-                fileRecordOperations.UPDATE_CHANGE_STATUS(cloudRecord.getPath(), cloudRecord.getName(), true);
+                fileRecordOperations.updateRecordSyncStatus(cloudRecord.getPath(), cloudRecord.getName(), false);
+                fileRecordOperations.updateRecordChangedStatus(cloudRecord.getPath(), cloudRecord.getName(), true);
                 notificationOperations.insertNotification(getCloudPath(file) + file.getName()
                         + " dosyasında değişiklik oldu. Dosya senkronizasyona kapatıldı!");
 
@@ -62,8 +62,8 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
     @Override
     public void onFileCreate(File file) {
         String cloudPath = getCloudPath(file);
-        FileRecord encryptedFileRecord = fileRecordOperations.getByPathAndEncryptedName(cloudPath, file.getName());
-        FileRecord sameFileRecord = fileRecordOperations.getByPathAndName(cloudPath, file.getName());
+        FileRecord encryptedFileRecord = fileRecordOperations.getRecordByPathAndEncryptedName(cloudPath, file.getName());
+        FileRecord sameFileRecord = fileRecordOperations.getRecordByPathAndName(cloudPath, file.getName());
         if (encryptedFileRecord != null || sameFileRecord != null) {
             return;
         } else {
@@ -74,8 +74,8 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                             .uploadAndFinish(efd.encryptedFile);
                     String path = metaData.getPathDisplay().substring(0,
                             metaData.getPathDisplay().length() - efd.name.length());
-                    String fileHash = FileOperations.GET_HASH(cloudPath, file.getName());
-                    fileRecordOperations.INSERT(new FileRecord(1, file.getName(),
+                    String fileHash = FileOperations.getHash(cloudPath, file.getName());
+                    fileRecordOperations.insertRecord(new FileRecord(1, file.getName(),
                             metaData.getPathDisplay().substring(0,
                                     metaData.getPathDisplay().length() - efd.name.length()),
                             efd.key,

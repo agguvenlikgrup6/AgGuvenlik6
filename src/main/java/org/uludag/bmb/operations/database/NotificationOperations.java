@@ -9,17 +9,11 @@ import java.util.List;
 
 import org.uludag.bmb.controller.database.DatabaseController;
 
-public class NotificationOperations {
-    private DatabaseController databaseController;
-
-    public NotificationOperations() {
-        this.databaseController = new DatabaseController();
-    }
-
+public class NotificationOperations extends DatabaseOperations{
     public List<String> getNotifications() {
         try {
-            Statement statement = this.databaseController.getConn().createStatement();
-            String query = "SELECT * FROM " + this.databaseController.TABLES.notification;
+            Statement statement = databaseController.getConn().createStatement();
+            String query = "SELECT * FROM " + databaseController.TABLES.notification;
             ResultSet rst = statement.executeQuery(query);
             List<String> notifications = new ArrayList<String>();
             while (rst.next()) {
@@ -34,9 +28,9 @@ public class NotificationOperations {
     }
 
     public void insertNotification(String notificationMessage) {
-        String query = "INSERT INTO " + this.databaseController.TABLES.notification + " (message) values(?)";
+        String query = "INSERT INTO " + databaseController.TABLES.notification + " (message) values(?)";
         try {
-            PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
+            PreparedStatement statement = databaseController.getConn().prepareStatement(query);
             statement.setString(1, notificationMessage);
 
             statement.execute();

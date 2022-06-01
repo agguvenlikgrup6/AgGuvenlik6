@@ -16,23 +16,18 @@ import org.uludag.bmb.beans.database.SharedFile;
 import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.dropbox.Client;
 
-public class PublicInfoOperations {
-    private DatabaseController databaseController;
+public class PublicInfoOperations extends DatabaseOperations{
 
-    public PublicInfoOperations() {
-        this.databaseController = new DatabaseController();
-    }
-
-    public void insertShareKeys(String publicKey, String privateKey) {
+    public void insertRsaKeys(String publicKey, String privateKey) {
         String email = "";
         try {
             email = Client.client.users().getCurrentAccount().getEmail();
         } catch (DbxException e1) {
             e1.printStackTrace();
         }
-        String privateKeyQuery = "INSERT INTO " + this.databaseController.TABLES.privateKey + " (privateKey, email) values(?, ?)";
+        String privateKeyQuery = "INSERT INTO " + databaseController.TABLES.privateKey + " (privateKey, email) values(?, ?)";
         try {
-            PreparedStatement statement = this.databaseController.getConn().prepareStatement(privateKeyQuery);
+            PreparedStatement statement = databaseController.getConn().prepareStatement(privateKeyQuery);
             statement.setString(1, privateKey);
             statement.setString(2, email);
 
@@ -43,11 +38,11 @@ public class PublicInfoOperations {
 
         String publicKeyQuery = "BEGIN IF NOT EXISTS (SELECT * FROM " + this.databaseController.TABLES.publicInfo
                 + " WHERE email=?)"
-                + "BEGIN INSERT INTO " + this.databaseController.TABLES.publicInfo
+                + "BEGIN INSERT INTO " + databaseController.TABLES.publicInfo
                 + "(email, publicKey) VALUES(?,?) END "
                 + "END";
         try {
-            PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(publicKeyQuery);
+            PreparedStatement statement = databaseController.getAzureCon().prepareStatement(publicKeyQuery);
             statement.setString(1, Client.client.users().getCurrentAccount().getEmail());
             statement.setString(2, Client.client.users().getCurrentAccount().getEmail());
             statement.setString(3, publicKey);
@@ -60,9 +55,9 @@ public class PublicInfoOperations {
 
     public SharedFile getSharedFileByEncryptedName(String encryptedName) {
         try {
-            String query = "SELECT * FROM " + this.databaseController.TABLES.sharedFilesKeyTable
+            String query = "SELECT * FROM " + databaseController.TABLES.sharedFilesKeyTable
                     + " WHERE encryptedName=?";
-            PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
+            PreparedStatement statement = databaseController.getAzureCon().prepareStatement(query);
             statement.setString(1, encryptedName);
             ResultSet rst = statement.executeQuery();
             List<SharedFile> sharedFiles = new ArrayList<SharedFile>();
@@ -80,8 +75,8 @@ public class PublicInfoOperations {
 
     public List<String> getUsersList() {
         try {
-            Statement statement = this.databaseController.getAzureCon().createStatement();
-            String query = "SELECT email FROM " + this.databaseController.TABLES.publicInfo;
+            Statement statement = databaseController.getAzureCon().createStatement();
+            String query = "SELECT email FROM " + databaseController.TABLES.publicInfo;
             ResultSet rst = statement.executeQuery(query);
             List<String> emailList = new ArrayList<String>();
             while (rst.next()) {

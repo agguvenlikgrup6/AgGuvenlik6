@@ -6,11 +6,8 @@ import java.util.ResourceBundle;
 
 import org.uludag.bmb.beans.dataproperty.AutoCompleteComboBoxListener;
 import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
-import org.uludag.bmb.operations.database.NotificationOperations;
-import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -63,7 +60,7 @@ public class ShareWindowController extends PopupSceneController implements Initi
 
     @FXML
     void shareWithMails(ActionEvent event) {
-        FileOperations.SHARE_FILE(mainSceneController.fileListView.getSelectionModel().getSelectedItems(), shareAccountList.getItems());
+        FileOperations.shareFile(mainSceneController.fileListView.getSelectionModel().getSelectedItems(), shareAccountList.getItems());
         Node source = (Node) event.getSource();
         Stage stage = (Stage) source.getScene().getWindow();
         stage.close();

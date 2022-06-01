@@ -1,11 +1,8 @@
 package org.uludag.bmb.controller.scene;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -14,16 +11,13 @@ import java.util.regex.Pattern;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
-import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.UploadErrorException;
-import com.dropbox.core.v2.sharing.UserFileMembershipInfo;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
 import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
 import org.uludag.bmb.beans.dataproperty.StyledHyperLink;
-import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
@@ -39,14 +33,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -139,10 +130,6 @@ public class MainSceneController extends Controller implements Initializable {
         super(PropertiesReader.getProperty("mainSceneFxml"),
                 Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")),
                 Integer.parseInt(PropertiesReader.getProperty("mainSceneHeigth")));
-
-        notificationListView.setCellFactory(param -> new NotificationListCellFactory());
-        fileListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        new NotificationPaneController(this);
     }
 
     @Override
@@ -155,12 +142,13 @@ public class MainSceneController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        notificationPane.visibleProperty().set(false);
-
         TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
         directoriesHierarchyView.setRoot(root);
         directoriesHierarchyView.setShowRoot(false);
 
+        notificationListView.setCellFactory(param -> new NotificationListCellFactory());
+        fileListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        new NotificationPaneController(this);
         // List<SharedFileMetadata> entries;
         // try {
         // entries = Client.client.sharing().listReceivedFiles().getEntries();
@@ -192,7 +180,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void deleteSelectedFiles(ActionEvent event) {
         for (CloudFileProperty file : fileListView.getSelectionModel().getSelectedItems()) {
-            FileOperations.DELETE_FILE(file);
+            FileOperations.deleteFile(file);
         }
     }
 
@@ -201,7 +189,7 @@ public class MainSceneController extends Controller implements Initializable {
         List<CloudFileProperty> selectedItems = fileListView.getSelectionModel().getSelectedItems();
         for (CloudFileProperty item : selectedItems) {
             item.syncStatus().get().selectedProperty().set(true);
-            FileOperations.CHANGE_SYNC_STATUS(item, true);
+            FileOperations.changeSyncStatus(item, true);
         }
     }
 
@@ -210,7 +198,7 @@ public class MainSceneController extends Controller implements Initializable {
         List<CloudFileProperty> selectedItems = fileListView.getSelectionModel().getSelectedItems();
         for (CloudFileProperty item : selectedItems) {
             item.syncStatus().get().selectedProperty().set(false);
-            FileOperations.CHANGE_SYNC_STATUS(item, false);
+            FileOperations.changeSyncStatus(item, false);
         }
     }
 
@@ -223,7 +211,7 @@ public class MainSceneController extends Controller implements Initializable {
             for (; selectedFolder.getParent() != null; selectedFolder = selectedFolder.getParent()) {
                 folderPath.insert(0, selectedFolder.getValue() + "/");
             }
-            ObservableList<CloudFileProperty> files = fileRecordOperations.getByPath(folderPath.toString());
+            ObservableList<CloudFileProperty> files = fileRecordOperations.getRecordByPath(folderPath.toString());
             fileListView.setItems(files);
             fileListView.refresh();
 
@@ -251,7 +239,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void downloadSelectedFile(ActionEvent event) {
         for (var file : fileListView.getSelectionModel().getSelectedItems()) {
-            FileOperations.DOWNLOAD_FILE(file.getFilePath(), file.getFileName());
+            FileOperations.downloadFile(file.getFilePath(), file.getFileName());
         }
     }
 
@@ -267,7 +255,7 @@ public class MainSceneController extends Controller implements Initializable {
 
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(stage);
-        FileOperations.UPLOAD_FILE(uploadDirectory, selectedFile);
+        FileOperations.uploadFile(uploadDirectory, selectedFile);
     }
 
     @FXML
@@ -306,7 +294,7 @@ public class MainSceneController extends Controller implements Initializable {
                 fileIcon.getStyleClass().add("iconDefault");
                 break;
         }
-        FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
+        FileRecord selectedFileRecord = fileRecordOperations.getRecordByPathAndName(selectedFile.getFilePath(),selectedFile.getFileName());
         detailFileName.setText(selectedFileRecord.getName());
         detailFileSize.setText(selectedFileRecord.getFileSize());
         detailModificationDate.setText(selectedFileRecord.getModificationDate());

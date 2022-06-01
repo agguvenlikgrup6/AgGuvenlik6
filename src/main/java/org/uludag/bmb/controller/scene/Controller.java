@@ -26,9 +26,9 @@ public abstract class Controller {
 
     public Controller(String scene, int width, int heigth) {
         fxmlLoad(scene, width, heigth);
-        notificationOperations = Constants.NOTIFICATION_OPERATIONS;
-        publicInfoOperations = Constants.PUBLIC_INFO_OPERATIONS;
-        fileRecordOperations = Constants.FILE_RECORD_OPERATIONS;
+        notificationOperations = Constants.notificationOperations;
+        publicInfoOperations = Constants.publicInfoOperations;
+        fileRecordOperations = Constants.fileRecordOperations;
     }
 
     public void fxmlLoad(String fxml, int sceneWidth, int sceneHeight) {

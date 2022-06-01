@@ -6,6 +6,7 @@ target/*
 Data/*
 
 /authinfo.json
+/config.json
 
 # Log file
 *.log

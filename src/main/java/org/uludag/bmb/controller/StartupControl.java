@@ -8,21 +8,25 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
+import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 
 public class StartupControl {
-    private static final NotificationOperations notificationOperations = new NotificationOperations();
-    private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
+    public StartupControl(){
+        deletedFileControl();
+        downloadFileControl();
+    }
+    private static final NotificationOperations notificationOperations = Constants.notificationOperations;
+    private static final FileRecordOperations fileRecordOperations = Constants.fileRecordOperations;
 
     public void deletedFileControl() {
         List<FileRecord> cloud = GET_CLOUD_RECORDS();
-        List<FileRecord> local = fileRecordOperations.getAll();
+        List<FileRecord> local = fileRecordOperations.getRecords();
 
         for (int i = 0; i < local.size(); i++) {
             boolean check = false;
@@ -33,8 +37,8 @@ public class StartupControl {
                 }
             }
             if (!check) {
-                FileOperations.DELETE_FILE(local.get(i).getPath(), local.get(i).getName());
-                fileRecordOperations.DELETE(local.get(i).getName(), local.get(i).getPath());
+                FileOperations.deleteFile(local.get(i).getPath(), local.get(i).getName());
+                fileRecordOperations.deleteRecord(local.get(i).getName(), local.get(i).getPath());
                 notificationOperations.insertNotification(local.get(i).getPath() + local.get(i).getName()
                         + " buluttan silindiği için yerelden de silindi.");
             }
@@ -66,16 +70,16 @@ public class StartupControl {
     }
 
     public void downloadFileControl() {
-        List<FileRecord> records = fileRecordOperations.getAll();
+        List<FileRecord> records = fileRecordOperations.getRecords();
         String syncPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
 
         for (FileRecord record : records) {
             String fullPath = syncPath + record.getPath() + record.getName();
             File file = new File(fullPath);
             if (!file.exists()) {
-                fileRecordOperations.UPDATE_DOWNLOAD_STATUS(record.getPath(), record.getName(), false);
+                fileRecordOperations.updateRecordDownloadStatus(record.getPath(), record.getName(), false);
             } else {
-                fileRecordOperations.UPDATE_DOWNLOAD_STATUS(record.getPath(), record.getName(), true);
+                fileRecordOperations.updateRecordDownloadStatus(record.getPath(), record.getName(), true);
             }
 
         }

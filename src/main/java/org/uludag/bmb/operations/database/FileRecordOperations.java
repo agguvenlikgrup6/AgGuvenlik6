@@ -10,21 +10,13 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.uludag.bmb.beans.crypto.FilePreview;
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.database.SharedFile;
 import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
-import org.uludag.bmb.controller.database.DatabaseController;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class FileRecordOperations {
-    private DatabaseController databaseController;
-
-    public FileRecordOperations() {
-        this.databaseController = new DatabaseController();
-    }
-
-    public void DELETE(String fileName, String filePath) {
+public class FileRecordOperations extends DatabaseOperations{
+    public void deleteRecord(String fileName, String filePath) {
         String query = "DELETE FROM records WHERE name=? AND path=?";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
@@ -37,7 +29,7 @@ public class FileRecordOperations {
         }
     }
 
-    public FileRecord getByPathAndName(String filePath, String fileName) {
+    public FileRecord getRecordByPathAndName(String filePath, String fileName) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
             List<FileRecord> records = this.databaseController.getLocalQueryRunner()
@@ -50,7 +42,7 @@ public class FileRecordOperations {
         }
     }
 
-    public List<FileRecord> getByEncryptedName(String encryptedName) {
+    public List<FileRecord> getRecordByEncryptedName(String encryptedName) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
             List<FileRecord> records = this.databaseController.getLocalQueryRunner()
@@ -63,7 +55,7 @@ public class FileRecordOperations {
         }
     }
 
-    public List<FileRecord> getAll() {
+    public List<FileRecord> getRecords() {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
             List<FileRecord> records = this.databaseController.getLocalQueryRunner()
@@ -75,7 +67,7 @@ public class FileRecordOperations {
         }
     }
 
-    public ObservableList<CloudFileProperty> getByPath(String path) {
+    public ObservableList<CloudFileProperty> getRecordByPath(String path) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
             List<FileRecord> records = this.databaseController.getLocalQueryRunner()
@@ -95,7 +87,7 @@ public class FileRecordOperations {
         }
     }
 
-    public void INSERT(FileRecord fr) {
+    public void insertRecord(FileRecord fr) {
         String query = "INSERT INTO " + this.databaseController.TABLES.record +
                 "(name, path, key, modificationDate, hash, encryptedName, sync, changeStatus, downloadStatus, fileSize, sharedAccounts) "
                 +
@@ -120,7 +112,7 @@ public class FileRecordOperations {
         }
     }
 
-    public FileRecord getByPathAndEncryptedName(String path, String encryptedName) {
+    public FileRecord getRecordByPathAndEncryptedName(String path, String encryptedName) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
             List<FileRecord> records = this.databaseController.getLocalQueryRunner()
@@ -140,7 +132,7 @@ public class FileRecordOperations {
         }
     }
 
-    public void UPDATE_SYNC_STATUS(String filePath, String fileName, boolean newStatus) {
+    public void updateRecordSyncStatus(String filePath, String fileName, boolean newStatus) {
         String query = "UPDATE " + this.databaseController.TABLES.record + " SET sync=? WHERE name=? AND path=?";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
@@ -154,7 +146,7 @@ public class FileRecordOperations {
         }
     }
 
-    public void UPDATE_CHANGE_STATUS(String filePath, String fileName, boolean newStatus) {
+    public void updateRecordChangedStatus(String filePath, String fileName, boolean newStatus) {
         String query = "UPDATE " + this.databaseController.TABLES.record
                 + " SET changeStatus=? WHERE name=? AND path=?";
         try {
@@ -169,11 +161,11 @@ public class FileRecordOperations {
         }
     }
 
-    public void UPDATE_DOWNLOAD_STATUS(String filePath, String fileName, boolean newStatus) {
+    public void updateRecordDownloadStatus(String filePath, String fileName, boolean newStatus) {
         String query = "UPDATE " + this.databaseController.TABLES.record
                 + " SET downloadStatus=? WHERE name=? AND path=?";
         try {
-            FileRecord item = getByPathAndName(filePath, fileName);
+            FileRecord item = getRecordByPathAndName(filePath, fileName);
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
             statement.setInt(1, newStatus ? 1 : 0);
             statement.setString(2, item.getName());
@@ -200,7 +192,7 @@ public class FileRecordOperations {
         }
     }
 
-    public void UPDATE_SHARED_ACCOUNTS(List<String> userEmailList, String filePath, String fileName) {
+    public void updateRecordSharedAccounts(List<String> userEmailList, String filePath, String fileName) {
         String query = "UPDATE " + this.databaseController.TABLES.record
                 + " SET sharedAccounts=sharedAccounts || ? WHERE path=? AND name=?";
         try {

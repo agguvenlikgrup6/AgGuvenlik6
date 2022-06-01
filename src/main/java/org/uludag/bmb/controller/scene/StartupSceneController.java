@@ -3,17 +3,14 @@ package org.uludag.bmb.controller.scene;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.util.Base64;
 
-import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.controller.StartupControl;
 import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.oauth.OAuthFlow;
 import org.uludag.bmb.operations.database.PublicInfoOperations;
 import org.uludag.bmb.operations.database.TableOperations;
@@ -23,10 +20,10 @@ import org.uludag.bmb.service.sync.SyncMonitor;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -61,9 +58,7 @@ public class StartupSceneController extends Controller {
         tableOperations.createPrivateKeyTable();
         try {
             if (Client.client != null) {
-                StartupControl sc = new StartupControl();
-                sc.deletedFileControl();
-                sc.downloadFileControl();
+                new StartupControl();
                 new Thread(new SyncMonitor()).start();
 
                 MainSceneController msc = new MainSceneController();
@@ -89,13 +84,10 @@ public class StartupSceneController extends Controller {
         try {
             String path = directoryChooser.showDialog(null).getAbsolutePath();
             chosenPath.setText(path);
-
             ConfigController.Settings.SaveSettings(new Config(path));
-
         } catch (NullPointerException ex) {
             chooseLocalPath(event);
         }
-
     }
 
     @FXML
@@ -123,7 +115,7 @@ public class StartupSceneController extends Controller {
             }
 
             KeyPair keyPair = Crypto.SHARE.CREATE_KEY_PAIR();
-            publicInfoOperations.insertShareKeys(
+            publicInfoOperations.insertRsaKeys(
                     Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()),
                     Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()));
             new Thread(new SyncMonitor()).start();
