@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 import com.dropbox.core.DbxException;
 
-import org.uludag.bmb.beans.dataproperty.StyledHyperLink;
+import org.uludag.bmb.beans.dataproperty.CustomHyperLink;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
@@ -60,7 +60,7 @@ public class FolderCreationSceneController extends PopupSceneController implemen
         var folderPathNode = mainSceneController.selectedDirectoryPathPane.getItems();
         if (folderPathNode.size() != 0) {
             for (int index = 1; index < folderPathNode.size(); index++) {
-                newFolderPath += ((StyledHyperLink) mainSceneController.selectedDirectoryPathPane.getItems().get(index)).getText().toString();
+                newFolderPath += ((CustomHyperLink) mainSceneController.selectedDirectoryPathPane.getItems().get(index)).getText().toString();
             }
         }
     }

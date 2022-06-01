@@ -27,7 +27,7 @@ import com.dropbox.core.v2.sharing.MemberSelector;
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
+import org.uludag.bmb.beans.dataproperty.CustomTableView;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.service.cryption.Crypto;
 
@@ -138,7 +138,7 @@ public class FileOperations {
         }
     }
 
-    public static void changeSyncStatus(CloudFileProperty item, boolean status) {
+    public static void changeSyncStatus(CustomTableView item, boolean status) {
         if (status) {
             String filePath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
             filePath += item.getFilePath() + item.getFileName();
@@ -194,13 +194,13 @@ public class FileOperations {
         return null;
     }
 
-    public static boolean shareFile(ObservableList<CloudFileProperty> fileList, List<String> userEmailList) {
+    public static boolean shareFile(ObservableList<CustomTableView> fileList, List<String> userEmailList) {
         try {
             String filePath = fileList.get(0).getFilePath();
             String myPrivateKey = Constants.publicInfoOperations.getPrivateKey();
             for (String recieverEmail : userEmailList) {
                 String recieverPublicKey = Constants.publicInfoOperations.getUserPublicKey(recieverEmail);
-                for (CloudFileProperty shareFile : fileList) {
+                for (CustomTableView shareFile : fileList) {
                     FileRecord file = Constants.fileRecordOperations.getRecordByPathAndName(filePath,
                             shareFile.getFileName());
                     String fileAESKey = file.getKey();
@@ -233,7 +233,7 @@ public class FileOperations {
         }
     }
 
-    public static void deleteFile(CloudFileProperty file) {
+    public static void deleteFile(CustomTableView file) {
         if (file.getFileSyncStatus()) {
             FileOperations.deleteFromCloud(file.getFilePath(), file.getFileName());
         } else {

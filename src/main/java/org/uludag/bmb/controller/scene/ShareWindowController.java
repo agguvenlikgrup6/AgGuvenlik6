@@ -4,8 +4,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.uludag.bmb.beans.dataproperty.AutoCompleteComboBoxListener;
-import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
+import org.uludag.bmb.beans.dataproperty.CustomComboBoxListener;
+import org.uludag.bmb.beans.dataproperty.CustomTableView;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 
 import javafx.event.ActionEvent;
@@ -47,8 +47,8 @@ public class ShareWindowController extends PopupSceneController implements Initi
         for (String email : emailList) {
             accountField.getItems().addAll(email);
         }
-        new AutoCompleteComboBoxListener<>(accountField);
-        for (CloudFileProperty file : mainSceneController.fileListView.getSelectionModel().getSelectedItems()) {
+        new CustomComboBoxListener<>(accountField);
+        for (CustomTableView file : mainSceneController.fileListView.getSelectionModel().getSelectedItems()) {
             shareFileList.getItems().add(file.getFileName());
         }
     }

@@ -10,7 +10,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.uludag.bmb.beans.crypto.FilePreview;
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
+import org.uludag.bmb.beans.dataproperty.CustomTableView;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -67,15 +67,15 @@ public class FileRecordOperations extends DatabaseOperations{
         }
     }
 
-    public ObservableList<CloudFileProperty> getRecordByPath(String path) {
+    public ObservableList<CustomTableView> getRecordByPath(String path) {
         ResultSetHandler<List<FileRecord>> rsh = new BeanListHandler<FileRecord>(FileRecord.class);
         try {
             List<FileRecord> records = this.databaseController.getLocalQueryRunner()
                     .query("SELECT * FROM " + this.databaseController.TABLES.record + " WHERE path='" + path + "'",
                             rsh);
-            ObservableList<CloudFileProperty> fileList = FXCollections.observableArrayList();
+            ObservableList<CustomTableView> fileList = FXCollections.observableArrayList();
             for (FileRecord record : records) {
-                fileList.add(new CloudFileProperty(record.getDownloadStatus(), record.getName(),
+                fileList.add(new CustomTableView(record.getDownloadStatus(), record.getName(),
                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(record.getModificationDate()),
                         record.getPath(), record.getSync(), record.getChangeStatus(), record.getFileSize(),
                         Arrays.asList(record.getSharedAccounts().split(";"))));

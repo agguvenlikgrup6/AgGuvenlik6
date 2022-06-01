@@ -15,9 +15,9 @@ import com.dropbox.core.v2.files.UploadErrorException;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
-import org.uludag.bmb.beans.dataproperty.NotificationListCellFactory;
-import org.uludag.bmb.beans.dataproperty.StyledHyperLink;
+import org.uludag.bmb.beans.dataproperty.CustomTableView;
+import org.uludag.bmb.beans.dataproperty.CustomNotificationListCell;
+import org.uludag.bmb.beans.dataproperty.CustomHyperLink;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
@@ -73,28 +73,28 @@ public class MainSceneController extends Controller implements Initializable {
     public SplitPane selectedDirectoryPathPane;
 
     @FXML
-    public TableView<CloudFileProperty> fileListView;
+    public TableView<CustomTableView> fileListView;
 
     @FXML
     public Pane fileDetailPane;
 
     @FXML
-    public TableColumn<CloudFileProperty, CheckBox> syncStatusColumn;
+    public TableColumn<CustomTableView, CheckBox> syncStatusColumn;
 
     @FXML
-    public TableColumn<CloudFileProperty, String> filePathColumn;
+    public TableColumn<CustomTableView, String> filePathColumn;
 
     @FXML
-    public TableColumn<CloudFileProperty, String> fileNameColumn;
+    public TableColumn<CustomTableView, String> fileNameColumn;
 
     @FXML
-    public TableColumn<CloudFileProperty, Date> modificationDateColumn;
+    public TableColumn<CustomTableView, Date> modificationDateColumn;
 
     @FXML
-    public TableColumn<CloudFileProperty, CheckBox> fileChangeStatusColumn;
+    public TableColumn<CustomTableView, CheckBox> fileChangeStatusColumn;
 
     @FXML
-    public TableColumn<CloudFileProperty, CheckBox> fileDownloadStatusColumn;
+    public TableColumn<CustomTableView, CheckBox> fileDownloadStatusColumn;
 
     @FXML
     public ListView<String> notificationListView;
@@ -146,7 +146,7 @@ public class MainSceneController extends Controller implements Initializable {
         directoriesHierarchyView.setRoot(root);
         directoriesHierarchyView.setShowRoot(false);
 
-        notificationListView.setCellFactory(param -> new NotificationListCellFactory());
+        notificationListView.setCellFactory(param -> new CustomNotificationListCell());
         fileListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         new NotificationPaneController(this);
         // List<SharedFileMetadata> entries;
@@ -179,15 +179,15 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void deleteSelectedFiles(ActionEvent event) {
-        for (CloudFileProperty file : fileListView.getSelectionModel().getSelectedItems()) {
+        for (CustomTableView file : fileListView.getSelectionModel().getSelectedItems()) {
             FileOperations.deleteFile(file);
         }
     }
 
     @FXML
     void changeSyncStatusOn(ActionEvent event) {
-        List<CloudFileProperty> selectedItems = fileListView.getSelectionModel().getSelectedItems();
-        for (CloudFileProperty item : selectedItems) {
+        List<CustomTableView> selectedItems = fileListView.getSelectionModel().getSelectedItems();
+        for (CustomTableView item : selectedItems) {
             item.syncStatus().get().selectedProperty().set(true);
             FileOperations.changeSyncStatus(item, true);
         }
@@ -195,8 +195,8 @@ public class MainSceneController extends Controller implements Initializable {
 
     @FXML
     void changeSyncStatusOff(ActionEvent event) {
-        List<CloudFileProperty> selectedItems = fileListView.getSelectionModel().getSelectedItems();
-        for (CloudFileProperty item : selectedItems) {
+        List<CustomTableView> selectedItems = fileListView.getSelectionModel().getSelectedItems();
+        for (CustomTableView item : selectedItems) {
             item.syncStatus().get().selectedProperty().set(false);
             FileOperations.changeSyncStatus(item, false);
         }
@@ -211,7 +211,7 @@ public class MainSceneController extends Controller implements Initializable {
             for (; selectedFolder.getParent() != null; selectedFolder = selectedFolder.getParent()) {
                 folderPath.insert(0, selectedFolder.getValue() + "/");
             }
-            ObservableList<CloudFileProperty> files = fileRecordOperations.getRecordByPath(folderPath.toString());
+            ObservableList<CustomTableView> files = fileRecordOperations.getRecordByPath(folderPath.toString());
             fileListView.setItems(files);
             fileListView.refresh();
 
@@ -222,12 +222,12 @@ public class MainSceneController extends Controller implements Initializable {
                     List<String> selectedBarPath = Arrays.asList(folderPath.toString().split("/"));
                     if (selectedBarPath.size() == 0) {
                         selectedDirectoryPathPane.getItems()
-                                .add(new StyledHyperLink(selectedDirectoryPathPane, fileListView, ""));
+                                .add(new CustomHyperLink(selectedDirectoryPathPane, fileListView, ""));
                         return;
                     }
                     for (String pathPart : Arrays.asList(folderPath.toString().split("/"))) {
                         selectedDirectoryPathPane.getItems()
-                                .add(new StyledHyperLink(selectedDirectoryPathPane, fileListView, pathPart));
+                                .add(new CustomHyperLink(selectedDirectoryPathPane, fileListView, pathPart));
                     }
 
                 }
@@ -273,7 +273,7 @@ public class MainSceneController extends Controller implements Initializable {
     @FXML
     void showSelectedFileDetails(MouseEvent event) {
         fileIcon.getStyleClass().remove(1);
-        CloudFileProperty selectedFile = fileListView.getSelectionModel().getSelectedItem();
+        CustomTableView selectedFile = fileListView.getSelectionModel().getSelectedItem();
         String fileExtension = selectedFile.getFileName().split(Pattern.quote("."))[1];
         switch (fileExtension) {
             case "png":

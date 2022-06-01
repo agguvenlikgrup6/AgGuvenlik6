@@ -2,7 +2,7 @@ package org.uludag.bmb.beans.dataproperty;
 
 import javafx.scene.control.ListCell;
 
-public class NotificationListCellFactory extends ListCell<String> {
+public class CustomNotificationListCell extends ListCell<String> {
     @Override
     protected void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);

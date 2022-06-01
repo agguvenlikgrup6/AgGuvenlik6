@@ -10,7 +10,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
 
-public class CloudFileProperty {
+public class CustomTableView {
     private final StringProperty fileName;
     private final ObjectProperty<Date> lastEditDate;
     private final StringProperty filePath;
@@ -20,10 +20,10 @@ public class CloudFileProperty {
     private final StringProperty fileSize;
     private final ObjectProperty<List<String>> sharedAccounts;
 
-    public CloudFileProperty(int downloadStatus, String fileName, Date lastEditDate, String filePath, int syncStatus, int changeStatus, String fileSize, List<String> sharedAccounts) {
-        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", new CheckBoxWithStatus(downloadStatus));
-        this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CheckBoxWithStatus(syncStatus));
-        this.changeStatus = new SimpleObjectProperty<>(this, "changeStatus", new CheckBoxWithStatus(changeStatus));
+    public CustomTableView(int downloadStatus, String fileName, Date lastEditDate, String filePath, int syncStatus, int changeStatus, String fileSize, List<String> sharedAccounts) {
+        this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", new CustomCheckBox(downloadStatus));
+        this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CustomCheckBox(syncStatus));
+        this.changeStatus = new SimpleObjectProperty<>(this, "changeStatus", new CustomCheckBox(changeStatus));
         this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
         this.fileName = new SimpleStringProperty(this, "fileName", fileName);
         this.filePath = new SimpleStringProperty(this, "filepath", filePath);

@@ -13,7 +13,7 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.CloudFileProperty;
+import org.uludag.bmb.beans.dataproperty.CustomTableView;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 

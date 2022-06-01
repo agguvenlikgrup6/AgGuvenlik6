@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-public class AutoCompleteComboBoxListener<T> implements EventHandler<KeyEvent> {
+public class CustomComboBoxListener<T> implements EventHandler<KeyEvent> {
 
     private ComboBox comboBox;
     private StringBuilder sb;
@@ -15,7 +15,7 @@ public class AutoCompleteComboBoxListener<T> implements EventHandler<KeyEvent> {
     private boolean moveCaretToPos = false;
     private int caretPos;
 
-    public AutoCompleteComboBoxListener(final ComboBox comboBox) {
+    public CustomComboBoxListener(final ComboBox comboBox) {
         this.comboBox = comboBox;
         sb = new StringBuilder();
         data = comboBox.getItems();
@@ -28,7 +28,7 @@ public class AutoCompleteComboBoxListener<T> implements EventHandler<KeyEvent> {
                 comboBox.hide();
             }
         });
-        this.comboBox.setOnKeyReleased(AutoCompleteComboBoxListener.this);
+        this.comboBox.setOnKeyReleased(CustomComboBoxListener.this);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class AutoCompleteComboBoxListener<T> implements EventHandler<KeyEvent> {
         ObservableList list = FXCollections.observableArrayList();
         for (int i=0; i<data.size(); i++) {
             if(data.get(i).toString().toLowerCase().startsWith(
-                AutoCompleteComboBoxListener.this.comboBox
+                CustomComboBoxListener.this.comboBox
                 .getEditor().getText().toLowerCase())) {
                 list.add(data.get(i));
             }

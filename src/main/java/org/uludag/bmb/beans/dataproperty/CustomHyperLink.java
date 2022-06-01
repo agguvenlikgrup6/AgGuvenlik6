@@ -12,11 +12,11 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 
-public class StyledHyperLink extends Hyperlink {
+public class CustomHyperLink extends Hyperlink {
     private static FileRecordOperations fileRecordOperations = new FileRecordOperations();
     private int index;
 
-    public StyledHyperLink(SplitPane pathBar, TableView<CloudFileProperty> cloudTableView, String text) {
+    public CustomHyperLink(SplitPane pathBar, TableView<CustomTableView> cloudTableView, String text) {
         if(text.equals("")){
             text = "Dropbox";
         }
@@ -31,7 +31,7 @@ public class StyledHyperLink extends Hyperlink {
                 if (i == 0) {
                     path.append("/");
                 } else {
-                    StyledHyperLink styledBarPart = (StyledHyperLink) splitPaneItems.get(i);
+                    CustomHyperLink styledBarPart = (CustomHyperLink) splitPaneItems.get(i);
                     path.append(styledBarPart.getText() + "/");
                 }
             }
@@ -41,7 +41,7 @@ public class StyledHyperLink extends Hyperlink {
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ObservableList<CloudFileProperty> files;
+                ObservableList<CustomTableView> files;
                 if (path.toString().equals(""))
                     files = fileRecordOperations.getRecordByPath("/");
                 else
