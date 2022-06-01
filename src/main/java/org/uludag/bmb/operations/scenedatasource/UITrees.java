@@ -1,7 +1,5 @@
 package org.uludag.bmb.operations.scenedatasource;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,13 +10,8 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.CustomTableView;
-import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

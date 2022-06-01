@@ -3,20 +3,18 @@ package org.uludag.bmb.operations.database;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.dropbox.core.DbxException;
+import org.uludag.bmb.beans.constants.Constants.TABLES;
 
-import org.uludag.bmb.controller.database.DatabaseController;
-import org.uludag.bmb.operations.dropbox.Client;
+public class TableOperations extends DatabaseOperations {
 
-public class TableOperations {
-    private DatabaseController databaseController;
-
-    public TableOperations() {
-        this.databaseController = new DatabaseController();
+    public void createLocalTables() {
+        createNotificationTable();
+        createRecordTable();
+        createSharedRecordTable();
     }
 
-    public void createRecordTable() {
-        String query = "CREATE TABLE IF NOT EXISTS " + this.databaseController.TABLES.record +
+    private void createRecordTable() {
+        String query = "CREATE TABLE IF NOT EXISTS " + TABLES.fileRecords +
                 "(" +
                 "id integer PRIMARY KEY," +
                 "name TEXT NOT NULL," +
@@ -29,7 +27,7 @@ public class TableOperations {
                 "downloadStatus BOOLEAN NOT NULL CHECK(downloadStatus IN(0,1))," +
                 "changeStatus BOOLEAN NOT NULL CHECK(changeStatus IN(0,1))," +
                 "fileSize TEXT NOT NULL," +
-                "sharedAccounts TEXT NOT NULL" + 
+                "sharedAccounts TEXT NOT NULL" +
                 ")";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
@@ -39,8 +37,8 @@ public class TableOperations {
         }
     }
 
-    public void createSharedRecordTable() {
-        String query = "CREATE TABLE IF NOT EXISTS " + this.databaseController.TABLES.sharedRecordTable +
+    private void createSharedRecordTable() {
+        String query = "CREATE TABLE IF NOT EXISTS " + TABLES.recievedFiles +
                 "(" +
                 "id integer PRIMARY KEY," +
                 "senderEmail TEXT NOT NULL," +
@@ -56,9 +54,9 @@ public class TableOperations {
         }
     }
 
-    public void createNotificationTable() {
+    private void createNotificationTable() {
         String query = "CREATE TABLE IF NOT EXISTS " +
-                this.databaseController.TABLES.notification +
+                TABLES.notification +
                 "(" +
                 "id integer PRIMARY KEY," +
                 "message TEXT NOT NULL" +
@@ -70,20 +68,4 @@ public class TableOperations {
             e.printStackTrace();
         }
     }
-
-    public void createPrivateKeyTable() {
-        String query = "CREATE TABLE IF NOT EXISTS " +
-                this.databaseController.TABLES.privateKey +
-                "(" +
-                "privateKey TEXT NOT NULL," +
-                "email TEXT NOT NULL" + 
-                ")";
-        try {
-            PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

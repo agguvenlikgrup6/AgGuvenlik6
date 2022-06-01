@@ -12,7 +12,7 @@ import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.controller.StartupControl;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.oauth.OAuthFlow;
-import org.uludag.bmb.operations.database.PublicInfoOperations;
+import org.uludag.bmb.operations.database.SharingOperations;
 import org.uludag.bmb.operations.database.TableOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.service.cryption.Crypto;
@@ -52,10 +52,7 @@ public class StartupSceneController extends Controller {
     public void displayScene(Stage stage) {
         TableOperations tableOperations = new TableOperations();
 
-        tableOperations.createNotificationTable();
-        tableOperations.createRecordTable();
-        tableOperations.createSharedRecordTable();
-        tableOperations.createPrivateKeyTable();
+        tableOperations.createLocalTables();
         try {
             if (Client.client != null) {
                 new StartupControl();
@@ -84,42 +81,45 @@ public class StartupSceneController extends Controller {
         try {
             String path = directoryChooser.showDialog(null).getAbsolutePath();
             chosenPath.setText(path);
-            ConfigController.Settings.SaveSettings(new Config(path));
         } catch (NullPointerException ex) {
             chooseLocalPath(event);
         }
     }
 
     @FXML
-    void finishStartup(MouseEvent event) throws IOException, FileLoadException {
-        var path = chosenPath.getText();
+    void finishStartup(MouseEvent event) {
+        try {
+            var path = chosenPath.getText();
 
-        if (!new File(path).exists()) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("HATA");
-            alert.setHeaderText("Geçersiz Bir Dizin Seçtiniz");
-            alert.setContentText("Lütfen Geçerli Bir Dizin Seçiniz");
-            alert.showAndWait();
-        } else {
-            TableOperations tableOperations = new TableOperations();
+            if (!new File(path).exists()) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("HATA");
+                alert.setHeaderText("Geçersiz Bir Dizin Seçtiniz");
+                alert.setContentText("Lütfen Geçerli Bir Dizin Seçiniz");
+                alert.showAndWait();
+            } else {
+                TableOperations tableOperations = new TableOperations();
 
-            tableOperations.createNotificationTable();
-            tableOperations.createRecordTable();
-            tableOperations.createSharedRecordTable();
-            tableOperations.createPrivateKeyTable();
+                tableOperations.createLocalTables();
 
-            PublicInfoOperations publicInfoOperations = new PublicInfoOperations();
+                SharingOperations publicInfoOperations = new SharingOperations();
 
-            if (Client.client == null) {
-                Client.client = Client.getClient();
+                if (Client.client == null) {
+                    Client.client = Client.getClient();
+                }
+                KeyPair keyPair = Crypto.SHARE.CREATE_KEY_PAIR();
+                ConfigController.Settings.SaveSettings(new Config(chosenPath.getText(),
+                        Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()),
+                        Client.client.users().getCurrentAccount().getEmail()));
+
+                publicInfoOperations
+                        .insertPublicKey(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+                new Thread(new SyncMonitor()).start();
+                new MainSceneController().displayScene(stage);
             }
 
-            KeyPair keyPair = Crypto.SHARE.CREATE_KEY_PAIR();
-            publicInfoOperations.insertRsaKeys(
-                    Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()),
-                    Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()));
-            new Thread(new SyncMonitor()).start();
-            new MainSceneController().displayScene(stage);
+        } catch (Exception e) {
+
         }
     }
 

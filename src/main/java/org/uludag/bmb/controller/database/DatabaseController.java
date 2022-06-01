@@ -14,24 +14,6 @@ import org.sqlite.SQLiteDataSource;
 import org.uludag.bmb.PropertiesReader;
 
 public class DatabaseController {
-    public class Tables {
-        public String record;
-        public String notification;
-        public String privateKey;
-        public String publicInfo;
-        public String sharedFilesKeyTable;
-        public String sharedRecordTable;
-
-        public Tables() {
-            this.record = PropertiesReader.getProperty("table_Record");
-            this.notification = PropertiesReader.getProperty("table_Notification");
-            this.privateKey = PropertiesReader.getProperty("table_privateKey");
-            this.publicInfo = PropertiesReader.getProperty("table_publicInfo");
-            this.sharedFilesKeyTable = PropertiesReader.getProperty("table_sharedKeyPeople");
-            this.sharedRecordTable = PropertiesReader.getProperty("table_sharedRecord");
-        }
-    }
-
     public class Databases {
         public String local;
         public String cloud;
@@ -42,7 +24,6 @@ public class DatabaseController {
         }
     }
 
-    public Tables TABLES;
     public Databases DATABASES;
 
     private Connection localDb;
@@ -78,7 +59,6 @@ public class DatabaseController {
     }
 
     public DatabaseController() {
-        this.TABLES = new Tables();
         this.DATABASES = new Databases();
         this.connectionUrl = getConnectionUrl(this.DATABASES.local);
         this.sqliteDataSource = new SQLiteDataSource();

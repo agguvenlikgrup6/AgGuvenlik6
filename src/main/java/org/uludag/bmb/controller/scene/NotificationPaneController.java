@@ -2,6 +2,8 @@ package org.uludag.bmb.controller.scene;
 
 import java.util.List;
 
+import org.uludag.bmb.beans.database.Notification;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -18,21 +20,21 @@ public class NotificationPaneController {
 
                             @Override
                             public void handle(ActionEvent event) {
-                                List<String> notifications = msc.notificationOperations.getNotifications();
+                                List<Notification> notifications = msc.notificationOperations.getAll();
                                 if (notifications.size() != 0 && notifications != null) {
                                     try {
                                         String path = "/";
                                         for (int i = 1; i < msc.selectedDirectoryPathPane.getItems().size(); i++) {
                                             path += ((Hyperlink) msc.selectedDirectoryPathPane.getItems().get(i)).getText();
                                         }
-                                        var items = msc.fileRecordOperations.getRecordByPath(path);
+                                        var items = msc.fileRecordOperations.getByPath(path);
                                         msc.fileListView.setItems(items);
                                         msc.fileListView.refresh();
                                     } catch (IndexOutOfBoundsException e) {
 
                                     }
-                                    for (String notification : notifications) {
-                                        msc.notificationListView.getItems().add(0, notification);
+                                    for (Notification notification : notifications) {
+                                        msc.notificationListView.getItems().add(0, notification.getMessage());
                                         msc.notificationDot.visibleProperty().set(true);
                                         ScaleTransition st = new ScaleTransition(Duration.millis(1000),
                                                 msc.notificationDot);
@@ -45,9 +47,8 @@ public class NotificationPaneController {
                                         st.jumpTo(Duration.millis(200));
                                         st.play();
                                     }
-                                    notifications.clear();
+                                    msc.notificationOperations.deleteAll();
                                 }
-
                             }
                         }));
         notificationCycle.setCycleCount(Timeline.INDEFINITE);

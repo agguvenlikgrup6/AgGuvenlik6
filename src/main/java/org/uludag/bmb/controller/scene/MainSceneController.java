@@ -211,7 +211,7 @@ public class MainSceneController extends Controller implements Initializable {
             for (; selectedFolder.getParent() != null; selectedFolder = selectedFolder.getParent()) {
                 folderPath.insert(0, selectedFolder.getValue() + "/");
             }
-            ObservableList<CustomTableView> files = fileRecordOperations.getRecordByPath(folderPath.toString());
+            ObservableList<CustomTableView> files = fileRecordOperations.getByPath(folderPath.toString());
             fileListView.setItems(files);
             fileListView.refresh();
 
@@ -294,7 +294,7 @@ public class MainSceneController extends Controller implements Initializable {
                 fileIcon.getStyleClass().add("iconDefault");
                 break;
         }
-        FileRecord selectedFileRecord = fileRecordOperations.getRecordByPathAndName(selectedFile.getFilePath(),selectedFile.getFileName());
+        FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(),selectedFile.getFileName());
         detailFileName.setText(selectedFileRecord.getName());
         detailFileSize.setText(selectedFileRecord.getFileSize());
         detailModificationDate.setText(selectedFileRecord.getModificationDate());

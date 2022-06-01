@@ -26,7 +26,7 @@ public class StartupControl {
 
     public void deletedFileControl() {
         List<FileRecord> cloud = GET_CLOUD_RECORDS();
-        List<FileRecord> local = fileRecordOperations.getRecords();
+        List<FileRecord> local = fileRecordOperations.getAll();
 
         for (int i = 0; i < local.size(); i++) {
             boolean check = false;
@@ -38,8 +38,8 @@ public class StartupControl {
             }
             if (!check) {
                 FileOperations.deleteFile(local.get(i).getPath(), local.get(i).getName());
-                fileRecordOperations.deleteRecord(local.get(i).getName(), local.get(i).getPath());
-                notificationOperations.insertNotification(local.get(i).getPath() + local.get(i).getName()
+                fileRecordOperations.delete(local.get(i).getName(), local.get(i).getPath());
+                notificationOperations.insert(local.get(i).getPath() + local.get(i).getName()
                         + " buluttan silindiği için yerelden de silindi.");
             }
         }
@@ -70,16 +70,16 @@ public class StartupControl {
     }
 
     public void downloadFileControl() {
-        List<FileRecord> records = fileRecordOperations.getRecords();
+        List<FileRecord> records = fileRecordOperations.getAll();
         String syncPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
 
         for (FileRecord record : records) {
             String fullPath = syncPath + record.getPath() + record.getName();
             File file = new File(fullPath);
             if (!file.exists()) {
-                fileRecordOperations.updateRecordDownloadStatus(record.getPath(), record.getName(), false);
+                fileRecordOperations.updateDownloadStatus(record.getPath(), record.getName(), false);
             } else {
-                fileRecordOperations.updateRecordDownloadStatus(record.getPath(), record.getName(), true);
+                fileRecordOperations.updateDownloadStatus(record.getPath(), record.getName(), true);
             }
 
         }

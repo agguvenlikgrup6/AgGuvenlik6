@@ -3,7 +3,7 @@ package org.uludag.bmb.controller.scene;
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
-import org.uludag.bmb.operations.database.PublicInfoOperations;
+import org.uludag.bmb.operations.database.SharingOperations;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,7 +19,7 @@ public class PopupSceneController {
     protected MainSceneController mainSceneController;
 
     protected NotificationOperations notificationOperations;
-    protected PublicInfoOperations publicInfoOperations;
+    protected SharingOperations publicInfoOperations;
     protected FileRecordOperations fileRecordOperations;
 
     public PopupSceneController(){

@@ -1,12 +1,12 @@
-package org.uludag.bmb.beans.crypto;
+package org.uludag.bmb.beans.database.sharing;
 
-public class FilePreview {
+public class RecievedFile {
     private String senderEmail;
     private String encryptedName;
     private String key;
     private String decryptedName;
 
-    public FilePreview(String senderEmail, String encryptedName, String decryptedName, String key) {
+    public RecievedFile(String senderEmail, String encryptedName, String decryptedName, String key) {
         this.senderEmail = senderEmail;
         this.encryptedName = encryptedName;
         this.decryptedName = decryptedName;

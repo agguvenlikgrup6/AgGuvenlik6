@@ -43,9 +43,9 @@ public class CustomHyperLink extends Hyperlink {
             public void handle(MouseEvent event) {
                 ObservableList<CustomTableView> files;
                 if (path.toString().equals(""))
-                    files = fileRecordOperations.getRecordByPath("/");
+                    files = fileRecordOperations.getByPath("/");
                 else
-                    files = fileRecordOperations.getRecordByPath(path.toString());
+                    files = fileRecordOperations.getByPath(path.toString());
                 cloudTableView.setItems(files);
                 pathBar.getItems().remove(index, pathBar.getItems().size());
             }

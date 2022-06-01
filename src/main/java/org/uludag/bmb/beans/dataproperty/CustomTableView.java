@@ -12,7 +12,7 @@ import javafx.scene.control.CheckBox;
 
 public class CustomTableView {
     private final StringProperty fileName;
-    private final ObjectProperty<Date> lastEditDate;
+    private final StringProperty lastEditDate;
     private final StringProperty filePath;
     private final ObjectProperty<CheckBox> syncStatus;
     private final ObjectProperty<CheckBox> changeStatus;
@@ -20,11 +20,11 @@ public class CustomTableView {
     private final StringProperty fileSize;
     private final ObjectProperty<List<String>> sharedAccounts;
 
-    public CustomTableView(int downloadStatus, String fileName, Date lastEditDate, String filePath, int syncStatus, int changeStatus, String fileSize, List<String> sharedAccounts) {
+    public CustomTableView(int downloadStatus, String fileName, String lastEditDate, String filePath, int syncStatus, int changeStatus, String fileSize, List<String> sharedAccounts) {
         this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", new CustomCheckBox(downloadStatus));
         this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CustomCheckBox(syncStatus));
         this.changeStatus = new SimpleObjectProperty<>(this, "changeStatus", new CustomCheckBox(changeStatus));
-        this.lastEditDate = new SimpleObjectProperty<>(this, "lastEditDate", lastEditDate);
+        this.lastEditDate = new SimpleStringProperty(this, "lastEditDate", lastEditDate);
         this.fileName = new SimpleStringProperty(this, "fileName", fileName);
         this.filePath = new SimpleStringProperty(this, "filepath", filePath);
         this.fileSize = new SimpleStringProperty(this, "fileSize", fileSize);
@@ -47,7 +47,11 @@ public class CustomTableView {
         return this.syncStatus.get().selectedProperty().get();
     }
 
-    public final ObjectProperty<Date> lastEditDate() {
+    public boolean hasFileChanged() {
+        return this.changeStatus.get().selectedProperty().get();
+    }
+
+    public final StringProperty lastEditDate() {
         return lastEditDate;
     }
 
@@ -95,11 +99,11 @@ public class CustomTableView {
         this.syncStatus.set(selection);
     }
 
-    public final Date getLastEditDate() {
+    public final String getLastEditDate() {
         return this.lastEditDate.get();
     }
 
-    public final void setLastEditDate(Date date) {
+    public final void setLastEditDate(String date) {
         this.lastEditDate.set(date);
     }
 
@@ -138,4 +142,6 @@ public class CustomTableView {
     public void setFileSize(String fileSize) {
         this.fileSize.set(fileSize);
     }
+
+    
 }

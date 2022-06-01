@@ -43,7 +43,7 @@ public class ShareWindowController extends PopupSceneController implements Initi
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        List<String> emailList = publicInfoOperations.getUsersList();
+        List<String> emailList = publicInfoOperations.getApplicationUsersList();
         for (String email : emailList) {
             accountField.getItems().addAll(email);
         }

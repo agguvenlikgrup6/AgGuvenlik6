@@ -4,7 +4,7 @@ import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
-import org.uludag.bmb.operations.database.PublicInfoOperations;
+import org.uludag.bmb.operations.database.SharingOperations;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 public abstract class Controller {
     protected NotificationOperations notificationOperations;
-    protected PublicInfoOperations publicInfoOperations;
+    protected SharingOperations publicInfoOperations;
     protected FileRecordOperations fileRecordOperations;
 
     protected Parent parent;

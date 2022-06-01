@@ -1,9 +1,5 @@
 package org.uludag.bmb.beans.database;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class FileRecord {
     private String name;
     private String path;
@@ -21,7 +17,8 @@ public class FileRecord {
 
     }
 
-    public FileRecord(int downloadStatus, String name, String path, String key, String modificationDate, String hash, String encryptedName, int sync, int changeStatus, String fileSize, String sharedAccounts) {
+    public FileRecord(int downloadStatus, String name, String path, String key, String modificationDate, String hash,
+            String encryptedName, int sync, int changeStatus, String fileSize, String sharedAccounts) {
         this.downloadStatus = downloadStatus;
         this.name = name;
         this.path = path;

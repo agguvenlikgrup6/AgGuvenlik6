@@ -7,44 +7,24 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dropbox.core.DbxException;
+import org.uludag.bmb.beans.constants.Constants.TABLES;
+import org.uludag.bmb.beans.database.sharing.RecievedFile;
+import org.uludag.bmb.beans.database.sharing.SentFile;
+import org.uludag.bmb.controller.config.ConfigController;
 
-import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.uludag.bmb.beans.crypto.FilePreview;
-import org.uludag.bmb.beans.database.SharedFile;
-import org.uludag.bmb.controller.database.DatabaseController;
-import org.uludag.bmb.operations.dropbox.Client;
+public class SharingOperations extends DatabaseOperations {
 
-public class PublicInfoOperations extends DatabaseOperations{
-
-    public void insertRsaKeys(String publicKey, String privateKey) {
-        String email = "";
-        try {
-            email = Client.client.users().getCurrentAccount().getEmail();
-        } catch (DbxException e1) {
-            e1.printStackTrace();
-        }
-        String privateKeyQuery = "INSERT INTO " + databaseController.TABLES.privateKey + " (privateKey, email) values(?, ?)";
-        try {
-            PreparedStatement statement = databaseController.getConn().prepareStatement(privateKeyQuery);
-            statement.setString(1, privateKey);
-            statement.setString(2, email);
-
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        String publicKeyQuery = "BEGIN IF NOT EXISTS (SELECT * FROM " + this.databaseController.TABLES.publicInfo
+    public void insertPublicKey(String publicKey) {
+        String eMail = ConfigController.Settings.LoadSettings().getUserEmail();
+        String publicKeyQuery = "BEGIN IF NOT EXISTS (SELECT * FROM " + TABLES.userInformation
                 + " WHERE email=?)"
-                + "BEGIN INSERT INTO " + databaseController.TABLES.publicInfo
+                + "BEGIN INSERT INTO " + TABLES.userInformation
                 + "(email, publicKey) VALUES(?,?) END "
                 + "END";
         try {
             PreparedStatement statement = databaseController.getAzureCon().prepareStatement(publicKeyQuery);
-            statement.setString(1, Client.client.users().getCurrentAccount().getEmail());
-            statement.setString(2, Client.client.users().getCurrentAccount().getEmail());
+            statement.setString(1, eMail);
+            statement.setString(2, eMail);
             statement.setString(3, publicKey);
 
             statement.execute();
@@ -53,16 +33,16 @@ public class PublicInfoOperations extends DatabaseOperations{
         }
     }
 
-    public SharedFile getSharedFileByEncryptedName(String encryptedName) {
+    public SentFile getSharedFileByEncryptedName(String encryptedName) {
         try {
-            String query = "SELECT * FROM " + databaseController.TABLES.sharedFilesKeyTable
+            String query = "SELECT * FROM " + TABLES.sharedFiles
                     + " WHERE encryptedName=?";
             PreparedStatement statement = databaseController.getAzureCon().prepareStatement(query);
             statement.setString(1, encryptedName);
             ResultSet rst = statement.executeQuery();
-            List<SharedFile> sharedFiles = new ArrayList<SharedFile>();
+            List<SentFile> sharedFiles = new ArrayList<SentFile>();
             while (rst.next()) {
-                sharedFiles.add(new SharedFile(rst.getString("recieverEmail"), rst.getString("senderEmail"),
+                sharedFiles.add(new SentFile(rst.getString("recieverEmail"), rst.getString("senderEmail"),
                         rst.getString("encryptedName"),
                         rst.getString("fileKeyPart1"), rst.getString("fileKeyPart2")));
             }
@@ -73,10 +53,10 @@ public class PublicInfoOperations extends DatabaseOperations{
         }
     }
 
-    public List<String> getUsersList() {
+    public List<String> getApplicationUsersList() {
         try {
             Statement statement = databaseController.getAzureCon().createStatement();
-            String query = "SELECT email FROM " + databaseController.TABLES.publicInfo;
+            String query = "SELECT email FROM " + TABLES.userInformation;
             ResultSet rst = statement.executeQuery(query);
             List<String> emailList = new ArrayList<String>();
             while (rst.next()) {
@@ -89,9 +69,9 @@ public class PublicInfoOperations extends DatabaseOperations{
         }
     }
 
-    public String getUserPublicKey(String email) {
+    public String getPublicKey(String email) {
         try {
-            String query = "SELECT publicKey FROM " + this.databaseController.TABLES.publicInfo + " WHERE email=?";
+            String query = "SELECT publicKey FROM " + TABLES.userInformation + " WHERE email=?";
             PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
             statement.setString(1, email);
             String publicKey = "";
@@ -107,40 +87,16 @@ public class PublicInfoOperations extends DatabaseOperations{
     }
 
     public String getPrivateKey() {
-        String privateKeyQuery = "SELECT privateKey FROM " + this.databaseController.TABLES.privateKey;
-        String privateKey = "";
-        try {
-            PreparedStatement statement = this.databaseController.getConn().prepareStatement(privateKeyQuery);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                privateKey = rs.getString("privateKey");
-            }
-            return privateKey;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return ConfigController.Settings.LoadSettings().getPrivateRsaKey();
     }
 
-    public String getUserEmail(){
-        String emailQuery = "SELECT email FROM " + this.databaseController.TABLES.privateKey;
-        String email = "";
-        try {
-            PreparedStatement statement = this.databaseController.getConn().prepareStatement(emailQuery);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                email = rs.getString("email");
-            }
-            return email;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String getUserEmail() {
+        return ConfigController.Settings.LoadSettings().getUserEmail();
     }
 
     public void insertSharedFileKey(String recieverEmail, String senderEmail, String fileKeyPart1, String fileKeyPart2,
             String encryptedFileName) {
-        String query = "INSERT INTO " + this.databaseController.TABLES.sharedFilesKeyTable
+        String query = "INSERT INTO " + TABLES.sharedFiles
                 + "(recieverEmail, senderEmail,encryptedName, fileKeyPart1, fileKeyPart2) VALUES(?,?,?,?,?)";
         try {
             PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
@@ -156,8 +112,8 @@ public class PublicInfoOperations extends DatabaseOperations{
         }
     }
 
-    public void insertRecordPreview(FilePreview filePreview) {
-        String query = "INSERT INTO " + this.databaseController.TABLES.sharedRecordTable
+    public void insertRecordPreview(RecievedFile filePreview) {
+        String query = "INSERT INTO " + TABLES.recievedFiles
                 + "(senderEmail, encryptedName, decryptedName, fileKey) VALUES(?,?,?,?)";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);

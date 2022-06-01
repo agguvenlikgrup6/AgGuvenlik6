@@ -1,13 +1,13 @@
-package org.uludag.bmb.beans.database;
+package org.uludag.bmb.beans.database.sharing;
 
-public class SharedFile {
+public class SentFile {
     private String recieverEmail;
     private String senderEmail;
     private String encryptedName;
     private String fileKeyPart1;
     private String fileKeyPart2;
 
-    public SharedFile(String recieverEmail, String senderEmail, String encryptedName, String fileKeyPart1,
+    public SentFile(String recieverEmail, String senderEmail, String encryptedName, String fileKeyPart1,
             String fileKeyPart2) {
         this.recieverEmail = recieverEmail;
         this.senderEmail = senderEmail;

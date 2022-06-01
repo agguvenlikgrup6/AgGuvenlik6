@@ -38,9 +38,9 @@ public class FolderCreationSceneController extends PopupSceneController implemen
                 TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
                 mainSceneController.directoriesHierarchyView.setRoot(root);
                 mainSceneController.directoriesHierarchyView.setShowRoot(false);
-                notificationOperations.insertNotification(newFolderPath + " dizininde " + newFolderName + " klasörü başarı ile oluşturuldu!");
+                notificationOperations.insert(newFolderPath + " dizininde " + newFolderName + " klasörü başarı ile oluşturuldu!");
             } catch (DbxException e) {
-                notificationOperations.insertNotification(newFolderPath + " dizininde " + newFolderName + " klasörü oluşturulamadı!");
+                notificationOperations.insert(newFolderPath + " dizininde " + newFolderName + " klasörü oluşturulamadı!");
                 e.printStackTrace();
             }
             this.stage.close();
