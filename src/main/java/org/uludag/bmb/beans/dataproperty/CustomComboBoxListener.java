@@ -7,6 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+@SuppressWarnings("all")
 public class CustomComboBoxListener<T> implements EventHandler<KeyEvent> {
 
     private ComboBox comboBox;

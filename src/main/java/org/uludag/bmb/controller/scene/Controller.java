@@ -4,7 +4,8 @@ import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
-import org.uludag.bmb.operations.database.SharingOperations;
+import org.uludag.bmb.operations.database.TableOperations;
+import org.uludag.bmb.operations.database.UserInformationOperations;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,8 +14,9 @@ import javafx.stage.Stage;
 
 public abstract class Controller {
     protected NotificationOperations notificationOperations;
-    protected SharingOperations publicInfoOperations;
     protected FileRecordOperations fileRecordOperations;
+    protected UserInformationOperations userInformationOperations;
+    protected TableOperations tableOperations;
 
     protected Parent parent;
     protected Stage stage;
@@ -27,8 +29,9 @@ public abstract class Controller {
     public Controller(String scene, int width, int heigth) {
         fxmlLoad(scene, width, heigth);
         notificationOperations = Constants.notificationOperations;
-        publicInfoOperations = Constants.sharingOperations;
         fileRecordOperations = Constants.fileRecordOperations;
+        userInformationOperations = Constants.userInformationOperations;
+        tableOperations = Constants.tableOperations;
     }
 
     public void fxmlLoad(String fxml, int sceneWidth, int sceneHeight) {

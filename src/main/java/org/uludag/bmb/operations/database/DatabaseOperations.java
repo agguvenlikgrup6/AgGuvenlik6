@@ -44,7 +44,23 @@ public class DatabaseOperations {
     public <T> List<T> executeCloudQuery(QueryFactory query, Object... params) {
         ResultSetHandler<List<T>> rsh = new BeanListHandler<T>((Class<? extends T>) query.getClassType());
         try {
-            return databaseController.getAzureQueryRunner().query(query.getQuery(), rsh, params);
+            if (query.getQuery().contains("UPDATE") || query.getQuery().contains("INSERT")
+                    || query.getQuery().contains("DELETE")) {
+                if (params.length == 0) {
+                    databaseController.getAzureQueryRunner().update(query.getQuery());
+                } else {
+                    databaseController.getAzureQueryRunner().update(query.getQuery(), params);
+                }
+                return null;
+            } else {
+                if (params.length == 0) {
+                    var result = databaseController.getAzureQueryRunner().query(query.getQuery(), rsh);
+                    return result;
+                } else {
+                    var result = databaseController.getAzureQueryRunner().query(query.getQuery(), rsh, params);
+                    return result;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;

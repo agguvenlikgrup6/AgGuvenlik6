@@ -18,7 +18,6 @@ import java.util.Base64;
 import java.util.List;
 
 import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.DeleteResult;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
@@ -27,6 +26,7 @@ import com.dropbox.core.v2.sharing.MemberSelector;
 import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.database.FileRecord;
+import org.uludag.bmb.beans.database.sharing.SharedFile;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.service.cryption.Crypto;
@@ -197,9 +197,9 @@ public class FileOperations {
     public static boolean shareFile(ObservableList<CustomTableView> fileList, List<String> userEmailList) {
         try {
             String filePath = fileList.get(0).getFilePath();
-            String myPrivateKey = Constants.sharingOperations.getPrivateKey();
+            String myPrivateKey = ConfigController.Settings.LoadSettings().getPrivateRsaKey();
             for (String recieverEmail : userEmailList) {
-                String recieverPublicKey = Constants.sharingOperations.getPublicKey(recieverEmail);
+                String recieverPublicKey = Constants.userInformationOperations.getByEmail(recieverEmail).getEMail();
                 for (CustomTableView shareFile : fileList) {
                     FileRecord file = Constants.fileRecordOperations.getByPathAndName(filePath,
                             shareFile.getFileName());
@@ -213,8 +213,8 @@ public class FileOperations {
                     String encryptedFileName = Constants.fileRecordOperations
                             .getByPathAndName(shareFile.getFilePath(), shareFile.getFileName())
                             .getEncryptedName();
-                            
-                    Constants.sharingOperations.insertSharedFile(recieverEmail, encryptedFileName, secondEncryptedAES1,secondEncryptedAES2);
+                    String senderEmail = ConfigController.Settings.LoadSettings().getUserEmail();
+                    Constants.sharedFileOperations.insert(new SharedFile(recieverEmail, senderEmail, encryptedFileName, secondEncryptedAES1,secondEncryptedAES2));
 
                     List<MemberSelector> member = new ArrayList<>();
                     member.add(MemberSelector.email(recieverEmail));
@@ -242,7 +242,7 @@ public class FileOperations {
     private static void deleteFromCloud(String path, String fileName) {
         try {
             FileRecord file = Constants.fileRecordOperations.getByPathAndName(path, fileName);
-            DeleteResult ds = Client.client.files().deleteV2(path + file.getEncryptedName());
+            Client.client.files().deleteV2(path + file.getEncryptedName());
             Constants.fileRecordOperations.delete(fileName, path);
             FileOperations.deleteFile(path, fileName);
             Constants.notificationOperations.insert(path + fileName + " dosyası buluttan ve yerelden silindi!");

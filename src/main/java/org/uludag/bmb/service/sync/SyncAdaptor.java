@@ -5,13 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.FileMetadata;
-
-import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.FileRecord;
@@ -21,6 +15,9 @@ import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.service.cryption.Crypto;
+
+import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.files.FileMetadata;
 
 public class SyncAdaptor extends FileAlterationListenerAdaptor {
     private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();

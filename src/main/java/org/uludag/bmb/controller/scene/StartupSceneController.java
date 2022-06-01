@@ -12,7 +12,6 @@ import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.controller.StartupControl;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.oauth.OAuthFlow;
-import org.uludag.bmb.operations.database.SharingOperations;
 import org.uludag.bmb.operations.database.TableOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.service.cryption.Crypto;
@@ -98,22 +97,19 @@ public class StartupSceneController extends Controller {
                 alert.setContentText("Lütfen Geçerli Bir Dizin Seçiniz");
                 alert.showAndWait();
             } else {
-                TableOperations tableOperations = new TableOperations();
-
                 tableOperations.createLocalTables();
-
-                SharingOperations publicInfoOperations = new SharingOperations();
 
                 if (Client.client == null) {
                     Client.client = Client.getClient();
                 }
                 KeyPair keyPair = Crypto.SHARE.CREATE_KEY_PAIR();
+                String eMail = Client.client.users().getCurrentAccount().getEmail();
                 ConfigController.Settings.SaveSettings(new Config(chosenPath.getText(),
                         Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()),
-                        Client.client.users().getCurrentAccount().getEmail()));
+                        eMail));
 
-                publicInfoOperations
-                        .insertNewUser(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+                userInformationOperations.insert(eMail,
+                        Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
                 new Thread(new SyncMonitor()).start();
                 new MainSceneController().displayScene(stage);
             }

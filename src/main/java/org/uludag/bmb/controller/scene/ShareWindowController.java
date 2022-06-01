@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.uludag.bmb.beans.database.sharing.UserInformation;
 import org.uludag.bmb.beans.dataproperty.CustomComboBoxListener;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
 import org.uludag.bmb.operations.dropbox.FileOperations;
@@ -43,9 +44,9 @@ public class ShareWindowController extends PopupSceneController implements Initi
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        List<String> emailList = publicInfoOperations.getApplicationUsersList();
-        for (String email : emailList) {
-            accountField.getItems().addAll(email);
+        List<UserInformation> userInformations = userInformationOperations.getAll();
+        for (UserInformation user : userInformations) {
+            accountField.getItems().addAll(user.getEMail());
         }
         new CustomComboBoxListener<>(accountField);
         for (CustomTableView file : mainSceneController.fileListView.getSelectionModel().getSelectedItems()) {

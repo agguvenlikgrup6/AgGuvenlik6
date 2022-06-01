@@ -1,22 +1,13 @@
 package org.uludag.bmb.service.cryption;
 
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -24,28 +15,22 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
-import org.uludag.bmb.operations.database.FileRecordOperations;
+import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.database.RecievedFileOperations;
-import org.uludag.bmb.operations.database.SharingOperations;
-import org.uludag.bmb.operations.dropbox.FileOperations;
 
 public class Crypto {
     private static String RSA_MODE = "RSA/ECB/PKCS1Padding";
-    private static final SharingOperations publicInfoOperations = new SharingOperations();
     private static final RecievedFileOperations recievedFileOperations = new RecievedFileOperations();
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
@@ -195,8 +180,8 @@ public class Crypto {
 
         public static void DECRYPT_PREVIEW(SharedFile sharedFile) {
             try {
-                String myPrivateKey = publicInfoOperations.getPrivateKey();
-                String senderPublicKey = publicInfoOperations.getPublicKey(sharedFile.getSenderEmail());
+                String myPrivateKey = ConfigController.Settings.LoadSettings().getPrivateRsaKey();
+                String senderPublicKey = ConfigController.Settings.LoadSettings().getUserEmail();
                 String decryptedKeyPart1 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart1(), myPrivateKey);
                 String decryptedKeyPart2 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart2(), myPrivateKey);
                 String decryptedKey = decryptedKeyPart1 + decryptedKeyPart2;

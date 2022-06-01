@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
+import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.database.FileRecord;
+import org.uludag.bmb.beans.dataproperty.CustomHyperLink;
+import org.uludag.bmb.beans.dataproperty.CustomNotificationListCell;
+import org.uludag.bmb.beans.dataproperty.CustomTableView;
+import org.uludag.bmb.operations.dropbox.FileOperations;
+import org.uludag.bmb.operations.scenedatasource.UITrees;
+
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.v2.files.UploadErrorException;
-
-import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.CustomTableView;
-import org.uludag.bmb.beans.dataproperty.CustomNotificationListCell;
-import org.uludag.bmb.beans.dataproperty.CustomHyperLink;
-import org.uludag.bmb.operations.dropbox.FileOperations;
-import org.uludag.bmb.operations.scenedatasource.UITrees;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
