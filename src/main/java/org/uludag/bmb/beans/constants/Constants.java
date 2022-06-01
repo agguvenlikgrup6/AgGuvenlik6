@@ -8,7 +8,7 @@ import org.uludag.bmb.operations.database.SharingOperations;
 public class Constants {
     public static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
     public static final NotificationOperations notificationOperations = new NotificationOperations();
-    public static final SharingOperations publicInfoOperations = new SharingOperations();
+    public static final SharingOperations sharingOperations = new SharingOperations();
 
     public class TABLES {
         public static final String fileRecords = PropertiesReader.getProperty("table_Record");

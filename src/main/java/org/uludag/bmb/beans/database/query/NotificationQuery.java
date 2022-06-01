@@ -1,4 +1,4 @@
-package org.uludag.bmb.beans.query;
+package org.uludag.bmb.beans.database.query;
 
 import org.uludag.bmb.beans.constants.Constants.TABLES;
 import org.uludag.bmb.beans.database.Notification;

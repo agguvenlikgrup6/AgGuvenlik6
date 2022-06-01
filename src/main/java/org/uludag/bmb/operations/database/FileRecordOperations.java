@@ -20,9 +20,9 @@ public class FileRecordOperations extends DatabaseOperations {
 
     public FileRecord getByPathAndName(String filePath, String fileName) {
         List<FileRecord> records = executeLocalQuery(QueryFactory.Records("getByPathAndName"), filePath, fileName);
-        if(records.size() != 0){
+        if (records.size() != 0) {
             return records.get(0);
-        }else {
+        } else {
             return null;
         }
     }
@@ -44,7 +44,8 @@ public class FileRecordOperations extends DatabaseOperations {
         return tableData;
     }
 
-    public void insertRecord(FileRecord record) {
+    public void insert(FileRecord record) {
+
         executeLocalQuery(QueryFactory.Records("insert"), record.getName(), record.getPath(), record.getKey(),
                 record.getModificationDate(), record.getHash(), record.getEncryptedName(), record.getSync(),
                 record.getChangeStatus(),
@@ -54,7 +55,7 @@ public class FileRecordOperations extends DatabaseOperations {
     public FileRecord getbyPathAndEncryptedName(String filePath, String fileEncryptedName) {
         List<FileRecord> records = executeLocalQuery(QueryFactory.Records("getbyPathAndEncryptedName"), filePath,
                 fileEncryptedName);
-        if(records.size() != 0){
+        if (records.size() != 0) {
             return records.get(0);
         } else {
             return null;

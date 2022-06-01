@@ -37,15 +37,16 @@ import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
-import org.uludag.bmb.beans.database.sharing.SentFile;
+import org.uludag.bmb.beans.database.sharing.SharedFile;
 import org.uludag.bmb.operations.database.FileRecordOperations;
+import org.uludag.bmb.operations.database.RecievedFileOperations;
 import org.uludag.bmb.operations.database.SharingOperations;
 import org.uludag.bmb.operations.dropbox.FileOperations;
 
 public class Crypto {
     private static String RSA_MODE = "RSA/ECB/PKCS1Padding";
     private static final SharingOperations publicInfoOperations = new SharingOperations();
-    private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
+    private static final RecievedFileOperations recievedFileOperations = new RecievedFileOperations();
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;
@@ -192,7 +193,7 @@ public class Crypto {
 
         }
 
-        public static void DECRYPT_PREVIEW(SentFile sharedFile) {
+        public static void DECRYPT_PREVIEW(SharedFile sharedFile) {
             try {
                 String myPrivateKey = publicInfoOperations.getPrivateKey();
                 String senderPublicKey = publicInfoOperations.getPublicKey(sharedFile.getSenderEmail());
@@ -205,8 +206,8 @@ public class Crypto {
                         Base64.getUrlDecoder().decode(sharedFile.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
                         secondDecryptedKey);
 
-                publicInfoOperations.insertRecordPreview(new RecievedFile(sharedFile.getSenderEmail(), sharedFile.getEncryptedName(), decryptedFileName,
-                        secondDecryptedKey));
+                recievedFileOperations.insert(
+                        new RecievedFile(sharedFile.getEncryptedName(), decryptedFileName, secondDecryptedKey));
 
             } catch (Exception e) {
                 e.printStackTrace();

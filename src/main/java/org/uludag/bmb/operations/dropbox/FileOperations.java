@@ -197,9 +197,9 @@ public class FileOperations {
     public static boolean shareFile(ObservableList<CustomTableView> fileList, List<String> userEmailList) {
         try {
             String filePath = fileList.get(0).getFilePath();
-            String myPrivateKey = Constants.publicInfoOperations.getPrivateKey();
+            String myPrivateKey = Constants.sharingOperations.getPrivateKey();
             for (String recieverEmail : userEmailList) {
-                String recieverPublicKey = Constants.publicInfoOperations.getPublicKey(recieverEmail);
+                String recieverPublicKey = Constants.sharingOperations.getPublicKey(recieverEmail);
                 for (CustomTableView shareFile : fileList) {
                     FileRecord file = Constants.fileRecordOperations.getByPathAndName(filePath,
                             shareFile.getFileName());
@@ -213,16 +213,14 @@ public class FileOperations {
                     String encryptedFileName = Constants.fileRecordOperations
                             .getByPathAndName(shareFile.getFilePath(), shareFile.getFileName())
                             .getEncryptedName();
-                    Constants.publicInfoOperations.insertSharedFileKey(recieverEmail,
-                    Constants.publicInfoOperations.getUserEmail(), secondEncryptedAES1,
-                            secondEncryptedAES2,
-                            encryptedFileName);
+                            
+                    Constants.sharingOperations.insertSharedFile(recieverEmail, encryptedFileName, secondEncryptedAES1,secondEncryptedAES2);
 
                     List<MemberSelector> member = new ArrayList<>();
                     member.add(MemberSelector.email(recieverEmail));
                     Constants.fileRecordOperations.updateSharedAccounts(userEmailList, shareFile.getFilePath(), shareFile.getFileName());
                     Client.client.sharing().addFileMember(file.getPath() + file.getEncryptedName(), member);
-                    Constants.notificationOperations.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası seçili hesaplar ile paylaşıldı!");
+                    Constants.notificationOperations.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası" + recieverEmail + " ile paylaşıldı!");
                 }
             }
             return true;

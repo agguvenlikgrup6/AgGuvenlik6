@@ -1,13 +1,11 @@
 package org.uludag.bmb.beans.database.sharing;
 
 public class RecievedFile {
-    private String senderEmail;
-    private String encryptedName;
     private String key;
+    private String encryptedName;
     private String decryptedName;
 
-    public RecievedFile(String senderEmail, String encryptedName, String decryptedName, String key) {
-        this.senderEmail = senderEmail;
+    public RecievedFile(String encryptedName, String decryptedName, String key) {
         this.encryptedName = encryptedName;
         this.decryptedName = decryptedName;
         this.key = key;
@@ -21,14 +19,6 @@ public class RecievedFile {
         this.decryptedName = decryptedName;
     }
 
-    public String getSenderEmail() {
-        return this.senderEmail;
-    }
-
-    public void setSenderEmail(String senderEmail) {
-        this.senderEmail = senderEmail;
-    }
-
     public String getEncryptedName() {
         return this.encryptedName;
     }
@@ -37,7 +27,7 @@ public class RecievedFile {
         this.encryptedName = encryptedName;
     }
 
-    public String getSecondDecryptedKey() {
+    public String getKey() {
         return this.key;
     }
 

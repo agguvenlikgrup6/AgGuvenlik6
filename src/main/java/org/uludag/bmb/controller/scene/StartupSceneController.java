@@ -113,7 +113,7 @@ public class StartupSceneController extends Controller {
                         Client.client.users().getCurrentAccount().getEmail()));
 
                 publicInfoOperations
-                        .insertPublicKey(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+                        .insertNewUser(Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
                 new Thread(new SyncMonitor()).start();
                 new MainSceneController().displayScene(stage);
             }

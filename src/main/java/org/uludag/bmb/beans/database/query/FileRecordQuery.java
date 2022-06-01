@@ -1,11 +1,11 @@
-package org.uludag.bmb.beans.query;
+package org.uludag.bmb.beans.database.query;
 
 import org.uludag.bmb.beans.constants.Constants.TABLES;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.factory.query.QueryFactory;
 
-public class RecordsQuery extends Query implements QueryFactory {
-    public RecordsQuery(String queryName) {
+public class FileRecordQuery extends Query implements QueryFactory {
+    public FileRecordQuery(String queryName) {
         super(queryName);
     }
 

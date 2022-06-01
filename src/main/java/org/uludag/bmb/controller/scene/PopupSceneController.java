@@ -24,7 +24,7 @@ public class PopupSceneController {
 
     public PopupSceneController(){
         notificationOperations = Constants.notificationOperations;
-        publicInfoOperations = Constants.publicInfoOperations;
+        publicInfoOperations = Constants.sharingOperations;
         fileRecordOperations = Constants.fileRecordOperations;
     }
 

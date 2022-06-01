@@ -75,7 +75,7 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                     String path = metaData.getPathDisplay().substring(0,
                             metaData.getPathDisplay().length() - efd.name.length());
                     String fileHash = FileOperations.getHash(cloudPath, file.getName());
-                    fileRecordOperations.insertRecord(new FileRecord(1, file.getName(),
+                    fileRecordOperations.insert(new FileRecord(1, file.getName(),
                             metaData.getPathDisplay().substring(0,
                                     metaData.getPathDisplay().length() - efd.name.length()),
                             efd.key,

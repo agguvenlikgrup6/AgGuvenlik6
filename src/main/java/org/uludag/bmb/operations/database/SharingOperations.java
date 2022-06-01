@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.uludag.bmb.beans.constants.Constants.TABLES;
-import org.uludag.bmb.beans.database.sharing.RecievedFile;
-import org.uludag.bmb.beans.database.sharing.SentFile;
+import org.uludag.bmb.beans.database.sharing.SharedFile;
 import org.uludag.bmb.controller.config.ConfigController;
 
 public class SharingOperations extends DatabaseOperations {
 
-    public void insertPublicKey(String publicKey) {
+    public void insertNewUser(String publicKey) {
         String eMail = ConfigController.Settings.LoadSettings().getUserEmail();
         String publicKeyQuery = "BEGIN IF NOT EXISTS (SELECT * FROM " + TABLES.userInformation
                 + " WHERE email=?)"
@@ -33,16 +32,16 @@ public class SharingOperations extends DatabaseOperations {
         }
     }
 
-    public SentFile getSharedFileByEncryptedName(String encryptedName) {
+    public SharedFile getSharedFileByEncryptedName(String encryptedName) {
         try {
             String query = "SELECT * FROM " + TABLES.sharedFiles
                     + " WHERE encryptedName=?";
             PreparedStatement statement = databaseController.getAzureCon().prepareStatement(query);
             statement.setString(1, encryptedName);
             ResultSet rst = statement.executeQuery();
-            List<SentFile> sharedFiles = new ArrayList<SentFile>();
+            List<SharedFile> sharedFiles = new ArrayList<SharedFile>();
             while (rst.next()) {
-                sharedFiles.add(new SentFile(rst.getString("recieverEmail"), rst.getString("senderEmail"),
+                sharedFiles.add(new SharedFile(rst.getString("recieverEmail"), rst.getString("senderEmail"),
                         rst.getString("encryptedName"),
                         rst.getString("fileKeyPart1"), rst.getString("fileKeyPart2")));
             }
@@ -94,33 +93,16 @@ public class SharingOperations extends DatabaseOperations {
         return ConfigController.Settings.LoadSettings().getUserEmail();
     }
 
-    public void insertSharedFileKey(String recieverEmail, String senderEmail, String fileKeyPart1, String fileKeyPart2,
-            String encryptedFileName) {
+    public void insertSharedFile(String recieverEmail, String encryptedFileName, String fileKeyPart1, String fileKeyPart2) {
         String query = "INSERT INTO " + TABLES.sharedFiles
-                + "(recieverEmail, senderEmail,encryptedName, fileKeyPart1, fileKeyPart2) VALUES(?,?,?,?,?)";
+                + "(recieverEmail, senderEmail, encryptedName, fileKeyPart1, fileKeyPart2) VALUES(?,?,?,?,?)";
         try {
             PreparedStatement statement = this.databaseController.getAzureCon().prepareStatement(query);
             statement.setString(1, recieverEmail);
-            statement.setString(2, senderEmail);
+            statement.setString(2, getUserEmail());
             statement.setString(3, encryptedFileName);
             statement.setString(4, fileKeyPart1);
             statement.setString(5, fileKeyPart2);
-
-            statement.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void insertRecordPreview(RecievedFile filePreview) {
-        String query = "INSERT INTO " + TABLES.recievedFiles
-                + "(senderEmail, encryptedName, decryptedName, fileKey) VALUES(?,?,?,?)";
-        try {
-            PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);
-            statement.setString(1, filePreview.getSenderEmail());
-            statement.setString(2, filePreview.getEncryptedName());
-            statement.setString(3, filePreview.getDecryptedName());
-            statement.setString(4, filePreview.getSecondDecryptedKey());
 
             statement.execute();
         } catch (Exception e) {

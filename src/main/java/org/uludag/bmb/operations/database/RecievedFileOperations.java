@@ -7,7 +7,12 @@ import org.uludag.bmb.factory.query.QueryFactory;
 
 public class RecievedFileOperations extends DatabaseOperations {
     public RecievedFile getByEncryptedName(String encryptedName) {
-        List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getByEncryptedName"), encryptedName);
+        List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getByEncryptedName"),
+                encryptedName);
         return recievedFiles.get(0);
+    }
+
+    public void insert(RecievedFile recievedFile) {
+        executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getEncryptedName(), recievedFile.getDecryptedName(), recievedFile.getKey());
     }
 }

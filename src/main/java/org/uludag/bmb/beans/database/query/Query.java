@@ -1,4 +1,4 @@
-package org.uludag.bmb.beans.query;
+package org.uludag.bmb.beans.database.query;
 
 public class Query {
     protected String queryName;
