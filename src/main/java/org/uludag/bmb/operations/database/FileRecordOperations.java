@@ -45,7 +45,6 @@ public class FileRecordOperations extends DatabaseOperations {
     }
 
     public void insert(FileRecord record) {
-
         executeLocalQuery(QueryFactory.Records("insert"), record.getName(), record.getPath(), record.getKey(),
                 record.getModificationDate(), record.getHash(), record.getEncryptedName(), record.getSync(),
                 record.getChangeStatus(),

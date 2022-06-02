@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import org.uludag.bmb.beans.database.sharing.UserInformation;
 import org.uludag.bmb.beans.dataproperty.CustomComboBoxListener;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
-import org.uludag.bmb.operations.dropbox.FileOperations;
+import org.uludag.bmb.operations.FileOperations;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

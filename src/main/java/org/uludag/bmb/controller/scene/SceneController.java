@@ -12,7 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public abstract class Controller {
+public abstract class SceneController {
     protected NotificationOperations notificationOperations;
     protected FileRecordOperations fileRecordOperations;
     protected UserInformationOperations userInformationOperations;
@@ -22,11 +22,11 @@ public abstract class Controller {
     protected Stage stage;
     protected Scene scene;
 
-    public Controller() {
+    public SceneController() {
 
     }
 
-    public Controller(String scene, int width, int heigth) {
+    public SceneController(String scene, int width, int heigth) {
         fxmlLoad(scene, width, heigth);
         notificationOperations = Constants.notificationOperations;
         fileRecordOperations = Constants.fileRecordOperations;
@@ -35,7 +35,7 @@ public abstract class Controller {
     }
 
     public void fxmlLoad(String fxml, int sceneWidth, int sceneHeight) {
-        FXMLLoader fxmlLoader = new FXMLLoader(Controller.class.getResource("/" + fxml + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(SceneController.class.getResource("/" + fxml + ".fxml"));
         fxmlLoader.setController(this);
         try {
             parent = (Parent) fxmlLoader.load();

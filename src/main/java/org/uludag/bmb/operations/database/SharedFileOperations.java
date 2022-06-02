@@ -3,7 +3,7 @@ package org.uludag.bmb.operations.database;
 import java.util.List;
 
 import org.uludag.bmb.beans.database.sharing.SharedFile;
-import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.controller.localconfig.LocalConfigController;
 import org.uludag.bmb.factory.query.QueryFactory;
 
 public class SharedFileOperations extends DatabaseOperations {
@@ -12,7 +12,7 @@ public class SharedFileOperations extends DatabaseOperations {
     }
 
     public SharedFile getByMailAndEncryptedName(String encryptedName){
-        String email = ConfigController.Settings.LoadSettings().getUserEmail();
+        String email = LocalConfigController.Settings.LoadSettings().getUserEmail();
         List<SharedFile> sharedFiles =  executeCloudQuery(QueryFactory.SharedFile("getByEncryptedName"), email, encryptedName);
         if(sharedFiles.size() != 0){
             return sharedFiles.get(0);
@@ -22,7 +22,7 @@ public class SharedFileOperations extends DatabaseOperations {
     }
 
     public void deleteByMailAndEncryptedName(String encryptedName){
-        String email = ConfigController.Settings.LoadSettings().getUserEmail();
+        String email = LocalConfigController.Settings.LoadSettings().getUserEmail();
         executeCloudQuery(QueryFactory.SharedFile("deleteByMailAndEncryptedName"), email, encryptedName);
     }
 }

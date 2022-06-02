@@ -1,4 +1,4 @@
-package org.uludag.bmb.controller.config;
+package org.uludag.bmb.controller.localconfig;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.config.Config;
+import org.uludag.bmb.beans.localconfig.LocalConfig;
 
-public class ConfigController {
+public class LocalConfigController {
     public class Settings {
-        public static final void SaveSettings(Config config) {
+        public static final void SaveSettings(LocalConfig config) {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 FileOutputStream fout;
@@ -25,12 +25,12 @@ public class ConfigController {
             }
         }
 
-        public static final Config LoadSettings() {
+        public static final LocalConfig LoadSettings() {
             FileInputStream fin;
             ObjectMapper mapper = new ObjectMapper();
             try {
                 fin = new FileInputStream(PropertiesReader.getProperty("configFile"));
-                Config config = mapper.readValue(fin, Config.class);
+                LocalConfig config = mapper.readValue(fin, LocalConfig.class);
                 return config;
             } catch (Exception ex) {
                 ex.printStackTrace();

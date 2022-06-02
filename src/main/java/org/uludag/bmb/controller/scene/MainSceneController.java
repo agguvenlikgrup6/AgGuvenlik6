@@ -14,8 +14,9 @@ import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.CustomHyperLink;
 import org.uludag.bmb.beans.dataproperty.CustomNotificationListCell;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
-import org.uludag.bmb.operations.dropbox.FileOperations;
+import org.uludag.bmb.operations.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
+import org.uludag.bmb.service.sync.SyncControl;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
@@ -44,7 +45,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class MainSceneController extends Controller implements Initializable {
+public class MainSceneController extends SceneController implements Initializable {
     @FXML
     public Button btnDownload;
 
@@ -149,6 +150,7 @@ public class MainSceneController extends Controller implements Initializable {
         notificationListView.setCellFactory(param -> new CustomNotificationListCell());
         fileListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         new NotificationPaneController(this);
+        new SyncControl();
         // List<SharedFileMetadata> entries;
         // try {
         // entries = Client.client.sharing().listReceivedFiles().getEntries();

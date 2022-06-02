@@ -5,17 +5,16 @@ import java.io.IOException;
 import java.security.KeyPair;
 import java.util.Base64;
 
-import com.dropbox.core.json.JsonReader.FileLoadException;
-
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.config.Config;
-import org.uludag.bmb.controller.StartupControl;
-import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.beans.localconfig.LocalConfig;
+import org.uludag.bmb.controller.localconfig.LocalConfigController;
 import org.uludag.bmb.oauth.OAuthFlow;
 import org.uludag.bmb.operations.database.TableOperations;
 import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.service.cryption.Crypto;
 import org.uludag.bmb.service.sync.SyncMonitor;
+
+import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -27,7 +26,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-public class StartupSceneController extends Controller {
+public class StartupSceneController extends SceneController {
 
     @FXML
     private Button btnChoosePath;
@@ -54,7 +53,6 @@ public class StartupSceneController extends Controller {
         tableOperations.createLocalTables();
         try {
             if (Client.client != null) {
-                new StartupControl();
                 new Thread(new SyncMonitor()).start();
 
                 MainSceneController msc = new MainSceneController();
@@ -104,7 +102,7 @@ public class StartupSceneController extends Controller {
                 }
                 KeyPair keyPair = Crypto.SHARE.CREATE_KEY_PAIR();
                 String eMail = Client.client.users().getCurrentAccount().getEmail();
-                ConfigController.Settings.SaveSettings(new Config(chosenPath.getText(),
+                LocalConfigController.Settings.SaveSettings(new LocalConfig(chosenPath.getText(),
                         Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()),
                         eMail));
 

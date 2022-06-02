@@ -9,11 +9,11 @@ import java.text.SimpleDateFormat;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.controller.localconfig.LocalConfigController;
+import org.uludag.bmb.operations.FileOperations;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.dropbox.Client;
-import org.uludag.bmb.operations.dropbox.FileOperations;
 import org.uludag.bmb.service.cryption.Crypto;
 
 import com.dropbox.core.DbxException;
@@ -43,7 +43,7 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
     }
 
     private String getCloudPath(File file) {
-        int len = ConfigController.Settings.LoadSettings().getLocalDropboxPath().length();
+        int len = LocalConfigController.Settings.LoadSettings().getLocalDropboxPath().length();
         String cloudPath = file.getAbsolutePath().substring(len,
                 file.getAbsolutePath().length() - file.getName().length());
         String os = System.getProperty("os.name").toLowerCase();

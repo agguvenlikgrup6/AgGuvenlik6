@@ -27,8 +27,8 @@ module org.uludag.bmb {
    opens org.uludag.bmb to javafx.fxml, javafx.controls, javafx.base, javafx.graphics, commons.dbutils;
    opens org.uludag.bmb.beans.database to commons.dbutils;
    opens org.uludag.bmb.controller.scene to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
-   opens org.uludag.bmb.controller.config to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
-   opens org.uludag.bmb.beans.config to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
+   opens org.uludag.bmb.controller.localconfig to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
+   opens org.uludag.bmb.beans.localconfig to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
    opens org.uludag.bmb.beans.database.sharing to commons.dbutils;
    exports org.uludag.bmb.beans.crypto to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
    exports org.uludag.bmb.beans.dataproperty to org.uludag.bmb.controller.scene;

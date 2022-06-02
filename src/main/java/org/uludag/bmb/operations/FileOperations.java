@@ -1,4 +1,4 @@
-package org.uludag.bmb.operations.dropbox;
+package org.uludag.bmb.operations;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,19 +17,15 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.ListFolderResult;
-import com.dropbox.core.v2.files.Metadata;
-import com.dropbox.core.v2.sharing.MemberSelector;
-
-import org.uludag.bmb.beans.config.Config;
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
-import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.operations.dropbox.Client;
 import org.uludag.bmb.service.cryption.Crypto;
+
+import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.sharing.MemberSelector;
 
 import javafx.collections.ObservableList;
 
@@ -37,16 +33,16 @@ public class FileOperations {
     public static final void downloadFile(String filePath, String fileName) {
         new Thread(() -> {
             try {
-                String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
-                String fileWithPath = localPath + filePath + fileName;
+                String localSyncPath = Constants.CONFIG.localSyncPath;
+                String fileWithPath = localSyncPath + filePath + fileName;
 
                 if (!Files.exists(Paths.get(fileWithPath))) {
-                    if (!Files.exists(Paths.get(localPath + filePath))) {
-                        File fileFolder = new File(localPath + filePath);
+                    if (!Files.exists(Paths.get(localSyncPath + filePath))) {
+                        File fileFolder = new File(localSyncPath + filePath);
                         fileFolder.mkdirs();
                     }
                     FileRecord record = Constants.fileRecordOperations.getByPathAndName(filePath, fileName);
-                    OutputStream downloadFile = new FileOutputStream(localPath + filePath + record.getEncryptedName());
+                    OutputStream downloadFile = new FileOutputStream(localSyncPath + filePath + record.getEncryptedName());
                     Client.client.files().downloadBuilder(filePath + record.getEncryptedName()).download(downloadFile);
                     Constants.fileRecordOperations.updateDownloadStatus(filePath, fileName, true);
                     Constants.fileRecordOperations.updateSyncStatus(filePath, fileName, true);
@@ -54,14 +50,14 @@ public class FileOperations {
                     String decryptedName = Crypto.decryptName(
                             Base64.getUrlDecoder().decode(record.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
                             record.getKey());
-                    OutputStream decryptedFile = new FileOutputStream(localPath + filePath + decryptedName);
+                    OutputStream decryptedFile = new FileOutputStream(localSyncPath + filePath + decryptedName);
                     byte[] fileBytes = Crypto.decryptFile(
-                            Files.readAllBytes(Paths.get(localPath + filePath + record.getEncryptedName())),
+                            Files.readAllBytes(Paths.get(localSyncPath + filePath + record.getEncryptedName())),
                             record.getKey());
                     decryptedFile.write(fileBytes);
                     decryptedFile.close();
 
-                    Files.delete(Paths.get(localPath + filePath + record.getEncryptedName()));
+                    Files.delete(Paths.get(localSyncPath + filePath + record.getEncryptedName()));
 
                     Constants.notificationOperations
                             .insert(filePath + fileName + " dosyası başarı ile indirildi!");
@@ -73,9 +69,8 @@ public class FileOperations {
     }
 
     public static final void deleteFile(String path, String fileName) {
-        Config config = ConfigController.Settings.LoadSettings();
-        String localPath = config.getLocalDropboxPath();
-        String filePath = localPath;
+        String localSyncPath = Constants.CONFIG.localSyncPath;
+        String filePath = localSyncPath;
         String os = System.getProperty("os.name").toLowerCase();
         if (!path.equals("/")) {
             if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
@@ -91,15 +86,14 @@ public class FileOperations {
     }
 
     public static final void uploadFile(String uploadDirectory, File file) {
-        Config config = ConfigController.Settings.LoadSettings();
-        String localPath = config.getLocalDropboxPath();
+        String localSyncPath = Constants.CONFIG.localSyncPath;
         String os = System.getProperty("os.name").toLowerCase();
         if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
         } else {
             uploadDirectory = uploadDirectory.replace("/", "\\");
         }
 
-        String fileDirectory = localPath + uploadDirectory;
+        String fileDirectory = localSyncPath + uploadDirectory;
         try {
             String fileWithPath = fileDirectory + file.getName();
             if (!Files.exists(Paths.get(fileWithPath))) {
@@ -122,10 +116,10 @@ public class FileOperations {
     }
 
     public static String getHash(String path, String fileName) {
-        String localPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
+        String localSyncPath = Constants.CONFIG.localSyncPath;
         byte[] inputBytes;
         try {
-            inputBytes = Files.readAllBytes((Path) Paths.get(localPath + path + fileName));
+            inputBytes = Files.readAllBytes((Path) Paths.get(localSyncPath + path + fileName));
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             messageDigest.update(inputBytes);
             byte[] digestedBytes = messageDigest.digest();
@@ -140,14 +134,14 @@ public class FileOperations {
 
     public static void changeSyncStatus(CustomTableView item, boolean status) {
         if (status) {
-            String filePath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
-            filePath += item.getFilePath() + item.getFileName();
+            String localSyncPath = Constants.CONFIG.localSyncPath;
+            localSyncPath += item.getFilePath() + item.getFileName();
             if (item.hasFileChanged()) {
                 try {
-                    InputStream is = new FileInputStream(new File(filePath));
+                    InputStream is = new FileInputStream(new File(localSyncPath));
                     deleteFromLocal(item.getFilePath(), item.getFileName());
                     deleteFromCloud(item.getFilePath(), item.getFileName());
-                    Path destinationPath = (Path) Paths.get(filePath);
+                    Path destinationPath = (Path) Paths.get(localSyncPath);
                     Files.copy(is, destinationPath, StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -155,7 +149,7 @@ public class FileOperations {
             } else {
                 FileRecord record = Constants.fileRecordOperations.getByPathAndName(item.getFilePath(),
                         item.getFileName());
-                File file = new File(filePath);
+                File file = new File(localSyncPath);
                 if (!record.getModificationDate()
                         .equals(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()))) {
                     item.setChangeStatus(true);
@@ -169,35 +163,10 @@ public class FileOperations {
         }
     }
 
-    public static FileMetadata getMetadata(String filePath, String fileName) {
-        FileRecord record = Constants.fileRecordOperations.getByPathAndName(filePath,
-                fileName);
-        ListFolderResult result;
-        try {
-            if (filePath.equals("/")) {
-                filePath = "";
-            }
-            result = Client.client.files().listFolder(filePath);
-
-            List<Metadata> entries = result.getEntries();
-            for (Metadata metadata : entries) {
-                if (metadata instanceof FileMetadata &&
-                        metadata.getName().equals(record.getEncryptedName())) {
-                    FileMetadata data = (FileMetadata) metadata;
-                    return data;
-
-                }
-            }
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static boolean shareFile(ObservableList<CustomTableView> fileList, List<String> userEmailList) {
         try {
             String filePath = fileList.get(0).getFilePath();
-            String myPrivateKey = ConfigController.Settings.LoadSettings().getPrivateRsaKey();
+            String myPrivateKey = Constants.CONFIG.privateRSAKey;
             for (String recieverEmail : userEmailList) {
                 String recieverPublicKey = Constants.userInformationOperations.getByEmail(recieverEmail).getPublicKey();
                 for (CustomTableView shareFile : fileList) {
@@ -213,14 +182,14 @@ public class FileOperations {
                     String encryptedFileName = Constants.fileRecordOperations
                             .getByPathAndName(shareFile.getFilePath(), shareFile.getFileName())
                             .getEncryptedName();
-                    String senderEmail = ConfigController.Settings.LoadSettings().getUserEmail();
+                    String senderEmail = Constants.CONFIG.userEmail;
                     Constants.sharedFileOperations.insert(new SharedFile(recieverEmail, senderEmail, encryptedFileName, secondEncryptedAES1,secondEncryptedAES2));
 
                     List<MemberSelector> member = new ArrayList<>();
                     member.add(MemberSelector.email(recieverEmail));
                     Constants.fileRecordOperations.updateSharedAccounts(userEmailList, shareFile.getFilePath(), shareFile.getFileName());
                     Client.client.sharing().addFileMember(file.getPath() + file.getEncryptedName(), member);
-                    Constants.notificationOperations.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası" + recieverEmail + " ile paylaşıldı!");
+                    Constants.notificationOperations.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası " + recieverEmail + " ile paylaşıldı!");
                 }
             }
             return true;
@@ -252,9 +221,8 @@ public class FileOperations {
     }
 
     private static void deleteFromLocal(String path, String fileName) {
-        Config config = ConfigController.Settings.LoadSettings();
-        String localPath = config.getLocalDropboxPath();
-        String filePath = localPath;
+        String localSyncPath = Constants.CONFIG.localSyncPath;
+        String filePath = localSyncPath;
         String os = System.getProperty("os.name").toLowerCase();
 
         if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {

@@ -1,18 +1,18 @@
-package org.uludag.bmb.beans.config;
+package org.uludag.bmb.beans.localconfig;
 
 
-public class Config {
+public class LocalConfig {
     private String localDropboxPath;
     private String privateRsaKey;
     private String userEmail;
 
-    public Config(String path, String privateRsaKey, String userEmail) {
+    public LocalConfig(String path, String privateRsaKey, String userEmail) {
         this.localDropboxPath = path;
         this.privateRsaKey = privateRsaKey;
         this.userEmail = userEmail;
     }
 
-    public Config(){
+    public LocalConfig(){
 
     }
     

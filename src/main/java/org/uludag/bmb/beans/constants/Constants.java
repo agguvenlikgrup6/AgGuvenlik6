@@ -1,6 +1,8 @@
 package org.uludag.bmb.beans.constants;
 
 import org.uludag.bmb.PropertiesReader;
+import org.uludag.bmb.beans.localconfig.LocalConfig;
+import org.uludag.bmb.controller.localconfig.LocalConfigController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.database.SharedFileOperations;
@@ -20,5 +22,12 @@ public class Constants {
         public static final String userInformation = PropertiesReader.getProperty("table_userInformation");
         public static final String sharedFiles = PropertiesReader.getProperty("table_sharedFiles");
         public static final String recievedFiles = PropertiesReader.getProperty("table_recievedFiles");  
+    }
+
+    public class CONFIG {
+        private static final LocalConfig config = LocalConfigController.Settings.LoadSettings();
+        public static final String privateRSAKey = config.getPrivateRsaKey();
+        public static final String localSyncPath = config.getLocalDropboxPath();
+        public static final String userEmail = config.getUserEmail();
     }
 }

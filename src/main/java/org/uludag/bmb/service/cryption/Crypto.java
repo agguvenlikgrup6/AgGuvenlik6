@@ -26,7 +26,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
-import org.uludag.bmb.controller.config.ConfigController;
+import org.uludag.bmb.controller.localconfig.LocalConfigController;
 import org.uludag.bmb.operations.database.RecievedFileOperations;
 
 public class Crypto {
@@ -180,8 +180,8 @@ public class Crypto {
 
         public static void DECRYPT_PREVIEW(SharedFile sharedFile) {
             try {
-                String myPrivateKey = ConfigController.Settings.LoadSettings().getPrivateRsaKey();
-                String senderPublicKey = ConfigController.Settings.LoadSettings().getUserEmail();
+                String myPrivateKey = LocalConfigController.Settings.LoadSettings().getPrivateRsaKey();
+                String senderPublicKey = LocalConfigController.Settings.LoadSettings().getUserEmail();
                 String decryptedKeyPart1 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart1(), myPrivateKey);
                 String decryptedKeyPart2 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart2(), myPrivateKey);
                 String decryptedKey = decryptedKeyPart1 + decryptedKeyPart2;
