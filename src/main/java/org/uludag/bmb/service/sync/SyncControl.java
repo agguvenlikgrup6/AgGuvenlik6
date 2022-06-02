@@ -17,7 +17,7 @@ import org.uludag.bmb.controller.localconfig.LocalConfigController;
 import org.uludag.bmb.operations.FileOperations;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
-import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.operations.dropbox.DropboxClient;
 
 public class SyncControl {
     private final int START_DELAY = 3;
@@ -62,7 +62,7 @@ public class SyncControl {
         ArrayList<FileRecord> fileRecords = new ArrayList<FileRecord>();
         ListFolderResult result;
         try {
-            result = Client.client.files().listFolderBuilder("").withIncludeDeleted(false).withRecursive(true).start();
+            result = DropboxClient.client.files().listFolderBuilder("").withIncludeDeleted(false).withRecursive(true).start();
             List<Metadata> entries = result.getEntries();
 
             for (Metadata entry : entries) {
@@ -90,8 +90,9 @@ public class SyncControl {
             File file = new File(fullPath);
             if (!file.exists()) {
                 fileRecordOperations.updateDownloadStatus(record.getPath(), record.getName(), false);
+                fileRecordOperations.updateSyncStatus(record.getPath(), record.getName(), false);
                 notificationOperations.insert(
-                        record.getPath() + record.getName() + " dosyası uygulama kapalıyken yerelden silinmiş!");
+                        record.getPath() + record.getName() + " dosyası uygulama açılmadan önce silinmiş!");
             } else {
                 fileRecordOperations.updateDownloadStatus(record.getPath(), record.getName(), true);
             }
@@ -99,6 +100,23 @@ public class SyncControl {
     }
 
     public void recievedFileControl(){
-        
+        // List<SharedFileMetadata> entries;
+        // try {
+        // entries = Client.client.sharing().listReceivedFiles().getEntries();
+        // if (entries.size() != 0) {
+        // for (SharedFileMetadata entry : entries) {
+        // SharedFile sharedFile =
+        // publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
+        // Crypto.SHARE.DECRYPT_PREVIEW(sharedFile);
+        // String decryptedName =
+        // fileRecordOperations.getSharedRecordPreview(entry.getName())
+        // .getDecryptedName();
+        // sharedFilesList.getItems().add(decryptedName);
+        // //paylaşılan dosyadan çıkılacak
+        // }
+        // }
+        // } catch (DbxException e) {
+        // e.printStackTrace();
+        // }        
     }
 }

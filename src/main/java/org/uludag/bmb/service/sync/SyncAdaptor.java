@@ -13,7 +13,7 @@ import org.uludag.bmb.controller.localconfig.LocalConfigController;
 import org.uludag.bmb.operations.FileOperations;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
-import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.service.cryption.Crypto;
 
 import com.dropbox.core.DbxException;
@@ -67,7 +67,7 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
             if (SyncServer.getSyncStatus()) {
                 EncryptedFileData efd = Crypto.encryptFile(file);
                 try {
-                    FileMetadata metaData = Client.client.files().uploadBuilder(cloudPath + efd.name)
+                    FileMetadata metaData = DropboxClient.client.files().uploadBuilder(cloudPath + efd.name)
                             .uploadAndFinish(efd.encryptedFile);
                     String path = metaData.getPathDisplay().substring(0,
                             metaData.getPathDisplay().length() - efd.name.length());

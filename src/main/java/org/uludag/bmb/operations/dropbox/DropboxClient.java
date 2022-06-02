@@ -4,11 +4,12 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.DbxUserFilesRequests;
 
 import org.uludag.bmb.PropertiesReader;
 
-public class Client {
-    public static DbxClientV2 client = Client.getClient();
+public class DropboxClient {
+    public static DbxClientV2 client = DropboxClient.getClient();
 
     public static DbxClientV2 getClient() {
         try {
@@ -20,5 +21,9 @@ public class Client {
         } catch (DbxException | FileLoadException e) {
             return null;
         }
+    }
+
+    public static DbxUserFilesRequests files(){
+        return client.files();
     }
 }

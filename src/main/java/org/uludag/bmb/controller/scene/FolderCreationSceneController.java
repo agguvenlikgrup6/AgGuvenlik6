@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 import com.dropbox.core.DbxException;
 
 import org.uludag.bmb.beans.dataproperty.CustomHyperLink;
-import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
 import javafx.event.ActionEvent;
@@ -34,7 +34,7 @@ public class FolderCreationSceneController extends PopupSceneController implemen
         String newFolderName = folderName.getText();
         if (newFolderName != "") {
             try {
-                Client.client.files().createFolderV2(newFolderPath + newFolderName);
+                DropboxClient.client.files().createFolderV2(newFolderPath + newFolderName);
                 TreeItem<String> root = UITrees.Hierarchy.getAsTreeItem("");
                 mainSceneController.directoriesHierarchyView.setRoot(root);
                 mainSceneController.directoriesHierarchyView.setShowRoot(false);

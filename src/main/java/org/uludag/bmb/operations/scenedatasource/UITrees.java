@@ -10,7 +10,7 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 
-import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.operations.dropbox.DropboxClient;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
@@ -22,7 +22,7 @@ public class UITrees {
             List<String> folders = new ArrayList<String>();
             ListFolderResult result;
             try {
-                result = Client.client.files().listFolderBuilder(path)
+                result = DropboxClient.client.files().listFolderBuilder(path)
                         .withIncludeDeleted(false)
                         .withRecursive(true)
                         .start();

@@ -141,7 +141,7 @@ public class Crypto {
 
     public static byte[] decryptFile(byte[] cText, String secret) {
         SecretKey key = decodeKeyFromString(secret);
-
+        
         ByteBuffer bb = ByteBuffer.wrap(cText);
 
         byte[] iv = new byte[IV_LENGTH_BYTE];

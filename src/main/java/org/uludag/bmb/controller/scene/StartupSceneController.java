@@ -10,7 +10,7 @@ import org.uludag.bmb.beans.localconfig.LocalConfig;
 import org.uludag.bmb.controller.localconfig.LocalConfigController;
 import org.uludag.bmb.oauth.OAuthFlow;
 import org.uludag.bmb.operations.database.TableOperations;
-import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.service.cryption.Crypto;
 import org.uludag.bmb.service.sync.SyncMonitor;
 
@@ -52,7 +52,7 @@ public class StartupSceneController extends SceneController {
 
         tableOperations.createLocalTables();
         try {
-            if (Client.client != null) {
+            if (DropboxClient.client != null) {
                 new Thread(new SyncMonitor()).start();
 
                 MainSceneController msc = new MainSceneController();
@@ -97,11 +97,11 @@ public class StartupSceneController extends SceneController {
             } else {
                 tableOperations.createLocalTables();
 
-                if (Client.client == null) {
-                    Client.client = Client.getClient();
+                if (DropboxClient.client == null) {
+                    DropboxClient.client = DropboxClient.getClient();
                 }
                 KeyPair keyPair = Crypto.SHARE.CREATE_KEY_PAIR();
-                String eMail = Client.client.users().getCurrentAccount().getEmail();
+                String eMail = DropboxClient.client.users().getCurrentAccount().getEmail();
                 LocalConfigController.Settings.SaveSettings(new LocalConfig(chosenPath.getText(),
                         Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()),
                         eMail));

@@ -151,24 +151,6 @@ public class MainSceneController extends SceneController implements Initializabl
         fileListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         new NotificationPaneController(this);
         new SyncControl();
-        // List<SharedFileMetadata> entries;
-        // try {
-        // entries = Client.client.sharing().listReceivedFiles().getEntries();
-        // if (entries.size() != 0) {
-        // for (SharedFileMetadata entry : entries) {
-        // SharedFile sharedFile =
-        // publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
-        // Crypto.SHARE.DECRYPT_PREVIEW(sharedFile);
-        // String decryptedName =
-        // fileRecordOperations.getSharedRecordPreview(entry.getName())
-        // .getDecryptedName();
-        // sharedFilesList.getItems().add(decryptedName);
-        // //paylaşılan dosyadan çıkılacak
-        // }
-        // }
-        // } catch (DbxException e) {
-        // e.printStackTrace();
-        // }
     }
 
     @FXML

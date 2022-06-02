@@ -10,7 +10,7 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.util.StringUtil;
 import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
-import org.uludag.bmb.operations.dropbox.Client;
+import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
 import javafx.event.ActionEvent;
@@ -47,7 +47,7 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
     void saveSharedFileToLocal(ActionEvent event) {
         List<SharedFileMetadata> entries;
         try {
-            entries = Client.client.sharing().listReceivedFiles().getEntries();
+            entries = DropboxClient.client.sharing().listReceivedFiles().getEntries();
             for (SharedFileMetadata entry : entries) {
                 if (entry.getName().equals(mainSceneController.recievedFilesList.getSelectionModel().getSelectedItem())) {
                     // Client.client.files().saveUrl(cloudPathTXT.getText() + fileName, entry.getPreviewUrl());
