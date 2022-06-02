@@ -199,7 +199,7 @@ public class FileOperations {
             String filePath = fileList.get(0).getFilePath();
             String myPrivateKey = ConfigController.Settings.LoadSettings().getPrivateRsaKey();
             for (String recieverEmail : userEmailList) {
-                String recieverPublicKey = Constants.userInformationOperations.getByEmail(recieverEmail).getEMail();
+                String recieverPublicKey = Constants.userInformationOperations.getByEmail(recieverEmail).getPublicKey();
                 for (CustomTableView shareFile : fileList) {
                     FileRecord file = Constants.fileRecordOperations.getByPathAndName(filePath,
                             shareFile.getFileName());

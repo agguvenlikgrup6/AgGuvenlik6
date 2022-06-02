@@ -58,6 +58,7 @@ public class DatabaseController {
         return this.localQueryRunner;
     }
 
+
     public DatabaseController() {
         this.DATABASES = new Databases();
         this.connectionUrl = getConnectionUrl(this.DATABASES.local);

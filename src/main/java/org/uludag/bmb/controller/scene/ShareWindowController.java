@@ -46,7 +46,7 @@ public class ShareWindowController extends PopupSceneController implements Initi
     public void initialize(URL location, ResourceBundle resources) {
         List<UserInformation> userInformations = userInformationOperations.getAll();
         for (UserInformation user : userInformations) {
-            accountField.getItems().addAll(user.getEMail());
+            accountField.getItems().addAll(user.getEmail());
         }
         new CustomComboBoxListener<>(accountField);
         for (CustomTableView file : mainSceneController.fileListView.getSelectionModel().getSelectedItems()) {

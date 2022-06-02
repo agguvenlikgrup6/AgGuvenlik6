@@ -1,21 +1,24 @@
 package org.uludag.bmb.beans.database.sharing;
 
 public class UserInformation {
-    private String eMail;
+    private String email;
     private String publicKey;
 
 
-    public UserInformation(String eMail, String publicKey) {
-        this.eMail = eMail;
+    public UserInformation() {
+    }
+
+    public UserInformation(String email, String publicKey) {
+        this.email = email;
         this.publicKey = publicKey;
     }
 
-    public String getEMail() {
-        return this.eMail;
+    public String getEmail() {
+        return this.email;
     }
 
-    public void setEMail(String eMail) {
-        this.eMail = eMail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPublicKey() {
@@ -25,5 +28,4 @@ public class UserInformation {
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
-
 }

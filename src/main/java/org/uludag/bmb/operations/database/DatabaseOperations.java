@@ -1,5 +1,6 @@
 package org.uludag.bmb.operations.database;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -35,7 +36,7 @@ public class DatabaseOperations {
                     return result;
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -61,7 +62,7 @@ public class DatabaseOperations {
                     return result;
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
