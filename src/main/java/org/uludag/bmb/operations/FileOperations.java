@@ -58,8 +58,7 @@ public class FileOperations {
                     downloadedFile.close();
 
                     // dosyanın şifresini çözer
-                    byte[] fileBytes = Crypto.decryptFile(Files.readAllBytes(Paths.get(absoluteFilePath)),
-                            fileRecord.getKey());
+                    byte[] fileBytes = Crypto.decryptFile(Files.readAllBytes(Paths.get(absoluteFilePath)), fileRecord.getKey());
 
                     // şifreli dosya içeriğini çözülmüş yeni içerik ile değiştirir
                     new FileOutputStream(absoluteFilePath).close();
@@ -102,7 +101,6 @@ public class FileOperations {
             }
         } catch (Exception e) {
         }
-
     }
 
     public static String getHash(String path, String fileName) {
@@ -141,25 +139,21 @@ public class FileOperations {
                             String newHash = getHash(record.getPath(), record.getName());
 
                             DropboxClient.files().uploadBuilder(record.getPath() + record.getEncryptedName())
-                                    .withMode(WriteMode.OVERWRITE).withAutorename(false)
+                                    .withMode(WriteMode.OVERWRITE)
+                                    .withAutorename(false)
                                     .uploadAndFinish(encryptedFileData.getEncryptedFile());
-                            FILE_RECORD_OPERATIONS.updateKey(record.getPath(), encryptedFileData.getAesKey(),
-                                    record.getEncryptedName());
-                            FILE_RECORD_OPERATIONS.updateModificationDate(record.getPath(),
-                                    newlocalFileModificationDate, record.getEncryptedName());
-                            FILE_RECORD_OPERATIONS.updateFileSize(record.getPath(), newFileSize,
-                                    record.getEncryptedName());
+
+                            FILE_RECORD_OPERATIONS.updateKey(record.getPath(), encryptedFileData.getAesKey(), record.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateModificationDate(record.getPath(), newlocalFileModificationDate, record.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateFileSize(record.getPath(), newFileSize, record.getEncryptedName());
                             FILE_RECORD_OPERATIONS.updateHash(record.getPath(), newHash, record.getEncryptedName());
 
-                            DropboxClient.files().moveV2(record.getPath() + record.getEncryptedName(),
-                                    record.getPath() + encryptedFileData.getEncryptedName());
-                            FILE_RECORD_OPERATIONS.updateEncryptedName(record.getPath(),
-                                    encryptedFileData.getEncryptedName(), record.getEncryptedName());
+                            DropboxClient.files().moveV2(record.getPath() + record.getEncryptedName(), record.getPath() + encryptedFileData.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateEncryptedName(record.getPath(), encryptedFileData.getEncryptedName(), record.getEncryptedName());
 
                             FILE_RECORD_OPERATIONS.updateSyncStatus(item.getFilePath(), item.getFileName(), true);
                             FILE_RECORD_OPERATIONS.updateChangeStatus(record.getPath(), record.getName(), false);
-                            NOTIFICATION_OPERATIONS.insert(
-                                    record.getPath() + record.getName() + " dosyasının içeriği bulutta güncellendi!");
+                            NOTIFICATION_OPERATIONS.insert(record.getPath() + record.getName() + " dosyasının içeriği bulutta güncellendi!");
                         } catch (DbxException | IOException e) {
                             e.printStackTrace();
                         }

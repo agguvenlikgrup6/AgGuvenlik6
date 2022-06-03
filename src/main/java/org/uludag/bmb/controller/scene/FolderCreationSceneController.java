@@ -17,7 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 
-public class FolderCreationSceneController extends PopupSceneController implements Initializable{
+public class FolderCreationSceneController extends PopupSceneController implements Initializable {
     @FXML
     private Button btnCreateNewFolder;
 

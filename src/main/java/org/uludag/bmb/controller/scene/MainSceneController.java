@@ -188,6 +188,8 @@ public class MainSceneController extends SceneController implements Initializabl
 
     @FXML
     void hierarchySelectFolder(MouseEvent event) {
+        fileIcon.getStyleClass().clear();
+        fileIcon.getStyleClass().addAll("button", "iconFolder");
         TreeItem<String> selectedFolder = (TreeItem<String>) directoriesHierarchyView.getSelectionModel()
                 .getSelectedItem();
         try {
@@ -258,17 +260,22 @@ public class MainSceneController extends SceneController implements Initializabl
     void showSelectedFileDetails(MouseEvent event) {
         try {
             CustomTableView selectedFile = fileListView.getSelectionModel().getSelectedItem();
-            fileIcon.getStyleClass().clear();;
+            fileIcon.getStyleClass().clear();
             String fileExtension = selectedFile.getFileName().split(Pattern.quote("."))[1];
             switch (fileExtension) {
                 case "png":
                 case "svg":
                 case "jpeg":
                 case "jpg":
-                    fileIcon.getStyleClass().addAll("button","iconMedia");
+                    fileIcon.getStyleClass().addAll("button", "iconMedia");
                     break;
                 case "pdf":
                     fileIcon.getStyleClass().addAll("button", "iconPdf");
+                    break;
+                case "xml":
+                case "json":
+                case "java":
+                    fileIcon.getStyleClass().addAll("button", "iconCode");
                     break;
                 case "txt":
                 case "docx":
@@ -279,7 +286,7 @@ public class MainSceneController extends SceneController implements Initializabl
                     fileIcon.getStyleClass().addAll("button", "iconDefault");
                     break;
             }
-            FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(),selectedFile.getFileName());
+            FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
             detailFileName.setText(selectedFileRecord.getName());
             detailFileSize.setText(selectedFileRecord.getFileSize());
             detailModificationDate.setText(selectedFileRecord.getModificationDate());
