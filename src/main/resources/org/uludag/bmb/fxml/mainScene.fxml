@@ -64,7 +64,7 @@
               </font>
             </Label>
                   <TreeView fx:id="directoriesHierarchyView" layoutX="10.0" layoutY="58.0" onMouseClicked="#hierarchySelectFolder" prefHeight="299.0" prefWidth="230.0" style="-fx-background-color: #fbfaf9;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="58.0" />
-                  <ListView fx:id="recievedFilesList" layoutX="10.0" layoutY="422.0" prefHeight="353.0" prefWidth="230.0">
+                  <ListView fx:id="recievedFilesList" layoutX="10.0" layoutY="422.0" prefHeight="353.0" prefWidth="230.0" styleClass="recievedFiles">
                      <contextMenu>
                         <ContextMenu>
                           <items>
@@ -99,7 +99,7 @@
                               <PropertyValueFactory property="fileName" />
                            </cellValueFactory>
                         </TableColumn>
-                        <TableColumn fx:id="modificationDateColumn" minWidth="-1.0" prefWidth="272.0" text="Son Değişiklik">
+                        <TableColumn fx:id="modificationDateColumn" minWidth="-1.0" prefWidth="272.0" styleClass="ctwModification" text="Son Değişiklik">
                            <cellValueFactory>
                               <PropertyValueFactory property="lastEditDate" />
                            </cellValueFactory>
@@ -135,7 +135,7 @@
                   </TableView>
                   <SplitPane fx:id="selectedDirectoryPathPane" layoutX="16.0" layoutY="14.0" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="744.0" styleClass="pathLinkPane" />
                   <Button fx:id="btnNewFolder" layoutX="238.0" layoutY="60.0" mnemonicParsing="false" onMouseClicked="#createNewFolder" prefHeight="24.0" prefWidth="31.0" style="-fx-background-color: black;" styleClass="newFolder" />
-                  <Button layoutX="283.0" layoutY="60.0" mnemonicParsing="false" onAction="#shareSelectedFiles" text="Button" />
+                  <Button layoutX="283.0" layoutY="60.0" mnemonicParsing="false" onAction="#changeSyncStatusOn" text="Button" />
         </children>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -179,7 +179,7 @@
                               <Tooltip fx:id="toolTipModificationDate" text="Son Değişiklik" />
                            </tooltip>
                         </Label>
-                        <ListView fx:id="fileSharedAccountListView" layoutX="25.0" layoutY="509.0" prefHeight="200.0" prefWidth="200.0" styleClass="sharedAccountList" />
+                        <ListView fx:id="fileAccessorsListView" layoutX="25.0" layoutY="509.0" prefHeight="200.0" prefWidth="200.0" styleClass="sharedAccountList" />
                         <Label layoutX="59.0" layoutY="475.0" prefHeight="27.0" prefWidth="132.0" text="Dosya Üyeleri" textAlignment="CENTER">
                            <font>
                               <Font size="18.0" />

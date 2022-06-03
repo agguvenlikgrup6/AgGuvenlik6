@@ -31,14 +31,15 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
         String localHash = FileOperations.getHash(getCloudPath(file), file.getName());
         String cloudHash = cloudRecord.getHash();
 
-        if (cloudRecord.getSync() == 1) {
-            if (!localModificationDate.equals(cloudModificationDate) && !localHash.equals(cloudHash)) {
+        if (!localModificationDate.equals(cloudModificationDate) && !localHash.equals(cloudHash)) {
+            if (cloudRecord.getSync() == 0) {
+                notificationOperations.insert(getCloudPath(file) + file.getName() + " dosyasının içeriği değişti!");
+            } else {
                 fileRecordOperations.updateSyncStatus(cloudRecord.getPath(), cloudRecord.getName(), false);
-                fileRecordOperations.updateChangeStatus(cloudRecord.getPath(), cloudRecord.getName(), true);
                 notificationOperations.insert(getCloudPath(file) + file.getName()
-                        + " dosyasında değişiklik oldu. Dosya senkronizasyona kapatıldı!");
-
+                        + " dosyasının içeriği değişti, dosya senkronizasyonu kapatıldı!");
             }
+            fileRecordOperations.updateChangeStatus(cloudRecord.getPath(), cloudRecord.getName(), true);
         }
     }
 
@@ -67,20 +68,22 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
             if (SyncServer.getSyncStatus()) {
                 EncryptedFileData efd = Crypto.encryptFile(file);
                 try {
-                    FileMetadata metaData = DropboxClient.client.files().uploadBuilder(cloudPath + efd.name)
-                            .uploadAndFinish(efd.encryptedFile);
+                    FileMetadata metaData = DropboxClient.client.files()
+                            .uploadBuilder(cloudPath + efd.getEncryptedName())
+                            .uploadAndFinish(efd.getEncryptedFile());
                     String path = metaData.getPathDisplay().substring(0,
-                            metaData.getPathDisplay().length() - efd.name.length());
+                            metaData.getPathDisplay().length() - efd.getEncryptedName().length());
                     String fileHash = FileOperations.getHash(cloudPath, file.getName());
                     fileRecordOperations.insert(new FileRecord(1, file.getName(),
                             metaData.getPathDisplay().substring(0,
-                                    metaData.getPathDisplay().length() - efd.name.length()),
-                            efd.key,
+                                    metaData.getPathDisplay().length() - efd.getEncryptedName().length()),
+                            efd.getAesKey(),
                             new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()),
                             fileHash,
-                            efd.name, 1, 0, String.valueOf(Files.size(Paths.get(file.getAbsolutePath())) / 1024) + " KB",
+                            efd.getEncryptedName(), 1, 0,
+                            String.valueOf(Files.size(Paths.get(file.getAbsolutePath())) / 1024) + " KB",
                             "bmb4016grup6supervisor@gmail.com;"));
-                    notificationOperations.insert(path + file.getName() + " dosyası başarı ile yüklendi!");
+                    notificationOperations.insert(path + file.getName() + " dosyası başarı ile buluta yüklendi!");
 
                 } catch (DbxException | IOException e) {
                     e.printStackTrace();

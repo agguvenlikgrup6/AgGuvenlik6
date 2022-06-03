@@ -2,22 +2,26 @@ package org.uludag.bmb.beans.crypto;
 
 import java.io.InputStream;
 
-import com.dropbox.core.v2.files.FileMetadata;
-
 public class EncryptedFileData {
-    public InputStream encryptedFile;
-    public String name;
-    public String key;
-    public FileMetadata metadata;
-    
-    public EncryptedFileData() {
-
-    }
+    private InputStream encryptedFile;
+    private String encryptedName;
+    private String aesKey;
 
     public EncryptedFileData(InputStream file, String name, String secretKey) {
         this.encryptedFile = file;
-        this.name = name;
-        this.key = secretKey;
-        
+        this.encryptedName = name;
+        this.aesKey = secretKey;
+    }
+
+    public InputStream getEncryptedFile() {
+        return this.encryptedFile;
+    }
+
+    public String getEncryptedName() {
+        return this.encryptedName;
+    }
+
+    public String getAesKey() {
+        return this.aesKey;
     }
 }

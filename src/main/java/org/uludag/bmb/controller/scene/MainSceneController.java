@@ -16,7 +16,6 @@ import org.uludag.bmb.beans.dataproperty.CustomNotificationListCell;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
 import org.uludag.bmb.operations.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
-import org.uludag.bmb.service.sync.SyncControl;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
@@ -110,7 +109,7 @@ public class MainSceneController extends SceneController implements Initializabl
     public Label detailModificationDate;
 
     @FXML
-    public ListView<String> fileSharedAccountListView;
+    public ListView<String> fileAccessorsListView;
 
     @FXML
     public Tooltip toolTipFileName;
@@ -148,9 +147,10 @@ public class MainSceneController extends SceneController implements Initializabl
         directoriesHierarchyView.setShowRoot(false);
 
         notificationListView.setCellFactory(param -> new CustomNotificationListCell());
+        recievedFilesList.setCellFactory(param -> new CustomNotificationListCell());
+
         fileListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         new NotificationPaneController(this);
-        new SyncControl();
     }
 
     @FXML
@@ -256,37 +256,41 @@ public class MainSceneController extends SceneController implements Initializabl
 
     @FXML
     void showSelectedFileDetails(MouseEvent event) {
-        fileIcon.getStyleClass().remove(1);
-        CustomTableView selectedFile = fileListView.getSelectionModel().getSelectedItem();
-        String fileExtension = selectedFile.getFileName().split(Pattern.quote("."))[1];
-        switch (fileExtension) {
-            case "png":
-            case "svg":
-            case "jpeg":
-            case "jpg":
-                fileIcon.getStyleClass().add("iconMedia");
-                break;
-            case "pdf":
-                fileIcon.getStyleClass().add("iconPdf");
-                break;
-            case "txt":
-            case "docx":
-            case "doc":
-                fileIcon.getStyleClass().add("iconText");
-                break;
-            default:
-                fileIcon.getStyleClass().add("iconDefault");
-                break;
+        try {
+            CustomTableView selectedFile = fileListView.getSelectionModel().getSelectedItem();
+            fileIcon.getStyleClass().clear();;
+            String fileExtension = selectedFile.getFileName().split(Pattern.quote("."))[1];
+            switch (fileExtension) {
+                case "png":
+                case "svg":
+                case "jpeg":
+                case "jpg":
+                    fileIcon.getStyleClass().addAll("button","iconMedia");
+                    break;
+                case "pdf":
+                    fileIcon.getStyleClass().addAll("button", "iconPdf");
+                    break;
+                case "txt":
+                case "docx":
+                case "doc":
+                    fileIcon.getStyleClass().addAll("button", "iconText");
+                    break;
+                default:
+                    fileIcon.getStyleClass().addAll("button", "iconDefault");
+                    break;
+            }
+            FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(),selectedFile.getFileName());
+            detailFileName.setText(selectedFileRecord.getName());
+            detailFileSize.setText(selectedFileRecord.getFileSize());
+            detailModificationDate.setText(selectedFileRecord.getModificationDate());
+            toolTipFileName.setText(selectedFileRecord.getName());
+            toolTipFileSize.setText(selectedFileRecord.getFileSize());
+            toolTipModificationDate.setText(selectedFileRecord.getModificationDate());
+            fileAccessorsListView.getItems().clear();
+            fileAccessorsListView.getItems().addAll(selectedFile.getSharedAccounts());
+        } catch (Exception e) {
+            // no need to handle
         }
-        FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(),selectedFile.getFileName());
-        detailFileName.setText(selectedFileRecord.getName());
-        detailFileSize.setText(selectedFileRecord.getFileSize());
-        detailModificationDate.setText(selectedFileRecord.getModificationDate());
-        toolTipFileName.setText(selectedFileRecord.getName());
-        toolTipFileSize.setText(selectedFileRecord.getFileSize());
-        toolTipModificationDate.setText(selectedFileRecord.getModificationDate());
-        fileSharedAccountListView.getItems().clear();
-        fileSharedAccountListView.getItems().addAll(selectedFile.getSharedAccounts());
     }
 
     @FXML

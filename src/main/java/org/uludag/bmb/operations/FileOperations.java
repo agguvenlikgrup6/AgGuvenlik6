@@ -3,11 +3,9 @@ package org.uludag.bmb.operations;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +18,7 @@ import java.util.List;
 
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.constants.Constants.CONFIG;
+import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
@@ -29,6 +28,7 @@ import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.service.cryption.Crypto;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.files.WriteMode;
 import com.dropbox.core.v2.sharing.MemberSelector;
 
 import javafx.collections.ObservableList;
@@ -37,12 +37,6 @@ public class FileOperations {
     private static final String localSyncPath = CONFIG.localSyncPath;
     private static final FileRecordOperations FILE_RECORD_OPERATIONS = Constants.fileRecordOperations;
     private static final NotificationOperations NOTIFICATION_OPERATIONS = Constants.notificationOperations;
-    // public static final SharedFileOperations sharedFileOperations =
-    // Constants.sharedFileOperations;
-    // public static final UserInformationOperations userInformationOperations =
-    // Constants.userInformationOperations;
-    // public static final TableOperations tableOperations =
-    // Constants.tableOperations;
 
     public static final void downloadFile(String filePath, String fileName) {
         new Thread(() -> {
@@ -66,7 +60,7 @@ public class FileOperations {
                     // dosyanın şifresini çözer
                     byte[] fileBytes = Crypto.decryptFile(Files.readAllBytes(Paths.get(absoluteFilePath)),
                             fileRecord.getKey());
-                    
+
                     // şifreli dosya içeriğini çözülmüş yeni içerik ile değiştirir
                     new FileOutputStream(absoluteFilePath).close();
                     downloadedFile = new FileOutputStream(new File(absoluteFilePath));
@@ -80,22 +74,6 @@ public class FileOperations {
                 e.printStackTrace();
             }
         }).start();
-    }
-
-    public static final void deleteFile(String path, String fileName) {
-        String filePath = localSyncPath;
-        String os = System.getProperty("os.name").toLowerCase();
-        if (!path.equals("/")) {
-            if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
-                filePath += "/";
-            } else {
-                filePath += "\\";
-            }
-        }
-        filePath += path + fileName;
-
-        File file = new File(filePath);
-        file.delete();
     }
 
     public static final void uploadFile(String uploadDirectory, File file) {
@@ -143,35 +121,54 @@ public class FileOperations {
         }
     }
 
-    public static void changeSyncStatus(CustomTableView item, boolean status) {
-        if (status) {
-            String filaPath = localSyncPath;
-            filaPath += item.getFilePath() + item.getFileName();
-            if (item.hasFileChanged()) {
-                try {
-                    InputStream is = new FileInputStream(new File(filaPath));
-                    deleteFromLocal(item.getFilePath(), item.getFileName());
-                    deleteFromCloud(item.getFilePath(), item.getFileName());
-                    Path destinationPath = (Path) Paths.get(filaPath);
-                    Files.copy(is, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                FileRecord record = FILE_RECORD_OPERATIONS.getByPathAndName(item.getFilePath(),
-                        item.getFileName());
-                File file = new File(filaPath);
-                if (!record.getModificationDate()
-                        .equals(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()))) {
-                    item.setChangeStatus(true);
-                    FILE_RECORD_OPERATIONS.updateChangeStatus(item.getFilePath(), item.getFileName(), true);
-                    changeSyncStatus(item, status);
+    public static void changeSyncStatus(CustomTableView item, boolean newStatus) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (newStatus == true) {
+                    if (!item.hasFileChanged()) {
+                        FILE_RECORD_OPERATIONS.updateSyncStatus(item.getFilePath(), item.getFileName(), true);
+                    } else {
+                        try {
+                            FileRecord record = FILE_RECORD_OPERATIONS.getByPathAndName(item.getFilePath(),
+                                    item.getFileName());
+                            EncryptedFileData encryptedFileData = Crypto
+                                    .encryptFile(new File(localSyncPath + record.getPath() + record.getName()));
+                            String absoluteFilePath = localSyncPath + record.getPath() + record.getName();
+                            String newlocalFileModificationDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+                                    .format(new File(absoluteFilePath).lastModified());
+                            String newFileSize = String.valueOf(Files.size(Paths.get(absoluteFilePath)) / 1024) + " KB";
+                            String newHash = getHash(record.getPath(), record.getName());
+
+                            DropboxClient.files().uploadBuilder(record.getPath() + record.getEncryptedName())
+                                    .withMode(WriteMode.OVERWRITE).withAutorename(false)
+                                    .uploadAndFinish(encryptedFileData.getEncryptedFile());
+                            FILE_RECORD_OPERATIONS.updateKey(record.getPath(), encryptedFileData.getAesKey(),
+                                    record.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateModificationDate(record.getPath(),
+                                    newlocalFileModificationDate, record.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateFileSize(record.getPath(), newFileSize,
+                                    record.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateHash(record.getPath(), newHash, record.getEncryptedName());
+
+                            DropboxClient.files().moveV2(record.getPath() + record.getEncryptedName(),
+                                    record.getPath() + encryptedFileData.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateEncryptedName(record.getPath(),
+                                    encryptedFileData.getEncryptedName(), record.getEncryptedName());
+
+                            FILE_RECORD_OPERATIONS.updateSyncStatus(item.getFilePath(), item.getFileName(), true);
+                            FILE_RECORD_OPERATIONS.updateChangeStatus(record.getPath(), record.getName(), false);
+                            NOTIFICATION_OPERATIONS.insert(
+                                    record.getPath() + record.getName() + " dosyasının içeriği bulutta güncellendi!");
+                        } catch (DbxException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    FILE_RECORD_OPERATIONS.updateSyncStatus(item.getFilePath(), item.getFileName(), false);
                 }
             }
-            FILE_RECORD_OPERATIONS.updateSyncStatus(item.getFilePath(), item.getFileName(), true);
-        } else {
-            FILE_RECORD_OPERATIONS.updateSyncStatus(item.getFilePath(), item.getFileName(), false);
-        }
+        }).start();
     }
 
     public static boolean shareFile(ObservableList<CustomTableView> fileList, List<String> userEmailList) {
@@ -216,7 +213,13 @@ public class FileOperations {
 
     public static void deleteFile(CustomTableView file) {
         if (file.getFileSyncStatus()) {
-            FileOperations.deleteFromCloud(file.getFilePath(), file.getFileName());
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    FileOperations.deleteFromCloud(file.getFilePath(), file.getFileName());
+                }
+            }).start();
+            FileOperations.deleteFromLocal(file.getFilePath(), file.getFileName());
         } else {
             FileOperations.deleteFromLocal(file.getFilePath(), file.getFileName());
         }
@@ -227,14 +230,13 @@ public class FileOperations {
             FileRecord file = FILE_RECORD_OPERATIONS.getByPathAndName(path, fileName);
             DropboxClient.client.files().deleteV2(path + file.getEncryptedName());
             FILE_RECORD_OPERATIONS.delete(fileName, path);
-            FileOperations.deleteFile(path, fileName);
-            NOTIFICATION_OPERATIONS.insert(path + fileName + " dosyası buluttan ve yerelden silindi!");
+            NOTIFICATION_OPERATIONS.insert(path + fileName + " dosyası buluttan silindi!");
         } catch (DbxException e) {
             e.printStackTrace();
         }
     }
 
-    private static void deleteFromLocal(String path, String fileName) {
+    public static void deleteFromLocal(String path, String fileName) {
         String filePath = localSyncPath;
         String os = System.getProperty("os.name").toLowerCase();
 
@@ -251,9 +253,6 @@ public class FileOperations {
                     FILE_RECORD_OPERATIONS.updateDownloadStatus(path, fileName, false);
                 }
                 NOTIFICATION_OPERATIONS.insert(path + fileName + " dosyası yerelden silindi!");
-            } else {
-                NOTIFICATION_OPERATIONS
-                        .insert(path + fileName + " dosyası yerelde bulunmadığı için silinemedi!");
             }
         } catch (IOException e) {
             e.printStackTrace();

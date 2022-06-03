@@ -26,7 +26,12 @@ public class FileRecordQuery extends Query implements QueryFactory {
             + " SET downloadStatus=? WHERE path=? AND name=?";
     private final static String updateRecordSharedAccounts = "UPDATE " + TABLES.fileRecords
             + " SET sharedAccounts=sharedAccounts || ? WHERE path=? AND name=?";
-
+            
+    private final static String updateEncryptedName = "UPDATE " + TABLES.fileRecords + " SET encryptedName=? WHERE encryptedName=? AND path=?";
+    private final static String updateKey = "UPDATE " + TABLES.fileRecords + " SET key=? WHERE encryptedName=? AND path=?";
+    private final static String updateModificationDate = "UPDATE " + TABLES.fileRecords + " SET modificationDate=? WHERE encryptedName=? AND path=?";
+    private final static String updateFileSize = "UPDATE " + TABLES.fileRecords + " SET fileSize=? WHERE encryptedName=? AND path=?";
+    private final static String updateHash = "UPDATE " + TABLES.fileRecords + " SET hash=? WHERE encryptedName=? AND path=?";
     @Override
     public String getQuery() {
         switch (queryName) {
@@ -52,6 +57,16 @@ public class FileRecordQuery extends Query implements QueryFactory {
                 return updateDownloadStatus;
             case "updateRecordSharedAccounts":
                 return updateRecordSharedAccounts;
+            case "updateEncryptedName":
+                return updateEncryptedName;
+            case "updateKey":
+                return updateKey;
+            case "updateModificationDate":
+                return updateModificationDate;
+            case "updateFileSize":
+                return updateFileSize;
+            case "updateHash":
+                return updateHash;
         }
         return null;
     }

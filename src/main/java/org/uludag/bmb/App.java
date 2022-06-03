@@ -8,12 +8,14 @@ import java.io.IOException;
 import com.dropbox.core.json.JsonReader.FileLoadException;
 
 import org.uludag.bmb.controller.scene.StartupSceneController;
+import org.uludag.bmb.service.sync.SyncControl;
 import org.uludag.bmb.service.sync.SyncServer;
 
 public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException, FileLoadException {
         new StartupSceneController().displayScene(stage);
+        new SyncControl();
     }
 
     @Override

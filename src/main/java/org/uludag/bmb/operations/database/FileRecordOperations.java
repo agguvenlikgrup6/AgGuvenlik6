@@ -73,6 +73,26 @@ public class FileRecordOperations extends DatabaseOperations {
         executeLocalQuery(QueryFactory.Records("updateDownloadStatus"), newDownloadStatus, filePath, fileName);
     }
 
+    public void updateEncryptedName(String filePath, String newEncryptedName, String oldEncryptedName) {
+        executeLocalQuery(QueryFactory.Records("updateEncryptedName"), newEncryptedName, oldEncryptedName,filePath);
+    }
+
+    public void updateKey(String filePath, String aesKey, String encryptedName) {
+        executeLocalQuery(QueryFactory.Records("updateKey"), aesKey, encryptedName, filePath);
+    }
+
+    public void updateModificationDate(String filePath, String newlocalFileModificationDate, String encryptedName) {
+        executeLocalQuery(QueryFactory.Records("updateModificationDate"), newlocalFileModificationDate, encryptedName, filePath);
+    }
+
+    public void updateFileSize(String filePath, String newFileSize, String encryptedName) {
+        executeLocalQuery(QueryFactory.Records("updateFileSize"), newFileSize, encryptedName, filePath);
+    }
+
+    public void updateHash(String filePath, String newHash, String encryptedName) {
+        executeLocalQuery(QueryFactory.Records("updateHash"), newHash, encryptedName, filePath);
+    }
+
     public void updateSharedAccounts(List<String> userEmailList, String filePath, String fileName) {
         String query = "UPDATE " + TABLES.fileRecords
                 + " SET sharedAccounts=sharedAccounts || ? WHERE path=? AND name=?";

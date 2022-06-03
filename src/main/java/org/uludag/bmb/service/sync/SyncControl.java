@@ -20,14 +20,16 @@ import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.dropbox.DropboxClient;
 
 public class SyncControl {
-    private final int START_DELAY = 3;
+    private final int START_DELAY = 5;
     private final int CYCLE_DELAY = 3;
+
     public SyncControl() {
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 deletedFileControl();
+                recievedFileControl();
             }
         }, START_DELAY, CYCLE_DELAY, TimeUnit.SECONDS);
         downloadedFileControl();
@@ -49,10 +51,8 @@ public class SyncControl {
                 }
             }
             if (!check) {
-                FileOperations.deleteFile(local.get(i).getPath(), local.get(i).getName());
+                FileOperations.deleteFromLocal(local.get(i).getPath(), local.get(i).getName());
                 fileRecordOperations.delete(local.get(i).getName(), local.get(i).getPath());
-                notificationOperations.insert(local.get(i).getPath() + local.get(i).getName()
-                        + " buluttan silindiği için yerelden de silindi.");
             }
         }
 
@@ -62,7 +62,8 @@ public class SyncControl {
         ArrayList<FileRecord> fileRecords = new ArrayList<FileRecord>();
         ListFolderResult result;
         try {
-            result = DropboxClient.client.files().listFolderBuilder("").withIncludeDeleted(false).withRecursive(true).start();
+            result = DropboxClient.client.files().listFolderBuilder("").withIncludeDeleted(false).withRecursive(true)
+                    .start();
             List<Metadata> entries = result.getEntries();
 
             for (Metadata entry : entries) {
@@ -89,34 +90,22 @@ public class SyncControl {
             String fullPath = syncPath + record.getPath() + record.getName();
             File file = new File(fullPath);
             if (!file.exists()) {
-                fileRecordOperations.updateDownloadStatus(record.getPath(), record.getName(), false);
-                fileRecordOperations.updateSyncStatus(record.getPath(), record.getName(), false);
-                notificationOperations.insert(
-                        record.getPath() + record.getName() + " dosyası uygulama açılmadan önce silinmiş!");
+                if (record.getDownloadStatus() == 1) {
+                    notificationOperations.insert(
+                            record.getPath() + record.getName() + " dosyası uygulama kapalıyken silinmiş!");
+                    fileRecordOperations.updateDownloadStatus(record.getPath(), record.getName(), false);
+                }
+                if (record.getSync() == 1) {
+                    notificationOperations.insert(record.getPath() + record.getName() + " dosyasının senkronizasyonu kapatıldı");
+                    fileRecordOperations.updateSyncStatus(record.getPath(), record.getName(), false);
+                }
             } else {
                 fileRecordOperations.updateDownloadStatus(record.getPath(), record.getName(), true);
             }
         }
     }
 
-    public void recievedFileControl(){
-        // List<SharedFileMetadata> entries;
-        // try {
-        // entries = Client.client.sharing().listReceivedFiles().getEntries();
-        // if (entries.size() != 0) {
-        // for (SharedFileMetadata entry : entries) {
-        // SharedFile sharedFile =
-        // publicInfoOperations.getSharedFileByEncryptedName(entry.getName());
-        // Crypto.SHARE.DECRYPT_PREVIEW(sharedFile);
-        // String decryptedName =
-        // fileRecordOperations.getSharedRecordPreview(entry.getName())
-        // .getDecryptedName();
-        // sharedFilesList.getItems().add(decryptedName);
-        // //paylaşılan dosyadan çıkılacak
-        // }
-        // }
-        // } catch (DbxException e) {
-        // e.printStackTrace();
-        // }        
+    public void recievedFileControl() {
+        
     }
 }
