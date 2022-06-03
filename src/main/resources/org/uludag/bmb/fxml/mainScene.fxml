@@ -151,29 +151,29 @@
                   <Pane fx:id="fileDetailPane" layoutY="34.0" prefHeight="764.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <children>
                   <Label alignment="CENTER" font="$x1" layoutX="49.0" layoutY="21.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" wrapText="false" />
-                        <Label layoutX="5.0" layoutY="346.0" prefHeight="17.0" prefWidth="80.0" text="Dosya Adı">
+                        <Label layoutX="5.0" layoutY="363.0" prefHeight="17.0" prefWidth="80.0" text="Dosya Adı">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Label layoutX="5.0" layoutY="373.0" prefHeight="17.0" prefWidth="64.0" text="Boyut">
+                        <Label layoutX="5.0" layoutY="390.0" prefHeight="17.0" prefWidth="64.0" text="Boyut">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Label layoutX="5.0" layoutY="401.0" prefHeight="17.0" prefWidth="106.0" text="Son Değişiklik">
+                        <Label layoutX="5.0" layoutY="418.0" prefHeight="17.0" prefWidth="106.0" text="Son Değişiklik">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Label fx:id="detailFileName" layoutX="109.0" layoutY="346.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
+                        <Label fx:id="detailFileName" layoutX="109.0" layoutY="363.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
                            <tooltip>
                               <Tooltip fx:id="toolTipFileName" text="Dosya Adı" />
                            </tooltip>
                         </Label>
-                        <Label fx:id="detailFileSize" layoutX="109.0" layoutY="373.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
+                        <Label fx:id="detailFileSize" layoutX="109.0" layoutY="390.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
                            <tooltip>
                               <Tooltip fx:id="toolTipFileSize" text="Dosya Boyutu" />
                            </tooltip>
                         </Label>
-                        <Label fx:id="detailModificationDate" layoutX="109.0" layoutY="401.0" prefHeight="17.0" prefWidth="152.0" text="Dosya Adı">
+                        <Label fx:id="detailModificationDate" layoutX="109.0" layoutY="418.0" prefHeight="17.0" prefWidth="152.0" text="Dosya Adı">
                            <tooltip>
                               <Tooltip fx:id="toolTipModificationDate" text="Son Değişiklik" />
                            </tooltip>
@@ -187,6 +187,16 @@
                         <Separator layoutY="457.0" prefHeight="0.0" prefWidth="250.0" />
                         <Separator layoutY="320.0" prefHeight="3.0" prefWidth="250.0" />
                         <Button fx:id="fileIcon" layoutX="65.0" layoutY="121.0" mnemonicParsing="false" prefHeight="120.0" prefWidth="120.0" styleClass="iconDefault" />
+                        <Label layoutX="5.0" layoutY="336.0" prefHeight="17.0" prefWidth="92.0" text="Dosya Dizini">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="detailFilePath" layoutX="109.0" layoutY="336.0" prefHeight="17.0" prefWidth="132.0" text="Dosya Adı">
+                           <tooltip>
+                              <Tooltip fx:id="toolTipFilePath" text="Dosya Adı" />
+                           </tooltip>
+                        </Label>
                      </children>
                   </Pane>
                   <Pane fx:id="notificationPane" layoutY="35.0" prefHeight="323.0" prefWidth="360.0" visible="false">

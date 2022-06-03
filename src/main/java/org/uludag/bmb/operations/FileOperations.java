@@ -17,13 +17,15 @@ import java.util.Base64;
 import java.util.List;
 
 import org.uludag.bmb.beans.constants.Constants;
-import org.uludag.bmb.beans.constants.Constants.CONFIG;
+import org.uludag.bmb.beans.constants.Constants.ACCOUNT;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
+import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
+import org.uludag.bmb.operations.database.SharedFileOperations;
 import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.service.cryption.Crypto;
 
@@ -34,9 +36,10 @@ import com.dropbox.core.v2.sharing.MemberSelector;
 import javafx.collections.ObservableList;
 
 public class FileOperations {
-    private static final String localSyncPath = CONFIG.localSyncPath;
+    private static final String localSyncPath = ACCOUNT.localSyncPath;
     private static final FileRecordOperations FILE_RECORD_OPERATIONS = Constants.fileRecordOperations;
     private static final NotificationOperations NOTIFICATION_OPERATIONS = Constants.notificationOperations;
+    private static final SharedFileOperations SHARED_FILE_OPERATIONS = Constants.sharedFileOperations;
 
     public static final void downloadFile(String filePath, String fileName) {
         new Thread(() -> {
@@ -168,33 +171,33 @@ public class FileOperations {
     public static boolean shareFile(ObservableList<CustomTableView> fileList, List<String> userEmailList) {
         try {
             String filePath = fileList.get(0).getFilePath();
-            String myPrivateKey = Constants.CONFIG.privateRSAKey;
+            String myPrivateKey = Constants.ACCOUNT.privateRSAKey;
             for (String recieverEmail : userEmailList) {
                 String recieverPublicKey = Constants.userInformationOperations.getByEmail(recieverEmail).getPublicKey();
                 for (CustomTableView shareFile : fileList) {
-                    FileRecord file = FILE_RECORD_OPERATIONS.getByPathAndName(filePath,
-                            shareFile.getFileName());
+                    FileRecord file = FILE_RECORD_OPERATIONS.getByPathAndName(filePath, shareFile.getFileName());
                     String fileAESKey = file.getKey();
                     String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileAESKey, myPrivateKey);
                     String AESfirstPart = encryptedAES.substring(0, 200);
                     String AESsecondPart = encryptedAES.substring(200, encryptedAES.length());
                     String secondEncryptedAES1 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESfirstPart, recieverPublicKey);
-                    String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart,
-                            recieverPublicKey);
-                    String encryptedFileName = FILE_RECORD_OPERATIONS
-                            .getByPathAndName(shareFile.getFilePath(), shareFile.getFileName())
-                            .getEncryptedName();
-                    String senderEmail = Constants.CONFIG.userEmail;
-                    Constants.sharedFileOperations.insert(new SharedFile(recieverEmail, senderEmail, encryptedFileName,
-                            secondEncryptedAES1, secondEncryptedAES2));
+                    String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart, recieverPublicKey);
+                    String encryptedFileName = FILE_RECORD_OPERATIONS.getByPathAndName(shareFile.getFilePath(), shareFile.getFileName()).getEncryptedName();
+                    String senderEmail = Constants.ACCOUNT.userEmail;
+                    SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName, secondEncryptedAES1, secondEncryptedAES2);
+                    // SHARED_FILE_OPERATIONS.insert(sharedFile);
 
                     List<MemberSelector> member = new ArrayList<>();
                     member.add(MemberSelector.email(recieverEmail));
-                    FILE_RECORD_OPERATIONS.updateSharedAccounts(userEmailList, shareFile.getFilePath(),
-                            shareFile.getFileName());
+
+                    FileInputStream sharedFileCredentials = ConfigController.SharedFileCredentials.Save(sharedFile);
+                    DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json").uploadAndFinish(sharedFileCredentials);
+                    DropboxClient.client.sharing().addFileMember("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json", member);
+                    Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
+                    
+                    FILE_RECORD_OPERATIONS.updateSharedAccounts(userEmailList, shareFile.getFilePath(), shareFile.getFileName());
                     DropboxClient.client.sharing().addFileMember(file.getPath() + file.getEncryptedName(), member);
-                    NOTIFICATION_OPERATIONS.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası "
-                            + recieverEmail + " ile paylaşıldı!");
+                    NOTIFICATION_OPERATIONS.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası " + recieverEmail + " ile paylaşıldı!");
                 }
             }
             return true;
@@ -251,5 +254,9 @@ public class FileOperations {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void unShareFile(String text, String text2, String selectedItem) {
+        //TODO
     }
 }

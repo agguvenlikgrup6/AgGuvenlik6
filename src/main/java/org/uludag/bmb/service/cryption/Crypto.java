@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.constant.Constable;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -16,17 +17,24 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
-import org.uludag.bmb.controller.localconfig.LocalConfigController;
+import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.database.RecievedFileOperations;
 
 public class Crypto {
@@ -141,7 +149,7 @@ public class Crypto {
 
     public static byte[] decryptFile(byte[] cText, String secret) {
         SecretKey key = decodeKeyFromString(secret);
-        
+
         ByteBuffer bb = ByteBuffer.wrap(cText);
 
         byte[] iv = new byte[IV_LENGTH_BYTE];
@@ -166,7 +174,7 @@ public class Crypto {
     }
 
     public class SHARE {
-        public static KeyPair CREATE_KEY_PAIR() {
+        public static KeyPair CreateRSAKeyPair() {
             try {
                 KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
                 kpg.initialize(2048);
@@ -178,10 +186,10 @@ public class Crypto {
 
         }
 
-        public static void DECRYPT_PREVIEW(SharedFile sharedFile) {
+        public static void recieveSharedFile(SharedFile sharedFile) {
             try {
-                String myPrivateKey = LocalConfigController.Settings.LoadSettings().getPrivateRsaKey();
-                String senderPublicKey = LocalConfigController.Settings.LoadSettings().getUserEmail();
+                String myPrivateKey = Constants.ACCOUNT.privateRSAKey;
+                String senderPublicKey = Constants.ACCOUNT.userEmail;
                 String decryptedKeyPart1 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart1(), myPrivateKey);
                 String decryptedKeyPart2 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart2(), myPrivateKey);
                 String decryptedKey = decryptedKeyPart1 + decryptedKeyPart2;

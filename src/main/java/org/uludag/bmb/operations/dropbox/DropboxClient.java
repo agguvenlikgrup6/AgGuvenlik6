@@ -5,6 +5,7 @@ import com.dropbox.core.json.JsonReader.FileLoadException;
 import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.DbxUserFilesRequests;
+import com.dropbox.core.v2.sharing.DbxUserSharingRequests;
 
 import org.uludag.bmb.PropertiesReader;
 
@@ -25,5 +26,9 @@ public class DropboxClient {
 
     public static DbxUserFilesRequests files(){
         return client.files();
+    }
+
+    public static DbxUserSharingRequests sharing(){
+        return client.sharing();
     }
 }

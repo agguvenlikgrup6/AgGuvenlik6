@@ -15,6 +15,7 @@ import org.uludag.bmb.beans.dataproperty.CustomHyperLink;
 import org.uludag.bmb.beans.dataproperty.CustomNotificationListCell;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
 import org.uludag.bmb.operations.FileOperations;
+import org.uludag.bmb.operations.database.SharedFileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
 import com.dropbox.core.DbxException;
@@ -106,6 +107,9 @@ public class MainSceneController extends SceneController implements Initializabl
     public Label detailFileSize;
 
     @FXML
+    public Label detailFilePath;
+
+    @FXML
     public Label detailModificationDate;
 
     @FXML
@@ -116,6 +120,9 @@ public class MainSceneController extends SceneController implements Initializabl
 
     @FXML
     public Tooltip toolTipFileSize;
+
+    @FXML 
+    public Tooltip toolTipFilePath;
 
     @FXML
     public Tooltip toolTipModificationDate;
@@ -134,10 +141,14 @@ public class MainSceneController extends SceneController implements Initializabl
 
     @Override
     public void displayScene(Stage stage) {
-        this.stage = stage;
-        stage.setScene(scene);
-        stage.hide();
-        stage.show();
+        try {
+            this.stage = stage;
+            stage.setScene(scene);
+            stage.hide();
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -289,16 +300,25 @@ public class MainSceneController extends SceneController implements Initializabl
             FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
             detailFileName.setText(selectedFileRecord.getName());
             detailFileSize.setText(selectedFileRecord.getFileSize());
+            detailFilePath.setText(selectedFileRecord.getPath());
             detailModificationDate.setText(selectedFileRecord.getModificationDate());
             toolTipFileName.setText(selectedFileRecord.getName());
+            toolTipFilePath.setText(selectedFileRecord.getPath());
             toolTipFileSize.setText(selectedFileRecord.getFileSize());
             toolTipModificationDate.setText(selectedFileRecord.getModificationDate());
             fileAccessorsListView.getItems().clear();
             fileAccessorsListView.getItems().addAll(selectedFile.getSharedAccounts());
         } catch (Exception e) {
+            e.printStackTrace();
             // no need to handle
         }
     }
+
+
+    // @FXML
+    // void unshareSelectedFile(ActionEvent event){
+    //     FileOperations.unShareFile(detailFilePath.getText(), detailFileName.getText(), fileAccessorsListView.getSelectionModel().getSelectedItem());
+    // }
 
     @FXML
     void saveSelectedSharedFile(ActionEvent event) {

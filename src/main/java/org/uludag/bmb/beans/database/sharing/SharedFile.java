@@ -16,6 +16,10 @@ public class SharedFile {
         this.fileKeyPart2 = fileKeyPart2;
     }
 
+    public SharedFile() {
+
+    }
+
     public String getRecieverEmail() {
         return this.recieverEmail;
     }

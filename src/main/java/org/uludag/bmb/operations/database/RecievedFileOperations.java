@@ -9,10 +9,15 @@ public class RecievedFileOperations extends DatabaseOperations {
     public RecievedFile getByEncryptedName(String encryptedName) {
         List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getByEncryptedName"),
                 encryptedName);
-        return recievedFiles.get(0);
+        if (recievedFiles.size() != 0) {
+            return recievedFiles.get(0);
+        } else {
+            return null;
+        }
     }
 
     public void insert(RecievedFile recievedFile) {
-        executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getEncryptedName(), recievedFile.getDecryptedName(), recievedFile.getKey());
+        executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getEncryptedName(),
+                recievedFile.getDecryptedName(), recievedFile.getKey());
     }
 }

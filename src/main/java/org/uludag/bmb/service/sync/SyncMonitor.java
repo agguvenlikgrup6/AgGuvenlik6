@@ -5,8 +5,8 @@ import java.io.File;
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
-import org.uludag.bmb.beans.localconfig.LocalConfig;
-import org.uludag.bmb.controller.localconfig.LocalConfigController;
+import org.uludag.bmb.beans.config.LocalConfig;
+import org.uludag.bmb.controller.config.ConfigController;
 
 public class SyncMonitor implements Runnable {
     private FileAlterationObserver observer;
@@ -17,7 +17,7 @@ public class SyncMonitor implements Runnable {
     @Override
     public void run() {
         try {
-            LocalConfig config = LocalConfigController.Settings.LoadSettings();
+            LocalConfig config = ConfigController.Settings.LoadSettings();
             String localPath = config.getLocalDropboxPath();
             File rootDirectory = new File(localPath);
 

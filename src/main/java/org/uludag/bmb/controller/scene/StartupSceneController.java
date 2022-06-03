@@ -6,12 +6,13 @@ import java.security.KeyPair;
 import java.util.Base64;
 
 import org.uludag.bmb.PropertiesReader;
-import org.uludag.bmb.beans.localconfig.LocalConfig;
-import org.uludag.bmb.controller.localconfig.LocalConfigController;
+import org.uludag.bmb.beans.config.LocalConfig;
+import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.oauth.OAuthFlow;
 import org.uludag.bmb.operations.database.TableOperations;
 import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.service.cryption.Crypto;
+import org.uludag.bmb.service.sync.SyncControl;
 import org.uludag.bmb.service.sync.SyncMonitor;
 
 import com.dropbox.core.json.JsonReader.FileLoadException;
@@ -57,6 +58,8 @@ public class StartupSceneController extends SceneController {
 
                 MainSceneController msc = new MainSceneController();
                 msc.displayScene(stage);
+                new SyncControl();
+
             } else {
                 this.stage = stage;
                 stage.setScene(scene);
@@ -100,11 +103,31 @@ public class StartupSceneController extends SceneController {
                 if (DropboxClient.client == null) {
                     DropboxClient.client = DropboxClient.getClient();
                 }
-                KeyPair keyPair = Crypto.SHARE.CREATE_KEY_PAIR();
+                KeyPair keyPair = Crypto.SHARE.CreateRSAKeyPair();
                 String eMail = DropboxClient.client.users().getCurrentAccount().getEmail();
-                LocalConfigController.Settings.SaveSettings(new LocalConfig(chosenPath.getText(),
+
+                String dataDir = System.getProperty("user.dir");
+                String cacheSharedFileDir = dataDir;
+                String cacheRecievedFileDir = dataDir;
+                String os = System.getProperty("os.name").toLowerCase();
+
+                if (os.indexOf("mac") >= 0) {
+                    dataDir += "/Data/";
+                    cacheSharedFileDir += "/Data/cache/sharedFiles/";
+                    cacheRecievedFileDir += "/Data/cache/recievedFiles/";
+                } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+                    dataDir += "/Data/";
+                    cacheSharedFileDir += "/Data/cache/sharedFiles/";
+                    cacheRecievedFileDir += "/Data/cache/recievedFiles/";
+                } else {
+                    dataDir += "\\Data\\";
+                    cacheSharedFileDir += "/Data/cache/sharedFiles/";
+                    cacheRecievedFileDir += "\\Data\\cache\\recievedFiles\\";
+                }
+
+                ConfigController.Settings.SaveSettings(new LocalConfig(chosenPath.getText(),
                         Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()),
-                        eMail));
+                        eMail, dataDir, cacheSharedFileDir, cacheRecievedFileDir));
 
                 userInformationOperations.insert(eMail,
                         Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));

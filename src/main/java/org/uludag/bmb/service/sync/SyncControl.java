@@ -1,6 +1,9 @@
 package org.uludag.bmb.service.sync;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -10,13 +13,16 @@ import java.util.concurrent.TimeUnit;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.controller.localconfig.LocalConfigController;
+import org.uludag.bmb.beans.database.sharing.RecievedFile;
+import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.FileOperations;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
+import org.uludag.bmb.operations.database.RecievedFileOperations;
 import org.uludag.bmb.operations.dropbox.DropboxClient;
 
 public class SyncControl {
@@ -29,14 +35,16 @@ public class SyncControl {
             @Override
             public void run() {
                 deletedFileControl();
-                recievedFileControl();
+                // recievedFileControl();
             }
         }, START_DELAY, CYCLE_DELAY, TimeUnit.SECONDS);
         downloadedFileControl();
+        createCacheDirectories();
     }
 
     private static final NotificationOperations notificationOperations = Constants.notificationOperations;
     private static final FileRecordOperations fileRecordOperations = Constants.fileRecordOperations;
+    private static final RecievedFileOperations recievedFileOperations = Constants.recievedFileOperations;
 
     public void deletedFileControl() {
         List<FileRecord> cloud = getCloudFiles();
@@ -84,7 +92,7 @@ public class SyncControl {
 
     public void downloadedFileControl() {
         List<FileRecord> records = fileRecordOperations.getAll();
-        String syncPath = LocalConfigController.Settings.LoadSettings().getLocalDropboxPath();
+        String syncPath = ConfigController.Settings.LoadSettings().getLocalDropboxPath();
 
         for (FileRecord record : records) {
             String fullPath = syncPath + record.getPath() + record.getName();
@@ -96,7 +104,8 @@ public class SyncControl {
                     fileRecordOperations.updateDownloadStatus(record.getPath(), record.getName(), false);
                 }
                 if (record.getSync() == 1) {
-                    notificationOperations.insert(record.getPath() + record.getName() + " dosyasının senkronizasyonu kapatıldı");
+                    notificationOperations
+                            .insert(record.getPath() + record.getName() + " dosyasının senkronizasyonu kapatıldı");
                     fileRecordOperations.updateSyncStatus(record.getPath(), record.getName(), false);
                 }
             } else {
@@ -105,7 +114,43 @@ public class SyncControl {
         }
     }
 
+    private void createCacheDirectories() {
+        if (!Files.exists(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory))) {
+            File fileFolder = new File(Constants.ACCOUNT.cacheSharedFileDirectory);
+            fileFolder.mkdirs();
+        }
+        if (!Files.exists(Paths.get(Constants.ACCOUNT.cacheRecievedFileDirectory))) {
+            File fileFolder = new File(Constants.ACCOUNT.cacheRecievedFileDirectory);
+            fileFolder.mkdirs();
+        }
+    }
+
     public void recievedFileControl() {
-        
+        try {
+            List<SharedFileMetadata> entries = DropboxClient.sharing().listReceivedFiles().getEntries();
+            for (SharedFileMetadata sharedFileMetadata : entries) {
+                if (sharedFileMetadata.getName().contains("json")) {
+                    String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + sharedFileMetadata.getName();
+                    // eğer dosya halihazırda yerelde kayıtlı değil ise indirir
+                    String encryptedName = sharedFileMetadata.getName().split("\\.")[0];
+                    RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(encryptedName);
+                    if (recievedFile != null) {
+                        DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl())
+                                .download(new FileOutputStream(new File(cacheFileAbsolutePath)));
+                        recievedFileOperations.insert(ConfigController.SharedFileCredentials.Load(encryptedName));
+                    }
+                    // if (!Files.exists(Paths.get(cacheFileAbsolutePath))) {
+                    // DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl())
+                    // .download(new FileOutputStream(new File(cacheFileAbsolutePath)));
+                    // }
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        // sharing klasörüne bakacak,
+        // indirilmemiş olan dosyaları indirecek
+        // json dosyalarındaki bilgiler recieved file tablosuna eklenecek
+
     }
 }
