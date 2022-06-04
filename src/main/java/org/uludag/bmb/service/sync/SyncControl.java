@@ -18,12 +18,14 @@ import com.dropbox.core.v2.sharing.SharedFileMetadata;
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
+import org.uludag.bmb.beans.database.sharing.SharedFile;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.FileOperations;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.database.RecievedFileOperations;
 import org.uludag.bmb.operations.dropbox.DropboxClient;
+import org.uludag.bmb.service.cryption.Crypto;
 
 public class SyncControl {
     private final int START_DELAY = 5;
@@ -132,15 +134,19 @@ public class SyncControl {
                 if (sharedFileMetadata.getName().contains("json")) {
                     String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + sharedFileMetadata.getName();
                     // eğer dosya halihazırda yerelde kayıtlı değil ise indirir
-                    String encryptedName = sharedFileMetadata.getName().split("\\.")[0].split("+")[1];
+                    String encryptedName = sharedFileMetadata.getName().split("\\+")[1].split("\\.")[0];
                     // dosya kayıt edilmiş mi kontrolü
                     RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(encryptedName);
-                    if (recievedFile != null) {
+                    if (recievedFile == null) {
                         // paylaşılan json dosyası indirilir
                         // ./cache/recievedFiles/bmbgrup6@gmail.com+SAJkmsdfmdskJsajd.json isimli dosya olarak
                         DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl())
                                 .download(new FileOutputStream(new File(cacheFileAbsolutePath)));
-                        recievedFileOperations.insert(ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName()));
+                        SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
+                        //dosya isminin şifresi ve anahtarı çözülür
+                        RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
+                        recievedFileOperations.insert(newRecievedFile);
+                        
                         // kaydı tamamlanan dosyaya ihtiyaç olmadığı için silinir
                         Files.delete(Paths.get(cacheFileAbsolutePath));
                     } else {

@@ -186,7 +186,7 @@ public class Crypto {
 
         }
 
-        public static void recieveSharedFile(SharedFile sharedFile) {
+        public static RecievedFile recieveSharedFile(SharedFile sharedFile) {
             try {
                 String myPrivateKey = Constants.ACCOUNT.privateRSAKey;
                 String senderPublicKey = Constants.ACCOUNT.userEmail;
@@ -199,11 +199,10 @@ public class Crypto {
                         Base64.getUrlDecoder().decode(sharedFile.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
                         secondDecryptedKey);
 
-                recievedFileOperations.insert(
-                        new RecievedFile(sharedFile.getEncryptedName(), decryptedFileName, secondDecryptedKey));
-
+                return new RecievedFile(sharedFile.getEncryptedName(), decryptedFileName, decryptedKey);
             } catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
         }
 

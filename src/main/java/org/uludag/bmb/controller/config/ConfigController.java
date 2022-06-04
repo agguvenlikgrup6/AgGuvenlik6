@@ -64,12 +64,12 @@ public class ConfigController {
             }
         }
 
-        public static final RecievedFile Load(String fileName) {
+        public static final SharedFile Load(String fileName) {
             FileInputStream fin;
             ObjectMapper mapper = new ObjectMapper();
             try {
                 fin = new FileInputStream(Constants.ACCOUNT.cacheRecievedFileDirectory + fileName);
-                RecievedFile recievedFile = mapper.readValue(fin, RecievedFile.class);
+                SharedFile recievedFile = mapper.readValue(fin, SharedFile.class);
                 return recievedFile;
             } catch (Exception ex) {
                 ex.printStackTrace();

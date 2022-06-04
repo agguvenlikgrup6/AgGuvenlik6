@@ -2,6 +2,8 @@ package org.uludag.bmb.controller.scene;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.util.Base64;
 
@@ -121,8 +123,20 @@ public class StartupSceneController extends SceneController {
                     cacheRecievedFileDir += "/Data/cache/recievedFiles/";
                 } else {
                     dataDir += "\\Data\\";
-                    cacheSharedFileDir += "/Data/cache/sharedFiles/";
+                    cacheSharedFileDir += "\\Data\\cache\\sharedFiles\\";
                     cacheRecievedFileDir += "\\Data\\cache\\recievedFiles\\";
+                }
+                if (!Files.exists(Paths.get(dataDir))) {
+                    File fileFolder = new File(dataDir);
+                    fileFolder.mkdirs();
+                }
+                if (!Files.exists(Paths.get(cacheSharedFileDir))) {
+                    File fileFolder = new File(cacheSharedFileDir);
+                    fileFolder.mkdirs();
+                }
+                if (!Files.exists(Paths.get(cacheRecievedFileDir))) {
+                    File fileFolder = new File(cacheRecievedFileDir);
+                    fileFolder.mkdirs();
                 }
 
                 ConfigController.Settings.SaveSettings(new LocalConfig(chosenPath.getText(),
