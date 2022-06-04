@@ -17,7 +17,7 @@ public class RecievedFileOperations extends DatabaseOperations {
     }
 
     public void insert(RecievedFile recievedFile) {
-        executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getEncryptedName(),
+        executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getSenderEmail(), recievedFile.getEncryptedName(),
                 recievedFile.getDecryptedName(), recievedFile.getKey());
     }
 }
