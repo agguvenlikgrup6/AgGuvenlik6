@@ -132,17 +132,20 @@ public class SyncControl {
                 if (sharedFileMetadata.getName().contains("json")) {
                     String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + sharedFileMetadata.getName();
                     // eğer dosya halihazırda yerelde kayıtlı değil ise indirir
-                    String encryptedName = sharedFileMetadata.getName().split("\\.")[0];
+                    String encryptedName = sharedFileMetadata.getName().split("\\.")[0].split("+")[1];
+                    // dosya kayıt edilmiş mi kontrolü
                     RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(encryptedName);
                     if (recievedFile != null) {
+                        // paylaşılan json dosyası indirilir
+                        // ./cache/recievedFiles/bmbgrup6@gmail.com+SAJkmsdfmdskJsajd.json isimli dosya olarak
                         DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl())
                                 .download(new FileOutputStream(new File(cacheFileAbsolutePath)));
-                        recievedFileOperations.insert(ConfigController.SharedFileCredentials.Load(encryptedName));
+                        recievedFileOperations.insert(ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName()));
+                        // kaydı tamamlanan dosyaya ihtiyaç olmadığı için silinir
+                        Files.delete(Paths.get(cacheFileAbsolutePath));
+                    } else {
+                        //do nothing, TBD for future use 
                     }
-                    // if (!Files.exists(Paths.get(cacheFileAbsolutePath))) {
-                    // DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl())
-                    // .download(new FileOutputStream(new File(cacheFileAbsolutePath)));
-                    // }
                 }
             }
         } catch (Exception e) {

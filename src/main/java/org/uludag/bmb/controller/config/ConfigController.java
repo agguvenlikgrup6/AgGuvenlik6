@@ -64,11 +64,11 @@ public class ConfigController {
             }
         }
 
-        public static final RecievedFile Load(String encryptedName) {
+        public static final RecievedFile Load(String fileName) {
             FileInputStream fin;
             ObjectMapper mapper = new ObjectMapper();
             try {
-                fin = new FileInputStream(PropertiesReader.getProperty("configFile"));
+                fin = new FileInputStream(Constants.ACCOUNT.cacheRecievedFileDirectory + fileName);
                 RecievedFile recievedFile = mapper.readValue(fin, RecievedFile.class);
                 return recievedFile;
             } catch (Exception ex) {
