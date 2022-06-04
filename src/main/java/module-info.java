@@ -1,5 +1,4 @@
-@SuppressWarnings("all")
-module org.uludag.bmb {
+@SuppressWarnings("all") open module org.uludag.bmb {
    requires transitive javafx.controls;
    requires javafx.fxml;
    requires java.logging;
@@ -22,18 +21,26 @@ module org.uludag.bmb {
    requires org.bouncycastle.provider;
    requires com.microsoft.sqlserver.jdbc;
 
-   opens org.uludag.bmb.service.sync to java.net.http, commons.dbutils;
-   opens org.uludag.bmb.service.cryption to org.bouncycastle.provider;
-   opens org.uludag.bmb to javafx.fxml, javafx.controls, javafx.base, javafx.graphics, commons.dbutils;
-   opens org.uludag.bmb.beans.database to commons.dbutils;
-   opens org.uludag.bmb.controller.scene to javafx.fxml, javafx.controls, javafx.base, javafx.graphics;
-   opens org.uludag.bmb.controller.config to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
-   opens org.uludag.bmb.beans.config to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
-   opens org.uludag.bmb.beans.database.sharing to commons.dbutils, com.fasterxml.jackson.databind;
-   exports org.uludag.bmb.beans.crypto to com.fasterxml.jackson.core, com.fasterxml.jackson.databind;
-   exports org.uludag.bmb.beans.dataproperty to org.uludag.bmb.controller.scene;
-   exports org.uludag.bmb.beans.database.sharing to com.fasterxml.jackson.databind;
-   opens org.uludag.bmb.beans.dataproperty to javafx.fxml, javafx.controls, javafx.base, javafx.graphics, org.uludag.bmb.controller.scene;
+   exports org.uludag.bmb.beans.config;
+   exports org.uludag.bmb.beans.constants;
+   exports org.uludag.bmb.beans.crypto;
+   exports org.uludag.bmb.beans.database;
+   exports org.uludag.bmb.beans.database.query;
+   exports org.uludag.bmb.beans.database.sharing;
+
+   exports org.uludag.bmb.controller.config;
+   exports org.uludag.bmb.controller.database;
    exports org.uludag.bmb.controller.scene;
+   exports org.uludag.bmb.factory.query;
+
    exports org.uludag.bmb.oauth;
+
+   exports org.uludag.bmb.operations;
+   exports org.uludag.bmb.operations.database;
+   exports org.uludag.bmb.operations.dropbox;
+   exports org.uludag.bmb.operations.scenedatasource;
+
+   exports org.uludag.bmb.service.cryption;
+   exports org.uludag.bmb.service.sync;
+
 }

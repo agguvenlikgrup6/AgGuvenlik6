@@ -149,8 +149,11 @@ public class SyncControl {
 
                         // kaydı tamamlanan dosyaya ihtiyaç olmadığı için silinir
                         Files.delete(Paths.get(cacheFileAbsolutePath));
+
+                        // DropboxClient.sharing().
                     } else {
                         //do nothing, TBD for future use 
+                        System.out.println("paylaşılan yeni bir dosya yok");
                     }
                 }
             }

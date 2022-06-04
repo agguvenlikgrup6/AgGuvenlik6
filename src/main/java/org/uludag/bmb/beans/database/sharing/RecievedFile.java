@@ -1,20 +1,45 @@
 package org.uludag.bmb.beans.database.sharing;
 
 public class RecievedFile {
-    private String key;
+    private String fileKey;
     private String senderEmail;
     private String encryptedName;
     private String decryptedName;
+    private int id;
 
-    public RecievedFile(String senderEmail, String encryptedName, String decryptedName, String key) {
+    public RecievedFile(String senderEmail, String encryptedName, String decryptedName, String fileKey) {
         this.senderEmail = senderEmail;
         this.encryptedName = encryptedName;
         this.decryptedName = decryptedName;
-        this.key = key;
+        this.fileKey = fileKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public RecievedFile(int id, String senderEmail, String encryptedName, String decryptedName, String fileKey) {
+        this.id = id;
+        this.senderEmail = senderEmail;
+        this.encryptedName = encryptedName;
+        this.decryptedName = decryptedName;
+        this.fileKey = fileKey;
+    }
+
+    public RecievedFile() {
+
+    }
+
+    public String getFileKey() {
+        return this.fileKey;
+    }
+
+    public void setFileKey(String fileKey) {
+        this.fileKey = fileKey;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getSenderEmail() {
@@ -25,11 +50,11 @@ public class RecievedFile {
         this.senderEmail = senderEmail;
     }
 
-    public String getDecryptedName(){
+    public String getDecryptedName() {
         return this.decryptedName;
     }
 
-    public void setDecryptedName(String decryptedName){
+    public void setDecryptedName(String decryptedName) {
         this.decryptedName = decryptedName;
     }
 
@@ -41,12 +66,8 @@ public class RecievedFile {
         this.encryptedName = encryptedName;
     }
 
-    public String getKey() {
-        return this.key;
-    }
-
     public void setSecondDecryptedKey(String secondDecryptedKey) {
-        this.key = secondDecryptedKey;
+        this.fileKey = secondDecryptedKey;
     }
 
 }

@@ -193,7 +193,7 @@ public class FileOperations {
                     FileInputStream sharedFileCredentials = ConfigController.SharedFileCredentials.Save(sharedFile);
                     DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json").uploadAndFinish(sharedFileCredentials);
                     DropboxClient.client.sharing().addFileMember("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json", member);
-                    Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
+                    // Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
                     
                     FILE_RECORD_OPERATIONS.updateSharedAccounts(userEmailList, shareFile.getFilePath(), shareFile.getFileName());
                     DropboxClient.client.sharing().addFileMember(file.getPath() + file.getEncryptedName(), member);
