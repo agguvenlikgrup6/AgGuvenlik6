@@ -37,7 +37,7 @@ public class SyncControl {
             @Override
             public void run() {
                 deletedFileControl();
-                // recievedFileControl();
+                recievedFileControl();
             }
         }, START_DELAY, CYCLE_DELAY, TimeUnit.SECONDS);
         downloadedFileControl();
@@ -146,7 +146,7 @@ public class SyncControl {
                         //dosya isminin şifresi ve anahtarı çözülür
                         RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
                         recievedFileOperations.insert(newRecievedFile);
-                        
+
                         // kaydı tamamlanan dosyaya ihtiyaç olmadığı için silinir
                         Files.delete(Paths.get(cacheFileAbsolutePath));
                     } else {

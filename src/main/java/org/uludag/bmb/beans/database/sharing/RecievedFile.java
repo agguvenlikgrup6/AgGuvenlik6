@@ -2,13 +2,27 @@ package org.uludag.bmb.beans.database.sharing;
 
 public class RecievedFile {
     private String key;
+    private String senderEmail;
     private String encryptedName;
     private String decryptedName;
 
-    public RecievedFile(String encryptedName, String decryptedName, String key) {
+    public RecievedFile(String senderEmail, String encryptedName, String decryptedName, String key) {
+        this.senderEmail = senderEmail;
         this.encryptedName = encryptedName;
         this.decryptedName = decryptedName;
         this.key = key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getSenderEmail() {
+        return this.senderEmail;
+    }
+
+    public void setSenderEmail(String senderEmail) {
+        this.senderEmail = senderEmail;
     }
 
     public String getDecryptedName(){

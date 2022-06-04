@@ -34,6 +34,7 @@ import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
+import org.uludag.bmb.beans.database.sharing.UserInformation;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.database.RecievedFileOperations;
 
@@ -189,7 +190,8 @@ public class Crypto {
         public static RecievedFile recieveSharedFile(SharedFile sharedFile) {
             try {
                 String myPrivateKey = Constants.ACCOUNT.privateRSAKey;
-                String senderPublicKey = Constants.ACCOUNT.userEmail;
+                UserInformation senderInformation = Constants.userInformationOperations.getByEmail(sharedFile.getSenderEmail());
+                String senderPublicKey = senderInformation.getPublicKey();
                 String decryptedKeyPart1 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart1(), myPrivateKey);
                 String decryptedKeyPart2 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart2(), myPrivateKey);
                 String decryptedKey = decryptedKeyPart1 + decryptedKeyPart2;
@@ -199,7 +201,7 @@ public class Crypto {
                         Base64.getUrlDecoder().decode(sharedFile.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
                         secondDecryptedKey);
 
-                return new RecievedFile(sharedFile.getEncryptedName(), decryptedFileName, decryptedKey);
+                return new RecievedFile(senderInformation.getEmail(), sharedFile.getEncryptedName(), decryptedFileName, secondDecryptedKey);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
