@@ -23,7 +23,8 @@ public class RecievedFileOperations extends DatabaseOperations {
     public void insert(RecievedFile recievedFile) {
         executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getSenderEmail(),
                 recievedFile.getEncryptedName(),
-                recievedFile.getDecryptedName(), recievedFile.getFileKey());
+                recievedFile.getDecryptedName(), recievedFile.getFileKey(), recievedFile.getModificationDate(),
+                recievedFile.getHash(), recievedFile.getFileSize());
     }
 
     public ObservableList<CustomRecievedFileListView> getAll() {
@@ -31,7 +32,8 @@ public class RecievedFileOperations extends DatabaseOperations {
         ObservableList<CustomRecievedFileListView> tableData = FXCollections.observableArrayList();
 
         for (RecievedFile f : recievedFiles) {
-            tableData.add(new CustomRecievedFileListView(f.getSenderEmail(), f.getDecryptedName(), f.getEncryptedName()));
+            tableData.add(
+                    new CustomRecievedFileListView(f.getSenderEmail(), f.getDecryptedName(), f.getEncryptedName()));
         }
 
         return tableData;
