@@ -17,7 +17,17 @@ public class RecievedFileOperations extends DatabaseOperations {
     }
 
     public void insert(RecievedFile recievedFile) {
-        executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getSenderEmail(), recievedFile.getEncryptedName(),
+        executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getSenderEmail(),
+                recievedFile.getEncryptedName(),
                 recievedFile.getDecryptedName(), recievedFile.getFileKey());
+    }
+
+    public List<RecievedFile> getAll() {
+        List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getAll"));
+        if (recievedFiles.size() != 0) {
+            return recievedFiles;
+        } else {
+            return null;
+        }
     }
 }

@@ -4,6 +4,7 @@ import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
+import org.uludag.bmb.operations.database.RecievedFileOperations;
 import org.uludag.bmb.operations.database.TableOperations;
 import org.uludag.bmb.operations.database.UserInformationOperations;
 
@@ -17,6 +18,7 @@ public abstract class SceneController {
     protected FileRecordOperations fileRecordOperations;
     protected UserInformationOperations userInformationOperations;
     protected TableOperations tableOperations;
+    protected RecievedFileOperations recievedFileOperations;
 
     protected Parent parent;
     protected Stage stage;
@@ -30,6 +32,7 @@ public abstract class SceneController {
         fxmlLoad(scene, width, heigth);
         notificationOperations = Constants.notificationOperations;
         fileRecordOperations = Constants.fileRecordOperations;
+        recievedFileOperations = Constants.recievedFileOperations;
         userInformationOperations = Constants.userInformationOperations;
         tableOperations = Constants.tableOperations;
     }

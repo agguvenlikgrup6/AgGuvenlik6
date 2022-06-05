@@ -149,8 +149,13 @@ public class SyncControl {
 
                         // kaydı tamamlanan dosyaya ihtiyaç olmadığı için silinir
                         Files.delete(Paths.get(cacheFileAbsolutePath));
-
-                        // DropboxClient.sharing().
+                        // dosya kabul edildiği için dosya paylaşımından ayrılınır.
+                        // paylaşılan dosyanın 2 sahibi olduğundan ve bu işlem sonrasında sahip sayısı
+                        // 1'e düşeceğinden (yalnızca dosya sahibinin kendisi kalır) dosya sahibinin client'ı
+                        // tarafından dosya otomatik olarak silinecektir (.json dosyası). Şifreli dosya
+                        // kabul edildikten sonra ise şifreli dosyadan da çıkılacak ve silinecektir.
+                        // DropboxClient.sharing().relinquishFileMembership(sharedFileMetadata.getId());
+                        notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
                     } else {
                         //do nothing, TBD for future use 
                         System.out.println("paylaşılan yeni bir dosya yok");
