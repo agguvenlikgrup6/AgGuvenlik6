@@ -3,7 +3,11 @@ package org.uludag.bmb.operations.database;
 import java.util.List;
 
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
+import org.uludag.bmb.beans.dataproperty.CustomRecievedFileListView;
 import org.uludag.bmb.factory.query.QueryFactory;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class RecievedFileOperations extends DatabaseOperations {
     public RecievedFile getByEncryptedName(String encryptedName) {
@@ -22,12 +26,14 @@ public class RecievedFileOperations extends DatabaseOperations {
                 recievedFile.getDecryptedName(), recievedFile.getFileKey());
     }
 
-    public List<RecievedFile> getAll() {
+    public ObservableList<CustomRecievedFileListView> getAll() {
         List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getAll"));
-        if (recievedFiles.size() != 0) {
-            return recievedFiles;
-        } else {
-            return null;
+        ObservableList<CustomRecievedFileListView> tableData = FXCollections.observableArrayList();
+
+        for (RecievedFile f : recievedFiles) {
+            tableData.add(new CustomRecievedFileListView(f.getSenderEmail(), f.getDecryptedName(), f.getEncryptedName()));
         }
+
+        return tableData;
     }
 }

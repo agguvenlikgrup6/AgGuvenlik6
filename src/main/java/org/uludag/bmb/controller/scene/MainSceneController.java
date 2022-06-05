@@ -7,15 +7,16 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.DoubleAdder;
 import java.util.regex.Pattern;
 
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.CustomHyperLink;
 import org.uludag.bmb.beans.dataproperty.CustomNotificationListCell;
+import org.uludag.bmb.beans.dataproperty.CustomRecievedFileListView;
 import org.uludag.bmb.beans.dataproperty.CustomTableView;
 import org.uludag.bmb.operations.FileOperations;
-import org.uludag.bmb.operations.database.SharedFileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
 import com.dropbox.core.DbxException;
@@ -27,6 +28,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
@@ -34,14 +36,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.skin.NestedTableColumnHeader;
+import javafx.scene.control.skin.TableColumnHeader;
+import javafx.scene.control.skin.TableHeaderRow;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -121,7 +129,7 @@ public class MainSceneController extends SceneController implements Initializabl
     @FXML
     public Tooltip toolTipFileSize;
 
-    @FXML 
+    @FXML
     public Tooltip toolTipFilePath;
 
     @FXML
@@ -131,12 +139,25 @@ public class MainSceneController extends SceneController implements Initializabl
     public Button fileIcon;
 
     @FXML
-    public ListView<String> recievedFilesList;
+    public Label lblSenderEmail;
+
+    @FXML
+    public Label lblSender;
+
+    @FXML
+    public TableView<CustomRecievedFileListView> recievedFilesList;
+
+    @FXML
+    public TableColumn<CustomRecievedFileListView, String> recievedFileSenderEmail;
+
+    @FXML
+    public TableColumn<CustomRecievedFileListView, String> recievedFileDecryptedName;
 
     public MainSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("mainSceneFxml"),
                 Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")),
                 Integer.parseInt(PropertiesReader.getProperty("mainSceneHeigth")));
+        refreshRecievedFileList();
     }
 
     @Override
@@ -158,7 +179,6 @@ public class MainSceneController extends SceneController implements Initializabl
         directoriesHierarchyView.setShowRoot(false);
 
         notificationListView.setCellFactory(param -> new CustomNotificationListCell());
-        recievedFilesList.setCellFactory(param -> new CustomNotificationListCell());
 
         fileListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         new NotificationPaneController(this);
@@ -297,7 +317,8 @@ public class MainSceneController extends SceneController implements Initializabl
                     fileIcon.getStyleClass().addAll("button", "iconDefault");
                     break;
             }
-            FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
+            FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(),
+                    selectedFile.getFileName());
             detailFileName.setText(selectedFileRecord.getName());
             detailFileSize.setText(selectedFileRecord.getFileSize());
             detailFilePath.setText(selectedFileRecord.getPath());
@@ -314,14 +335,8 @@ public class MainSceneController extends SceneController implements Initializabl
         }
     }
 
-
-    // @FXML
-    // void unshareSelectedFile(ActionEvent event){
-    //     FileOperations.unShareFile(detailFilePath.getText(), detailFileName.getText(), fileAccessorsListView.getSelectionModel().getSelectedItem());
-    // }
-
     @FXML
-    void saveSelectedSharedFile(ActionEvent event) {
+    void saveSelectedRecievedFile(ActionEvent event) {
         new SaveSharedFileSceneController(this, "saveSharedFileScene", "Paylaşılan Dosyayı Kaydet");
     }
 
@@ -333,5 +348,22 @@ public class MainSceneController extends SceneController implements Initializabl
     @FXML
     void shareSelectedFiles(ActionEvent event) {
         new ShareWindowController(this, "shareFilesScene", "Dosya Paylaş");
+    }
+
+    @FXML
+    void showRecieverInfo(MouseEvent event){
+        try {
+            lblSenderEmail.setText(recievedFilesList.getSelectionModel().getSelectedItem().getSenderEmail());
+            lblSenderEmail.visibleProperty().set(true);
+            lblSender.visibleProperty().set(true);
+        } catch (Exception e) {
+        }
+    }
+
+    public void refreshRecievedFileList() {
+        List<CustomRecievedFileListView> recievedSharedFiles = recievedFileOperations.getAll();
+        if (recievedSharedFiles != null) {
+            recievedFilesList.getItems().addAll(recievedSharedFiles);
+        }
     }
 }

@@ -158,7 +158,7 @@ public class SyncControl {
                         notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
                     } else {
                         //do nothing, TBD for future use 
-                        System.out.println("paylaşılan yeni bir dosya yok");
+                        // System.out.println("paylaşılan yeni bir dosya yok");
                     }
                 }
             }

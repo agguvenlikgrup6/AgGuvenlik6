@@ -63,20 +63,28 @@
               </font>
             </Label>
                   <TreeView fx:id="directoriesHierarchyView" layoutX="10.0" layoutY="58.0" onMouseClicked="#hierarchySelectFolder" prefHeight="299.0" prefWidth="230.0" style="-fx-background-color: #fbfaf9;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="58.0" />
-                  <ListView fx:id="recievedFilesList" layoutX="10.0" layoutY="422.0" prefHeight="353.0" prefWidth="230.0" styleClass="recievedFiles">
-                     <contextMenu>
-                        <ContextMenu>
-                          <items>
-                            <MenuItem fx:id="saveSharedFileContext" mnemonicParsing="false" onAction="#saveSelectedSharedFile" text="Kaydet" />
-                          </items>
-                        </ContextMenu>
-                     </contextMenu>
-                  </ListView>
-                  <Label layoutX="31.0" layoutY="386.0" prefHeight="27.0" prefWidth="189.0" text="Paylaşılan Dosyalar">
+                  <Label layoutX="36.0" layoutY="377.0" prefHeight="46.0" prefWidth="189.0" text="Hesabımla Paylaşılan Dosyalar" textAlignment="CENTER" wrapText="true" AnchorPane.bottomAnchor="379.0" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="25.0">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Label>
+                  <TableView fx:id="recievedFilesList" layoutX="14.0" layoutY="429.0" onMouseClicked="#showRecieverInfo" styleClass="recievedFileColumn" prefHeight="285.0" prefWidth="230.0" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="429.0">
+                    <columns>
+                      <TableColumn fx:id="recievedFileDecryptedName" minWidth="230.0" prefWidth="230.0" sortable="false">
+                        <cellValueFactory>
+                           <PropertyValueFactory property="decryptedName" />
+                        </cellValueFactory>
+                      </TableColumn>
+                      <TableColumn fx:id="recievedFileSenderEmail" minWidth="100.0" prefWidth="100.0" sortable="false" text="Gönderen" visible="false">
+                        <cellValueFactory>
+                           <PropertyValueFactory property="senderEmail" />
+                        </cellValueFactory>
+                      </TableColumn>
+                    </columns>
+                  </TableView>
+                  <Separator fx:id="d" layoutX="-6.0" layoutY="374.0" prefHeight="3.0" prefWidth="258.0" />
+                  <Label fx:id="lblSender" layoutX="76.0" layoutY="747.0" prefHeight="21.0" prefWidth="95.0" text="Gönderen" textAlignment="CENTER" visible="false" wrapText="true" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="76.0" AnchorPane.rightAnchor="79.0" />
+                  <Label fx:id="lblSenderEmail" layoutX="4.0" layoutY="763.0" prefHeight="46.0" prefWidth="239.0" text="Label" textAlignment="CENTER" visible="false" wrapText="true" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="7.0" />
           </children>
         </AnchorPane>
       <AnchorPane id="Content" fx:id="middlePane" maxWidth="1.7976931348623157E308" minHeight="-1.0" minWidth="400.0" prefWidth="794.0" style="-fx-background-color: white;">
@@ -93,17 +101,17 @@
                               <PropertyValueFactory property="downloadStatus" />
                            </cellValueFactory>
                         </TableColumn>
-                        <TableColumn fx:id="fileNameColumn" minWidth="-1.0" prefWidth="295.0" text="Dosya">
+                        <TableColumn fx:id="fileNameColumn" minWidth="-1.0" prefWidth="-1.0" text="Dosya">
                            <cellValueFactory>
                               <PropertyValueFactory property="fileName" />
                            </cellValueFactory>
                         </TableColumn>
-                        <TableColumn fx:id="modificationDateColumn" minWidth="-1.0" prefWidth="272.0" styleClass="ctwModification" text="Son Değişiklik">
+                        <TableColumn fx:id="modificationDateColumn" minWidth="-1.0" prefWidth="-1.0" styleClass="ctwModification" text="Son Değişiklik">
                            <cellValueFactory>
                               <PropertyValueFactory property="lastEditDate" />
                            </cellValueFactory>
                         </TableColumn>
-                        <TableColumn fx:id="syncStatusColumn" editable="false" minWidth="-1.0" prefWidth="304.0" styleClass="ctwSync" text="Senkronizasyon">
+                        <TableColumn fx:id="syncStatusColumn" editable="false" minWidth="-1.0" prefWidth="-1.0" styleClass="ctwSync" text="Senkronizasyon">
                            <cellValueFactory>
                               <PropertyValueFactory property="syncStatus" />
                            </cellValueFactory>
@@ -113,7 +121,7 @@
                               <PropertyValueFactory property="filePath" />
                            </cellValueFactory>
                         </TableColumn>
-                        <TableColumn fx:id="fileChangeStatusColumn" editable="false" minWidth="-1.0" prefWidth="304.0" styleClass="ctwChange" text="Değişiklik Durumu">
+                        <TableColumn fx:id="fileChangeStatusColumn" editable="false" minWidth="-1.0" prefWidth="-1.0" styleClass="ctwChange" text="Değişiklik Durumu">
                            <cellValueFactory>
                               <PropertyValueFactory property="changeStatus" />
                            </cellValueFactory>
@@ -134,7 +142,6 @@
                   </TableView>
                   <SplitPane fx:id="selectedDirectoryPathPane" layoutX="16.0" layoutY="14.0" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="744.0" styleClass="pathLinkPane" />
                   <Button fx:id="btnNewFolder" layoutX="238.0" layoutY="60.0" mnemonicParsing="false" onMouseClicked="#createNewFolder" prefHeight="24.0" prefWidth="31.0" style="-fx-background-color: black;" styleClass="newFolder" />
-                  <Button layoutX="283.0" layoutY="60.0" mnemonicParsing="false" onAction="#changeSyncStatusOn" text="Button" />
         </children>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -151,15 +158,15 @@
                   <Pane fx:id="fileDetailPane" layoutY="34.0" prefHeight="764.0" prefWidth="250.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <children>
                   <Label alignment="CENTER" font="$x1" layoutX="49.0" layoutY="21.0" prefHeight="21.0" prefWidth="152.0" style="&#10;" text="Dosya Detayları" textAlignment="CENTER" wrapText="false" />
-                        <Label layoutX="5.0" layoutY="363.0" prefHeight="17.0" prefWidth="80.0" text="Dosya Adı">
+                        <Label fx:id="lblFileName" layoutX="5.0" layoutY="363.0" prefHeight="17.0" prefWidth="80.0" text="Dosya Adı">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Label layoutX="5.0" layoutY="390.0" prefHeight="17.0" prefWidth="64.0" text="Boyut">
+                        <Label fx:id="lblFileSize" layoutX="5.0" layoutY="390.0" prefHeight="17.0" prefWidth="64.0" text="Boyut">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Label layoutX="5.0" layoutY="418.0" prefHeight="17.0" prefWidth="106.0" text="Son Değişiklik">
+                        <Label fx:id="lblModificationDate" layoutX="5.0" layoutY="418.0" prefHeight="17.0" prefWidth="106.0" text="Son Değişiklik">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
@@ -187,7 +194,7 @@
                         <Separator layoutY="457.0" prefHeight="0.0" prefWidth="250.0" />
                         <Separator layoutY="320.0" prefHeight="3.0" prefWidth="250.0" />
                         <Button fx:id="fileIcon" layoutX="65.0" layoutY="121.0" mnemonicParsing="false" prefHeight="120.0" prefWidth="120.0" styleClass="iconDefault" />
-                        <Label layoutX="5.0" layoutY="336.0" prefHeight="17.0" prefWidth="92.0" text="Dosya Dizini">
+                        <Label fx:id="lblFilePath" layoutX="5.0" layoutY="336.0" prefHeight="17.0" prefWidth="92.0" text="Dosya Dizini">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>

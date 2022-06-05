@@ -40,16 +40,8 @@ public class NotificationPaneController {
                                         msc.fileListView.setItems(items);
                                         msc.fileListView.refresh();
 
-                                        List<RecievedFile> recievedSharedFiles = msc.recievedFileOperations.getAll();
-                                        ObservableList<String> tableViewProperty = FXCollections.observableArrayList(
-                                                recievedSharedFiles.stream().map(rsf -> rsf.getDecryptedName())
-                                                        .collect(Collectors.toList()));
-                                        if (tableViewProperty != null) {
-                                            if (tableViewProperty.size() != 0) {
-                                                msc.recievedFilesList.setItems(tableViewProperty);
-                                                msc.recievedFilesList.refresh();
-                                            }
-                                        }
+                                        msc.refreshRecievedFileList();
+                                        
                                     } catch (IndexOutOfBoundsException e) {
 
                                     }
