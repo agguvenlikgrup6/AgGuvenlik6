@@ -11,7 +11,7 @@ public class RecievedQuery extends Query implements QueryFactory {
 
     private final static String getByEncryptedName = "SELECT * FROM " + TABLES.recievedFiles + " WHERE encryptedName=?";
     private final static String insert = "INSERT INTO " + TABLES.recievedFiles
-            + " (senderEmail, encryptedName, decryptedName, fileKey) VALUES(?,?,?,?)";
+            + " (senderEmail, encryptedName, decryptedName, fileKey, modificationDate, hash, fileSize) VALUES(?,?,?,?,?,?,?)";
     private final static String getAll = "SELECT * FROM " + TABLES.recievedFiles;
 
     @Override

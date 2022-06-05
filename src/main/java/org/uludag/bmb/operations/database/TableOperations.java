@@ -10,7 +10,7 @@ public class TableOperations extends DatabaseOperations {
     public void createLocalTables() {
         createNotificationTable();
         createRecordTable();
-        createSharedRecordTable();
+        createRecievedFilesTable();
     }
 
     private void createRecordTable() {
@@ -37,14 +37,17 @@ public class TableOperations extends DatabaseOperations {
         }
     }
 
-    private void createSharedRecordTable() {
+    private void createRecievedFilesTable() {
         String query = "CREATE TABLE IF NOT EXISTS " + TABLES.recievedFiles +
                 "(" +
                 "id integer PRIMARY KEY," +
                 "senderEmail TEXT NOT NULL," +
                 "encryptedName TEXT NOT NULL," +
                 "decryptedName TEXT NOT NULL," +
-                "fileKey TEXT NOT NULL" +
+                "fileKey TEXT NOT NULL," +
+                "modificationDate TEXT NOT NULL," +
+                "hash TEXT NOT NULL, " + 
+                "fileSize TEXT NOT NULL" + 
                 ")";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);

@@ -184,8 +184,7 @@ public class FileOperations {
                     String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart, recieverPublicKey);
                     String encryptedFileName = FILE_RECORD_OPERATIONS.getByPathAndName(shareFile.getFilePath(), shareFile.getFileName()).getEncryptedName();
                     String senderEmail = Constants.ACCOUNT.userEmail;
-                    SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName, secondEncryptedAES1, secondEncryptedAES2);
-                    // SHARED_FILE_OPERATIONS.insert(sharedFile);
+                    SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName, secondEncryptedAES1, secondEncryptedAES2, file.getModificationDate(), file.getHash(), file.getFileSize());
 
                     List<MemberSelector> member = new ArrayList<>();
                     member.add(MemberSelector.email(recieverEmail));
@@ -193,7 +192,7 @@ public class FileOperations {
                     FileInputStream sharedFileCredentials = ConfigController.SharedFileCredentials.Save(sharedFile);
                     DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json").uploadAndFinish(sharedFileCredentials);
                     DropboxClient.client.sharing().addFileMember("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json", member);
-                    // Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
+                    Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
                     
                     FILE_RECORD_OPERATIONS.updateSharedAccounts(userEmailList, shareFile.getFilePath(), shareFile.getFileName());
                     DropboxClient.client.sharing().addFileMember(file.getPath() + file.getEncryptedName(), member);

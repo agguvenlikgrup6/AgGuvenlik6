@@ -1,20 +1,16 @@
 package org.uludag.bmb.controller.scene;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.uludag.bmb.beans.database.Notification;
-import org.uludag.bmb.beans.database.sharing.RecievedFile;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.util.Duration;
 import javafx.scene.control.Hyperlink;
+import javafx.util.Duration;
 
 public class NotificationPaneController {
     public NotificationPaneController(MainSceneController msc) {
