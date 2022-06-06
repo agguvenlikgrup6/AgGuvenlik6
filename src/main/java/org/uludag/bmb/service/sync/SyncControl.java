@@ -38,7 +38,6 @@ public class SyncControl {
         try {
             DropboxClient.client.files().createFolderV2("/sharing");
         } catch (DbxException e) {
-            e.printStackTrace();
         }
         downloadedFileControl();
         createCacheDirectories();

@@ -186,8 +186,12 @@ public class Crypto {
                 String decryptedKeyPart2 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart2(), myPrivateKey);
                 String decryptedKeyPart3 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart3(), myPrivateKey);
                 String decryptedKeyPart4 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart4(), myPrivateKey);
-                String decryptedKey = decryptedKeyPart1 + decryptedKeyPart2 + decryptedKeyPart3 + decryptedKeyPart4;
-                String secondDecryptedKey = KEY_EXCHANGE.decryptWithPublic(decryptedKey, senderPublicKey);
+                String secondDecryptedKey1 = KEY_EXCHANGE.decryptWithPublic(decryptedKeyPart1, senderPublicKey);
+                String secondDecryptedKey2 = KEY_EXCHANGE.decryptWithPublic(decryptedKeyPart2, senderPublicKey);
+                String secondDecryptedKey3 = KEY_EXCHANGE.decryptWithPublic(decryptedKeyPart3, senderPublicKey);
+                String secondDecryptedKey4 = KEY_EXCHANGE.decryptWithPublic(decryptedKeyPart4, senderPublicKey);
+                String secondDecryptedKey = secondDecryptedKey1 + secondDecryptedKey2 + secondDecryptedKey3 + secondDecryptedKey4;
+
 
                 String decryptedFileName = Crypto.decryptName(
                         Base64.getUrlDecoder().decode(sharedFile.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
