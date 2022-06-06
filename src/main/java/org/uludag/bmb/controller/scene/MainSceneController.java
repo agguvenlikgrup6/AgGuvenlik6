@@ -181,9 +181,14 @@ public class MainSceneController extends SceneController implements Initializabl
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                directoriesHierarchyView.getSelectionModel().select(0);
-                directoriesHierarchyView.getSelectionModel().getSelectedItem().expandedProperty().set(true);
-                selectFolder();
+                try {
+                    directoriesHierarchyView.getSelectionModel().select(0);
+                    directoriesHierarchyView.getSelectionModel().getSelectedItem().expandedProperty().set(true);
+                    selectFolder();
+                } catch (Exception e) {
+                    // ilk açılışta ağaç görünümünde herhangi bir eleman olmayacağından 
+                    // exception handle
+                }
             }
         });
         new NotificationPaneController(this);
