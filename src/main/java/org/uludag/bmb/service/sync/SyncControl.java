@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
@@ -34,6 +35,11 @@ public class SyncControl {
     private final int CYCLE_DELAY = 3;
 
     public SyncControl() {
+        try {
+            DropboxClient.client.files().createFolderV2("/sharing");
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
         downloadedFileControl();
         createCacheDirectories();
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
