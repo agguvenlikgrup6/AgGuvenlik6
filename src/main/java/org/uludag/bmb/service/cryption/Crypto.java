@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.constant.Constable;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -17,13 +16,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -35,12 +28,9 @@ import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
 import org.uludag.bmb.beans.database.sharing.UserInformation;
-import org.uludag.bmb.controller.config.ConfigController;
-import org.uludag.bmb.operations.database.RecievedFileOperations;
 
 public class Crypto {
     private static String RSA_MODE = "RSA/ECB/PKCS1Padding";
-    private static final RecievedFileOperations recievedFileOperations = new RecievedFileOperations();
     private static final String ENCRYPT_ALGO = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;

@@ -6,12 +6,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.util.StringUtil;
-import com.dropbox.core.v2.sharing.SharedFileMetadata;
-
+import org.uludag.bmb.beans.database.FileRecord;
+import org.uludag.bmb.beans.database.sharing.RecievedFile;
 import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
+
+import com.dropbox.core.DbxException;
+import com.dropbox.core.util.StringUtil;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,7 +27,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 
-public class SaveSharedFileSceneController extends PopupSceneController implements Initializable{
+public class SaveSharedFileSceneController extends PopupSceneController implements Initializable {
     public SaveSharedFileSceneController(MainSceneController mainSceneController, String sceneFXML, String sceneTitle) {
         super(mainSceneController, sceneFXML, sceneTitle);
     }
@@ -44,23 +49,48 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
     }
 
     @FXML
-    void saveSharedFileToLocal(ActionEvent event) {
+    void saveSharedFileToCloud(ActionEvent event) {
         List<SharedFileMetadata> entries;
         try {
-            entries = DropboxClient.client.sharing().listReceivedFiles().getEntries();
-            for (SharedFileMetadata entry : entries) {
-                if (entry.getName().equals(mainSceneController.recievedFilesList.getSelectionModel().getSelectedItem().getEncryptedName())) {
-                    // Client.client.files().saveUrl(cloudPathTXT.getText() + fileName, entry.getPreviewUrl());
-                    // dosya önce ilgili dropbox dizinine kayıt edilecek
-                    // dosyanın tablo kaydı oluşturulacak
-                    // ardından dosyanın şifresi çözülecek ve ilgili local dizine atılacak
-                    
+            var selectedRecievedFile = mainSceneController.recievedFilesList.getSelectionModel().getSelectedItem();
+            if (selectedRecievedFile != null) {
+                entries = DropboxClient.client.sharing().listReceivedFiles().getEntries();
+                for (SharedFileMetadata entry : entries) {
+                    if (entry.getName().equals(selectedRecievedFile.getEncryptedName())) {
+                        ListFolderResult result =  DropboxClient.files().listFolderBuilder(cloudPathTXT.getText()).start();
+                        List<Metadata> folderEntries = result.getEntries();
+                        for (Metadata folderEntry : folderEntries) {
+                            if(folderEntry instanceof FileMetadata){
+                                FileMetadata fileEntry = (FileMetadata) folderEntry;
+                                if(fileEntry.getName() == selectedRecievedFile.getDecryptedName() && cloudPathTXT.getText() == fileEntry.getPathDisplay()) {
+                                    notificationOperations.insert("Seçilen dizin içerisinde aynı isme sahip başka bir dosya bulunmakta. Lütfen başka bir dizin seçiniz!");
+                                    return;
+                                }
+                            }
+                        }
+
+                        DropboxClient.files().saveUrl(cloudPathTXT.getText() + entry.getName(), entry.getPreviewUrl());
+                        RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(entry.getName());
+                        fileRecordOperations.insert(new FileRecord(0, recievedFile.getDecryptedName(),
+                                cloudPathTXT.getText(),
+                                recievedFile.getFileKey(), recievedFile.getModificationDate(), recievedFile.getHash(),
+                                recievedFile.getEncryptedName(), 0, 0, recievedFile.getFileSize(),
+                                "bmb4016grup6supervisor@gmail.com"));
+
+                        DropboxClient.sharing().relinquishFileMembership(entry.getId());
+                        recievedFileOperations.deleteByEncryptedName(recievedFile.getEncryptedName());
+                        notificationOperations.insert(recievedFile.getDecryptedName() + " dosyası başarı ile "
+                                + cloudPathTXT.getText() + " dizinine kaydedildi!");
+                        mainSceneController.recievedFilesList.getItems().remove(selectedRecievedFile);
+                    }
                 }
+
             }
 
             mainSceneController.lblSenderEmail.visibleProperty().set(false);
             mainSceneController.lblSender.visibleProperty().set(false);
 
+            this.stage.close();
         } catch (DbxException e) {
             e.printStackTrace();
         }
@@ -90,7 +120,7 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
     }
 
     @FXML
-    void saveSharedToFolder(ActionEvent event){
-        
+    void saveSharedToFolder(ActionEvent event) {
+
     }
 }

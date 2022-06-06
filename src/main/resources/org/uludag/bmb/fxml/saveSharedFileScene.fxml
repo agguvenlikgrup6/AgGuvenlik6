@@ -11,7 +11,7 @@
       <AnchorPane prefHeight="401.0" prefWidth="600.0">
          <children>
             <TreeView fx:id="selectShareFolderTreeView" layoutX="181.0" layoutY="14.0" onMouseClicked="#getCloudPath" prefHeight="253.0" prefWidth="276.0" />
-            <Button fx:id="saveSharedToFolderBtn" layoutX="238.0" layoutY="339.0" mnemonicParsing="false" onAction="#saveSharedToFolder" prefHeight="25.0" prefWidth="139.0" text="Dosyayı Kaydet" />
+            <Button fx:id="saveSharedToFolderBtn" layoutX="238.0" layoutY="339.0" mnemonicParsing="false" onAction="#saveSharedFileToCloud" prefHeight="25.0" prefWidth="139.0" text="Dosyayı Kaydet" />
             <TextField fx:id="cloudPathTXT" editable="false" layoutX="181.0" layoutY="288.0" prefHeight="25.0" prefWidth="276.0" promptText="Kaydetmek Istediğiniz klasörü seçiniz" />
          </children>
       </AnchorPane>

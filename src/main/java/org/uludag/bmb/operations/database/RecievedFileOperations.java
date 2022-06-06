@@ -38,4 +38,8 @@ public class RecievedFileOperations extends DatabaseOperations {
 
         return tableData;
     }
+
+    public void deleteByEncryptedName(String encryptedName) {
+        executeLocalQuery(QueryFactory.RecievedFile("deleteByEncryptedName"), encryptedName);
+    }
 }

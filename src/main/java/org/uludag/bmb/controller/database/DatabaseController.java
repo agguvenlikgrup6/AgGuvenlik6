@@ -7,11 +7,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
-
 import org.apache.commons.dbutils.QueryRunner;
 import org.sqlite.SQLiteDataSource;
 import org.uludag.bmb.PropertiesReader;
+
+import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
 public class DatabaseController {
     public class Databases {

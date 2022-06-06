@@ -11,12 +11,12 @@
    requires transitive javax.servlet.api;
    requires com.fasterxml.jackson.databind;
    requires com.fasterxml.jackson.core;
-   requires org.xerial.sqlitejdbc;
-   requires java.sql;
+   requires transitive org.xerial.sqlitejdbc;
+   requires transitive java.sql;
    requires jdk.unsupported;
    requires org.apache.commons.io;
    requires java.net.http;
-   requires commons.dbutils;
+   requires transitive commons.dbutils;
    requires commons.dbcp2;
    requires org.bouncycastle.provider;
    requires com.microsoft.sqlserver.jdbc;
@@ -42,5 +42,7 @@
 
    exports org.uludag.bmb.service.cryption;
    exports org.uludag.bmb.service.sync;
+
+   exports org.uludag.bmb.beans.dataproperty;
 
 }

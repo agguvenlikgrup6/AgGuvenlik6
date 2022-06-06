@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.uludag.bmb.PropertiesReader;
 import org.uludag.bmb.beans.config.LocalConfig;
 import org.uludag.bmb.beans.constants.Constants;
-import org.uludag.bmb.beans.database.sharing.RecievedFile;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
 
 public class ConfigController {

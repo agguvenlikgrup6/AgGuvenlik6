@@ -68,7 +68,7 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <TableView fx:id="recievedFilesList" layoutX="14.0" layoutY="429.0" onMouseClicked="#showRecieverInfo" styleClass="recievedFileColumn" prefHeight="285.0" prefWidth="230.0" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="429.0">
+                  <TableView fx:id="recievedFilesList" layoutX="14.0" layoutY="429.0" onMouseClicked="#showRecieverInfo" prefHeight="285.0" prefWidth="230.0" styleClass="recievedFileColumn" AnchorPane.bottomAnchor="84.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="429.0">
                     <columns>
                       <TableColumn fx:id="recievedFileDecryptedName" minWidth="230.0" prefWidth="230.0" sortable="false">
                         <cellValueFactory>
@@ -81,6 +81,13 @@
                         </cellValueFactory>
                       </TableColumn>
                     </columns>
+                     <contextMenu>
+                        <ContextMenu>
+                          <items>
+                            <MenuItem mnemonicParsing="false" onAction="#saveSelectedRecievedFile" text="Kaydet" />
+                          </items>
+                        </ContextMenu>
+                     </contextMenu>
                   </TableView>
                   <Separator fx:id="d" layoutX="-6.0" layoutY="374.0" prefHeight="3.0" prefWidth="258.0" />
                   <Label fx:id="lblSender" layoutX="76.0" layoutY="747.0" prefHeight="21.0" prefWidth="95.0" text="Gönderen" textAlignment="CENTER" visible="false" wrapText="true" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="76.0" AnchorPane.rightAnchor="79.0" />

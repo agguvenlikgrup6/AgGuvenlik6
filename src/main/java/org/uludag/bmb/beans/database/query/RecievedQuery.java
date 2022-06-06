@@ -13,6 +13,7 @@ public class RecievedQuery extends Query implements QueryFactory {
     private final static String insert = "INSERT INTO " + TABLES.recievedFiles
             + " (senderEmail, encryptedName, decryptedName, fileKey, modificationDate, hash, fileSize) VALUES(?,?,?,?,?,?,?)";
     private final static String getAll = "SELECT * FROM " + TABLES.recievedFiles;
+    private final static String deleteByEncryptedName = "DELETE FROM " + TABLES.recievedFiles + " WHERE encryptedName=?";
 
     @Override
     public String getQuery() {
@@ -23,6 +24,8 @@ public class RecievedQuery extends Query implements QueryFactory {
                 return insert;
             case "getAll":
                 return getAll;
+            case "deleteByEncryptedName":
+                return deleteByEncryptedName;
         }
         return null;
     }

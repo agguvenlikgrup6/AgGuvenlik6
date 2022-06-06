@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.controller.config.ConfigController;
@@ -20,8 +21,8 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.FileMetadata;
 
 public class SyncAdaptor extends FileAlterationListenerAdaptor {
-    private static final FileRecordOperations fileRecordOperations = new FileRecordOperations();
-    private static final NotificationOperations notificationOperations = new NotificationOperations();
+    private static final FileRecordOperations fileRecordOperations = Constants.fileRecordOperations;
+    private static final NotificationOperations notificationOperations = Constants.notificationOperations;
 
     @Override
     public void onFileChange(File file) {

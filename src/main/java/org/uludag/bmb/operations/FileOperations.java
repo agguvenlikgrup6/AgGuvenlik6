@@ -25,11 +25,11 @@ import org.uludag.bmb.beans.dataproperty.CustomTableView;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
-import org.uludag.bmb.operations.database.SharedFileOperations;
 import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.service.cryption.Crypto;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.files.UploadErrorException;
 import com.dropbox.core.v2.files.WriteMode;
 import com.dropbox.core.v2.sharing.MemberSelector;
 
@@ -39,7 +39,6 @@ public class FileOperations {
     private static final String localSyncPath = ACCOUNT.localSyncPath;
     private static final FileRecordOperations FILE_RECORD_OPERATIONS = Constants.fileRecordOperations;
     private static final NotificationOperations NOTIFICATION_OPERATIONS = Constants.notificationOperations;
-    private static final SharedFileOperations SHARED_FILE_OPERATIONS = Constants.sharedFileOperations;
 
     public static final void downloadFile(String filePath, String fileName) {
         new Thread(() -> {
@@ -168,7 +167,7 @@ public class FileOperations {
         }).start();
     }
 
-    public static boolean shareFile(ObservableList<CustomTableView> fileList, List<String> userEmailList) {
+    public static void shareFile(ObservableList<CustomTableView> fileList, List<String> userEmailList) {
         try {
             String filePath = fileList.get(0).getFilePath();
             String myPrivateKey = Constants.ACCOUNT.privateRSAKey;
@@ -190,7 +189,13 @@ public class FileOperations {
                     member.add(MemberSelector.email(recieverEmail));
 
                     FileInputStream sharedFileCredentials = ConfigController.SharedFileCredentials.Save(sharedFile);
-                    DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json").uploadAndFinish(sharedFileCredentials);
+                    try {
+                        DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json").uploadAndFinish(sharedFileCredentials);
+                    } catch (UploadErrorException e) {
+                        NOTIFICATION_OPERATIONS.insert("Seçili dosya " + recieverEmail + " ile zaten paylaşılmış durumda!");
+                        Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
+                        return;
+                    }
                     DropboxClient.client.sharing().addFileMember("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json", member);
                     Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
                     
@@ -199,11 +204,9 @@ public class FileOperations {
                     NOTIFICATION_OPERATIONS.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası " + recieverEmail + " ile paylaşıldı!");
                 }
             }
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
             NOTIFICATION_OPERATIONS.insert("Dosya Paylaşım Hatası!");
-            return false;
         }
     }
 
@@ -253,9 +256,5 @@ public class FileOperations {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void unShareFile(String text, String text2, String selectedItem) {
-        //TODO
     }
 }

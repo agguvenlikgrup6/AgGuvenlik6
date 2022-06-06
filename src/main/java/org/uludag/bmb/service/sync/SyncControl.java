@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.sharing.AccessLevel;
+import com.dropbox.core.v2.sharing.SharedFileMembers;
 import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
 import org.uludag.bmb.beans.constants.Constants;
@@ -37,6 +39,7 @@ public class SyncControl {
             @Override
             public void run() {
                 deletedFileControl();
+                sentFileControl();
                 recievedFileControl();
             }
         }, START_DELAY, CYCLE_DELAY, TimeUnit.SECONDS);
@@ -127,47 +130,61 @@ public class SyncControl {
         }
     }
 
+    public void sentFileControl() {
+        try {
+            ListFolderResult result = DropboxClient.files().listFolderBuilder("/sharing/").start();
+            List<Metadata> entries = result.getEntries();
+            for (Metadata entry : entries) {
+                if (entry instanceof FileMetadata) {
+                    FileMetadata fileMetadata = (FileMetadata) entry;
+                    SharedFileMembers a = DropboxClient.sharing().listFileMembers(fileMetadata.getId());
+                    if (a.getUsers().size() == 1 && a.getUsers().get(0).getAccessType() == AccessLevel.OWNER) {
+                        DropboxClient.files().deleteV2(fileMetadata.getPathDisplay());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void recievedFileControl() {
         try {
             List<SharedFileMetadata> entries = DropboxClient.sharing().listReceivedFiles().getEntries();
             for (SharedFileMetadata sharedFileMetadata : entries) {
                 if (sharedFileMetadata.getName().contains("json")) {
-                    String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + sharedFileMetadata.getName();
+                    String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory
+                            + sharedFileMetadata.getName();
                     // eğer dosya halihazırda yerelde kayıtlı değil ise indirir
                     String encryptedName = sharedFileMetadata.getName().split("\\+")[1].split("\\.")[0];
                     // dosya kayıt edilmiş mi kontrolü
                     RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(encryptedName);
                     if (recievedFile == null) {
                         // paylaşılan json dosyası indirilir
-                        // ./cache/recievedFiles/bmbgrup6@gmail.com+SAJkmsdfmdskJsajd.json isimli dosya olarak
+                        // ./cache/recievedFiles/bmbgrup6@gmail.com+SAJkmsdfmdskJsajd.json isimli dosya
+                        // olarak
                         DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl())
                                 .download(new FileOutputStream(new File(cacheFileAbsolutePath)));
-                        SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
-                        //dosya isminin şifresi ve anahtarı çözülür
+                        SharedFile sharedFile = ConfigController.SharedFileCredentials
+                                .Load(sharedFileMetadata.getName());
+                        // dosya isminin şifresi ve anahtarı çözülür
                         RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
                         recievedFileOperations.insert(newRecievedFile);
-
                         // kaydı tamamlanan dosyaya ihtiyaç olmadığı için silinir
                         Files.delete(Paths.get(cacheFileAbsolutePath));
                         // dosya kabul edildiği için dosya paylaşımından ayrılınır.
                         // paylaşılan dosyanın 2 sahibi olduğundan ve bu işlem sonrasında sahip sayısı
-                        // 1'e düşeceğinden (yalnızca dosya sahibinin kendisi kalır) dosya sahibinin client'ı
+                        // 1'e düşeceğinden (yalnızca dosya sahibinin kendisi kalır) dosya sahibinin
+                        // client'ı
                         // tarafından dosya otomatik olarak silinecektir (.json dosyası). Şifreli dosya
                         // kabul edildikten sonra ise şifreli dosyadan da çıkılacak ve silinecektir.
-                        // DropboxClient.sharing().relinquishFileMembership(sharedFileMetadata.getId());
-                        notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
-                    } else {
-                        //do nothing, TBD for future use 
-                        // System.out.println("paylaşılan yeni bir dosya yok");
-                    }
+                        DropboxClient.sharing().relinquishFileMembership(sharedFileMetadata.getId());
+                        notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası "
+                                + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
+                    } 
                 }
             }
         } catch (Exception e) {
-            // TODO: handle exception
         }
-        // sharing klasörüne bakacak,
-        // indirilmemiş olan dosyaları indirecek
-        // json dosyalarındaki bilgiler recieved file tablosuna eklenecek
-
     }
 }
