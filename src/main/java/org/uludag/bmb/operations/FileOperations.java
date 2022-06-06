@@ -191,19 +191,15 @@ public class FileOperations {
                     String fileAESKey = file.getKey();
                     String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileAESKey, myPrivateKey);
                     String AESfirstPart = encryptedAES.substring(0, 200);
-                    String AESsecondPart = encryptedAES.substring(200, 400);
-                    String AESthirdPart = encryptedAES.substring(400, 600);
-                    String AESforthPart = encryptedAES.substring(600, encryptedAES.length());
+                    String AESsecondPart = encryptedAES.substring(200, encryptedAES.length());
                     String secondEncryptedAES1 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESfirstPart, recieverPublicKey);
                     String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart,
                             recieverPublicKey);
-                    String secondEncryptedAES3 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESthirdPart, recieverPublicKey);
-                    String secondEncryptedAES4 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESforthPart, recieverPublicKey);
                     String encryptedFileName = FILE_RECORD_OPERATIONS
                             .getByPathAndName(shareFile.getFilePath(), shareFile.getFileName()).getEncryptedName();
                     String senderEmail = Constants.ACCOUNT.userEmail;
                     SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName,
-                            secondEncryptedAES1, secondEncryptedAES2, secondEncryptedAES3, secondEncryptedAES4,file.getModificationDate(),
+                            secondEncryptedAES1, secondEncryptedAES2, file.getModificationDate(),
                             file.getHash(), file.getFileSize());
 
                     List<MemberSelector> member = new ArrayList<>();

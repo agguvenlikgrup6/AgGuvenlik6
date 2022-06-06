@@ -168,7 +168,7 @@ public class Crypto {
         public static KeyPair CreateRSAKeyPair() {
             try {
                 KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-                kpg.initialize(4096);
+                kpg.initialize(2048);
                 return kpg.generateKeyPair();
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
@@ -184,13 +184,9 @@ public class Crypto {
                 String senderPublicKey = senderInformation.getPublicKey();
                 String decryptedKeyPart1 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart1(), myPrivateKey);
                 String decryptedKeyPart2 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart2(), myPrivateKey);
-                String decryptedKeyPart3 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart3(), myPrivateKey);
-                String decryptedKeyPart4 = KEY_EXCHANGE.decryptWithPrivate(sharedFile.getFileKeyPart4(), myPrivateKey);
                 String secondDecryptedKey1 = KEY_EXCHANGE.decryptWithPublic(decryptedKeyPart1, senderPublicKey);
                 String secondDecryptedKey2 = KEY_EXCHANGE.decryptWithPublic(decryptedKeyPart2, senderPublicKey);
-                String secondDecryptedKey3 = KEY_EXCHANGE.decryptWithPublic(decryptedKeyPart3, senderPublicKey);
-                String secondDecryptedKey4 = KEY_EXCHANGE.decryptWithPublic(decryptedKeyPart4, senderPublicKey);
-                String secondDecryptedKey = secondDecryptedKey1 + secondDecryptedKey2 + secondDecryptedKey3 + secondDecryptedKey4;
+                String secondDecryptedKey = secondDecryptedKey1 + secondDecryptedKey2;
 
 
                 String decryptedFileName = Crypto.decryptName(

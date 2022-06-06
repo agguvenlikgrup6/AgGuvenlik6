@@ -10,7 +10,7 @@ public class SharedFileQuery extends Query implements QueryFactory {
         super(queryName);
     }
 
-    private final static String insert = "INSERT INTO " + TABLES.sharedFiles + "(recieverEmail, senderEmail, encryptedName, fileKeyPart1, fileKeyPart2, fileKeyPart3, fileKeyPart4, modificationDate, hash, fileSize) VALUES(?,?,?,?,?,?,?,?,?,?)";
+    private final static String insert = "INSERT INTO " + TABLES.sharedFiles + "(recieverEmail, senderEmail, encryptedName, fileKeyPart1, fileKeyPart2, modificationDate, hash, fileSize) VALUES(?,?,?,?,?,?,?,?)";
     private final static String getByMailAndEncryptedName = "SELECT * FROM " + TABLES.sharedFiles + " WHERE recieverEmail=? AND encryptedName=?";
     private final static String deleteByMailAndEncryptedName = "DELETE FROM " + TABLES.sharedFiles + " WHERE recieverEmail=? AND encryptedName=?";
     @Override

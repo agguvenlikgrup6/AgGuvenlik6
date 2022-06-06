@@ -10,7 +10,6 @@ public class SharedFileOperations extends DatabaseOperations {
     public void insert(SharedFile sharedFile) {
         executeCloudQuery(QueryFactory.SharedFile("insert"), sharedFile.getRecieverEmail(), sharedFile.getSenderEmail(),
                 sharedFile.getEncryptedName(), sharedFile.getFileKeyPart1(), sharedFile.getFileKeyPart2(),
-                sharedFile.getFileKeyPart3(), sharedFile.getFileKeyPart4(),
                 sharedFile.getModificationDate(), sharedFile.getHash(), sharedFile.getFileSize());
     }
 
