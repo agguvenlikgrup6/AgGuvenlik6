@@ -26,7 +26,6 @@ import com.dropbox.core.v2.files.UploadErrorException;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -41,11 +40,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.robot.Robot;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -198,7 +194,6 @@ public class MainSceneController extends SceneController implements Initializabl
         notificationListView.getItems().clear();
         notificationDot.visibleProperty().set(false);
         notificationPane.visibleProperty().set(false);
-        // fileDetailPane.setLayoutY(34);
         lbl1.visibleProperty().set(true);
         fileIcon.visibleProperty().set(true);
     }
@@ -369,7 +364,6 @@ public class MainSceneController extends SceneController implements Initializabl
             fileAccessorsListView.getItems().addAll(selectedFile.getSharedAccounts());
         } catch (Exception e) {
             e.printStackTrace();
-            // no need to handle
         }
     }
 
