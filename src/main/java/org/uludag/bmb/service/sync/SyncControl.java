@@ -186,7 +186,7 @@ public class SyncControl {
                         DropboxClient.sharing().relinquishFileMembership(sharedFileMetadata.getId());
                         notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası "
                                 + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
-                    }
+                    } 
                 }
             }
         } catch (Exception e) {

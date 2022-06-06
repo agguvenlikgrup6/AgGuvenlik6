@@ -147,6 +147,7 @@ public class StartupSceneController extends SceneController {
                         Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));
                 new Thread(new SyncMonitor()).start();
                 new MainSceneController().displayScene(stage);
+                new SyncControl();
             }
 
         } catch (Exception e) {
