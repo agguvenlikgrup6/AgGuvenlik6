@@ -39,7 +39,7 @@ public class FileRecordOperations extends DatabaseOperations {
         for (FileRecord f : records) {
             tableData.add(new CustomTableView(f.getDownloadStatus(), f.getName(), f.getModificationDate(), f.getPath(),
                     f.getSync(), f.getChangeStatus(), f.getFileSize(),
-                    Arrays.asList(f.getSharedAccounts().split(";"))));
+                    Arrays.asList(f.getSharedAccounts().split(";")), f.getSharedAccounts()));
         }
         return tableData;
     }
@@ -74,7 +74,7 @@ public class FileRecordOperations extends DatabaseOperations {
     }
 
     public void updateEncryptedName(String filePath, String newEncryptedName, String oldEncryptedName) {
-        executeLocalQuery(QueryFactory.Records("updateEncryptedName"), newEncryptedName, oldEncryptedName,filePath);
+        executeLocalQuery(QueryFactory.Records("updateEncryptedName"), newEncryptedName, oldEncryptedName, filePath);
     }
 
     public void updateKey(String filePath, String aesKey, String encryptedName) {
@@ -82,7 +82,8 @@ public class FileRecordOperations extends DatabaseOperations {
     }
 
     public void updateModificationDate(String filePath, String newlocalFileModificationDate, String encryptedName) {
-        executeLocalQuery(QueryFactory.Records("updateModificationDate"), newlocalFileModificationDate, encryptedName, filePath);
+        executeLocalQuery(QueryFactory.Records("updateModificationDate"), newlocalFileModificationDate, encryptedName,
+                filePath);
     }
 
     public void updateFileSize(String filePath, String newFileSize, String encryptedName) {
@@ -106,5 +107,9 @@ public class FileRecordOperations extends DatabaseOperations {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void cleanSharedAccounts(String newSharedAccounts, String filePath, String fileName) {
+        executeLocalQuery(QueryFactory.Records("cleanSharedAccounts"), newSharedAccounts, filePath, fileName);
     }
 }

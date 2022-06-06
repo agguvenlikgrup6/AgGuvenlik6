@@ -56,7 +56,6 @@ public class Crypto {
             return new EncryptedFileData(encryptedFile, encryptedName, key);
 
         } catch (Exception ex) {
-            System.out.println("Sistem belirtilen dosyayı bulamıyor!");
             ex.printStackTrace();
             return null;
         }

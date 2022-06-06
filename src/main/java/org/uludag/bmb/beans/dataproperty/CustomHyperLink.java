@@ -10,14 +10,16 @@ import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 
 public class CustomHyperLink extends Hyperlink {
     private static FileRecordOperations fileRecordOperations = new FileRecordOperations();
     private int index;
 
-    public CustomHyperLink(SplitPane pathBar, TableView<CustomTableView> cloudTableView, String text) {
-        if(text.equals("")){
+    public CustomHyperLink(SplitPane pathBar, TreeView<String> directoriesHierarchyView,
+            TableView<CustomTableView> cloudTableView, String text) {
+        if (text.equals("")) {
             text = "Dropbox";
         }
         super.setText(text);
@@ -42,10 +44,16 @@ public class CustomHyperLink extends Hyperlink {
             @Override
             public void handle(MouseEvent event) {
                 ObservableList<CustomTableView> files;
-                if (path.toString().equals(""))
+                if (path.toString().equals("")) {
                     files = fileRecordOperations.getByPath("/");
-                else
+                    directoriesHierarchyView.getSelectionModel().select(0);
+                } else {
                     files = fileRecordOperations.getByPath(path.toString());
+                    int size = pathBar.getItems().size();
+                    for (int i = 0; i < (size - index); i++) {
+                        directoriesHierarchyView.getSelectionModel().selectPrevious();
+                    }
+                }
                 cloudTableView.setItems(files);
                 pathBar.getItems().remove(index, pathBar.getItems().size());
             }

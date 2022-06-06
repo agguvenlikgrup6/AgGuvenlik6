@@ -94,7 +94,6 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
         } catch (DbxException e) {
             e.printStackTrace();
         }
-        System.out.println("");
     }
 
     @FXML

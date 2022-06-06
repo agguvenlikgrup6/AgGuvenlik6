@@ -23,9 +23,8 @@
     -fx-border-color: grey;
     -fx-border-radius: 3px;
 }
-.sharedAccountList {
-    -fx-padding: 0px;
-}
+
+
 .sharedAccountList .list-cell {
     -fx-alignment: CENTER;
 }

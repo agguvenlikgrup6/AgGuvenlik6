@@ -30,7 +30,9 @@ public class UITrees {
                 List<Metadata> entries = result.getEntries();
                 for (Metadata metadata : entries) {
                     if (!(metadata instanceof FileMetadata)) {
-                        folders.add(metadata.getPathDisplay());
+                        if(!metadata.getPathDisplay().equals("/sharing")){
+                            folders.add(metadata.getPathDisplay());       
+                        }
                     }
                 }
             } catch (DbxException e) {

@@ -90,7 +90,6 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                     e.printStackTrace();
                 }
             } else {
-                System.out.println("Sync servisi kapalı, yeniden başlatılıyor");
                 SyncServer.stopSyncServer();
                 Thread thread = new Thread(new SyncMonitor());
                 thread.start();

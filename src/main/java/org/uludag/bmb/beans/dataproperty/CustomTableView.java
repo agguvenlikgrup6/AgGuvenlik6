@@ -17,8 +17,10 @@ public class CustomTableView {
     private final ObjectProperty<CheckBox> downloadStatus;
     private final StringProperty fileSize;
     private final ObjectProperty<List<String>> sharedAccounts;
+    private final StringProperty viewers;
 
-    public CustomTableView(int downloadStatus, String fileName, String lastEditDate, String filePath, int syncStatus, int changeStatus, String fileSize, List<String> sharedAccounts) {
+    public CustomTableView(int downloadStatus, String fileName, String lastEditDate, String filePath, int syncStatus,
+            int changeStatus, String fileSize, List<String> sharedAccounts, String viewers) {
         this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", new CustomCheckBox(downloadStatus));
         this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CustomCheckBox(syncStatus));
         this.changeStatus = new SimpleObjectProperty<>(this, "changeStatus", new CustomCheckBox(changeStatus));
@@ -27,6 +29,9 @@ public class CustomTableView {
         this.filePath = new SimpleStringProperty(this, "filepath", filePath);
         this.fileSize = new SimpleStringProperty(this, "fileSize", fileSize);
         this.sharedAccounts = new SimpleObjectProperty<>(this, "sharedAccounts", sharedAccounts);
+        int viewerCount = viewers.split(";").length;
+        viewers = String.valueOf(viewerCount) + " kullanıcı";
+        this.viewers = new SimpleStringProperty(this, "viewers", viewers);
     }
 
     public final ObjectProperty<List<String>> sharedAccounts() {
@@ -51,6 +56,18 @@ public class CustomTableView {
 
     public final StringProperty lastEditDate() {
         return lastEditDate;
+    }
+
+    public final StringProperty viewers(){
+        return viewers;
+    }
+
+    public final String getViewers(){
+        return this.viewers.get();
+    }
+
+    public final void setViewers(String viewers){
+        this.viewers.set(viewers);
     }
 
     public ObjectProperty<CheckBox> syncStatus() {
@@ -141,5 +158,4 @@ public class CustomTableView {
         this.fileSize.set(fileSize);
     }
 
-    
 }

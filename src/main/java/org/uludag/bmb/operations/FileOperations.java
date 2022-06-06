@@ -160,6 +160,7 @@ public class FileOperations {
 
                             FILE_RECORD_OPERATIONS.updateSyncStatus(item.getFilePath(), item.getFileName(), true);
                             FILE_RECORD_OPERATIONS.updateChangeStatus(record.getPath(), record.getName(), false);
+                            FILE_RECORD_OPERATIONS.cleanSharedAccounts("bmb4016grup6supervisor@gmail.com;", item.getFilePath(), item.getFileName());
                             NOTIFICATION_OPERATIONS.insert(
                                     record.getPath() + record.getName() + " dosyasının içeriği bulutta güncellendi!");
                         } catch (DbxException | IOException e) {
