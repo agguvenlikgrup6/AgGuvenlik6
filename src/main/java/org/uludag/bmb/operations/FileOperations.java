@@ -59,7 +59,8 @@ public class FileOperations {
                     downloadedFile.close();
 
                     // dosyanın şifresini çözer
-                    byte[] fileBytes = Crypto.decryptFile(Files.readAllBytes(Paths.get(absoluteFilePath)), fileRecord.getKey());
+                    byte[] fileBytes = Crypto.decryptFile(Files.readAllBytes(Paths.get(absoluteFilePath)),
+                            fileRecord.getKey());
 
                     // şifreli dosya içeriğini çözülmüş yeni içerik ile değiştirir
                     new FileOutputStream(absoluteFilePath).close();
@@ -144,17 +145,23 @@ public class FileOperations {
                                     .withAutorename(false)
                                     .uploadAndFinish(encryptedFileData.getEncryptedFile());
 
-                            FILE_RECORD_OPERATIONS.updateKey(record.getPath(), encryptedFileData.getAesKey(), record.getEncryptedName());
-                            FILE_RECORD_OPERATIONS.updateModificationDate(record.getPath(), newlocalFileModificationDate, record.getEncryptedName());
-                            FILE_RECORD_OPERATIONS.updateFileSize(record.getPath(), newFileSize, record.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateKey(record.getPath(), encryptedFileData.getAesKey(),
+                                    record.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateModificationDate(record.getPath(),
+                                    newlocalFileModificationDate, record.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateFileSize(record.getPath(), newFileSize,
+                                    record.getEncryptedName());
                             FILE_RECORD_OPERATIONS.updateHash(record.getPath(), newHash, record.getEncryptedName());
 
-                            DropboxClient.files().moveV2(record.getPath() + record.getEncryptedName(), record.getPath() + encryptedFileData.getEncryptedName());
-                            FILE_RECORD_OPERATIONS.updateEncryptedName(record.getPath(), encryptedFileData.getEncryptedName(), record.getEncryptedName());
+                            DropboxClient.files().moveV2(record.getPath() + record.getEncryptedName(),
+                                    record.getPath() + encryptedFileData.getEncryptedName());
+                            FILE_RECORD_OPERATIONS.updateEncryptedName(record.getPath(),
+                                    encryptedFileData.getEncryptedName(), record.getEncryptedName());
 
                             FILE_RECORD_OPERATIONS.updateSyncStatus(item.getFilePath(), item.getFileName(), true);
                             FILE_RECORD_OPERATIONS.updateChangeStatus(record.getPath(), record.getName(), false);
-                            NOTIFICATION_OPERATIONS.insert(record.getPath() + record.getName() + " dosyasının içeriği bulutta güncellendi!");
+                            NOTIFICATION_OPERATIONS.insert(
+                                    record.getPath() + record.getName() + " dosyasının içeriği bulutta güncellendi!");
                         } catch (DbxException | IOException e) {
                             e.printStackTrace();
                         }
@@ -174,34 +181,49 @@ public class FileOperations {
                 String recieverPublicKey = Constants.userInformationOperations.getByEmail(recieverEmail).getPublicKey();
                 for (CustomTableView shareFile : fileList) {
                     for (String fileViewer : shareFile.getSharedAccounts()) {
-                        if(fileViewer.equals(recieverEmail)){
-                            NOTIFICATION_OPERATIONS.insert("HATA! " + shareFile.getFileName() + " dosyası " + recieverEmail + " ile zaten paylaşılmış durumda!");
+                        if (fileViewer.equals(recieverEmail)) {
+                            NOTIFICATION_OPERATIONS.insert("HATA! " + shareFile.getFileName() + " dosyası "
+                                    + recieverEmail + " ile zaten paylaşılmış durumda!");
                             return;
                         }
                     }
                     FileRecord file = FILE_RECORD_OPERATIONS.getByPathAndName(filePath, shareFile.getFileName());
                     String fileAESKey = file.getKey();
                     String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileAESKey, myPrivateKey);
-                    String AESfirstPart = encryptedAES.substring(0, 400);
-                    String AESsecondPart = encryptedAES.substring(400, encryptedAES.length());
+                    String AESfirstPart = encryptedAES.substring(0, 200);
+                    String AESsecondPart = encryptedAES.substring(200, 400);
+                    String AESthirdPart = encryptedAES.substring(400, 600);
+                    String AESforthPart = encryptedAES.substring(600, encryptedAES.length());
                     String secondEncryptedAES1 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESfirstPart, recieverPublicKey);
-                    String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart, recieverPublicKey);
-                    String encryptedFileName = FILE_RECORD_OPERATIONS.getByPathAndName(shareFile.getFilePath(), shareFile.getFileName()).getEncryptedName();
+                    String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart,
+                            recieverPublicKey);
+                    String secondEncryptedAES3 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESthirdPart, recieverPublicKey);
+                    String secondEncryptedAES4 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESforthPart, recieverPublicKey);
+                    String encryptedFileName = FILE_RECORD_OPERATIONS
+                            .getByPathAndName(shareFile.getFilePath(), shareFile.getFileName()).getEncryptedName();
                     String senderEmail = Constants.ACCOUNT.userEmail;
-                    SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName, secondEncryptedAES1, secondEncryptedAES2, file.getModificationDate(), file.getHash(), file.getFileSize());
+                    SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName,
+                            secondEncryptedAES1, secondEncryptedAES2, secondEncryptedAES3, secondEncryptedAES4,file.getModificationDate(),
+                            file.getHash(), file.getFileSize());
 
                     List<MemberSelector> member = new ArrayList<>();
                     member.add(MemberSelector.email(recieverEmail));
 
                     FileInputStream sharedFileCredentials = ConfigController.SharedFileCredentials.Save(sharedFile);
-                    
-                    DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json").uploadAndFinish(sharedFileCredentials);
-                    DropboxClient.client.sharing().addFileMember("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json", member);
-                    Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
-                    
-                    FILE_RECORD_OPERATIONS.updateSharedAccounts(userEmailList, shareFile.getFilePath(), shareFile.getFileName());
+
+                    DropboxClient.files()
+                            .uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json")
+                            .uploadAndFinish(sharedFileCredentials);
+                    DropboxClient.client.sharing().addFileMember(
+                            "/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json", member);
+                    Files.delete(
+                            Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
+
+                    FILE_RECORD_OPERATIONS.updateSharedAccounts(userEmailList, shareFile.getFilePath(),
+                            shareFile.getFileName());
                     DropboxClient.client.sharing().addFileMember(file.getPath() + file.getEncryptedName(), member);
-                    NOTIFICATION_OPERATIONS.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası " + recieverEmail + " ile paylaşıldı!");
+                    NOTIFICATION_OPERATIONS.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası "
+                            + recieverEmail + " ile paylaşıldı!");
                 }
             }
         } catch (Exception e) {

@@ -9,19 +9,38 @@ public class SharedFile {
     private String fileSize;
     private String fileKeyPart1;
     private String fileKeyPart2;
+    private String fileKeyPart3;
+    private String fileKeyPart4;
 
     public SharedFile(String recieverEmail, String senderEmail, String encryptedName, String fileKeyPart1,
-            String fileKeyPart2, String modificationDate, String hash, String fileSize) {
+            String fileKeyPart2, String fileKeyPart3, String fileKeyPart4, String modificationDate, String hash, String fileSize) {
         this.recieverEmail = recieverEmail;
         this.senderEmail = senderEmail;
         this.encryptedName = encryptedName;
         this.fileKeyPart1 = fileKeyPart1;
         this.fileKeyPart2 = fileKeyPart2;
+        this.fileKeyPart3 = fileKeyPart3;
+        this.fileKeyPart4 = fileKeyPart4;
         this.modificationDate = modificationDate;
         this.fileSize = fileSize;
         this.hash = hash;
     }
 
+    public String getFileKeyPart4(){
+        return this.fileKeyPart4;
+    }
+
+    public void setFileKeyPart4(String fileKeyPart4){
+        this.fileKeyPart4 = fileKeyPart4;
+    }
+
+    public String getFileKeyPart3(){
+        return this.fileKeyPart3;
+    }    
+
+    public void setFileKeyPart3(String fileKeyPart3){
+        this.fileKeyPart3 = fileKeyPart3;
+    }
 
     public String getModificationDate() {
         return this.modificationDate;
