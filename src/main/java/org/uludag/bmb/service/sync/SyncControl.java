@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -142,9 +143,16 @@ public class SyncControl {
             for (Metadata entry : entries) {
                 if (entry instanceof FileMetadata) {
                     FileMetadata fileMetadata = (FileMetadata) entry;
-                    SharedFileMembers a = DropboxClient.sharing().listFileMembers(fileMetadata.getId());
-                    if (a.getUsers().size() == 1 && a.getUsers().get(0).getAccessType() == AccessLevel.OWNER) {
-                        DropboxClient.files().deleteV2(fileMetadata.getPathDisplay());
+                    Date clientModified = fileMetadata.getClientModified();
+                    Date currentDate = new Date();
+                    var difference = (currentDate.getTime() - clientModified.getTime()) / 1000 % 60;
+                    if(difference < 5){
+                        // do nothing
+                    }else {
+                        SharedFileMembers a = DropboxClient.sharing().listFileMembers(fileMetadata.getId());
+                        if (a.getUsers().size() == 1 && a.getUsers().get(0).getAccessType() == AccessLevel.OWNER) {
+                            DropboxClient.files().deleteV2(fileMetadata.getPathDisplay());
+                        }
                     }
                 }
             }

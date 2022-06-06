@@ -160,7 +160,8 @@ public class FileOperations {
 
                             FILE_RECORD_OPERATIONS.updateSyncStatus(item.getFilePath(), item.getFileName(), true);
                             FILE_RECORD_OPERATIONS.updateChangeStatus(record.getPath(), record.getName(), false);
-                            FILE_RECORD_OPERATIONS.cleanSharedAccounts("bmb4016grup6supervisor@gmail.com;", item.getFilePath(), item.getFileName());
+                            FILE_RECORD_OPERATIONS.cleanSharedAccounts("bmb4016grup6supervisor@gmail.com;",
+                                    item.getFilePath(), item.getFileName());
                             NOTIFICATION_OPERATIONS.insert(
                                     record.getPath() + record.getName() + " dosyasının içeriği bulutta güncellendi!");
                         } catch (DbxException | IOException e) {
@@ -209,8 +210,9 @@ public class FileOperations {
                     FileInputStream sharedFileCredentials = ConfigController.SharedFileCredentials.Save(sharedFile);
 
                     DropboxClient.files()
-                            .uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json")
+                            .upload("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json")
                             .uploadAndFinish(sharedFileCredentials);
+
                     DropboxClient.client.sharing().addFileMember(
                             "/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json", member);
                     Files.delete(
