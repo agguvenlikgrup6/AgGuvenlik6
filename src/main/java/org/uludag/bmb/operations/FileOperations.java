@@ -29,7 +29,6 @@ import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.service.cryption.Crypto;
 
 import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.UploadErrorException;
 import com.dropbox.core.v2.files.WriteMode;
 import com.dropbox.core.v2.sharing.MemberSelector;
 
@@ -174,11 +173,17 @@ public class FileOperations {
             for (String recieverEmail : userEmailList) {
                 String recieverPublicKey = Constants.userInformationOperations.getByEmail(recieverEmail).getPublicKey();
                 for (CustomTableView shareFile : fileList) {
+                    for (String fileViewer : shareFile.getSharedAccounts()) {
+                        if(fileViewer.equals(recieverEmail)){
+                            NOTIFICATION_OPERATIONS.insert("HATA! " + shareFile.getFileName() + " dosyası " + recieverEmail + " ile zaten paylaşılmış durumda!");
+                            return;
+                        }
+                    }
                     FileRecord file = FILE_RECORD_OPERATIONS.getByPathAndName(filePath, shareFile.getFileName());
                     String fileAESKey = file.getKey();
                     String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileAESKey, myPrivateKey);
-                    String AESfirstPart = encryptedAES.substring(0, 200);
-                    String AESsecondPart = encryptedAES.substring(200, encryptedAES.length());
+                    String AESfirstPart = encryptedAES.substring(0, 400);
+                    String AESsecondPart = encryptedAES.substring(400, encryptedAES.length());
                     String secondEncryptedAES1 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESfirstPart, recieverPublicKey);
                     String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart, recieverPublicKey);
                     String encryptedFileName = FILE_RECORD_OPERATIONS.getByPathAndName(shareFile.getFilePath(), shareFile.getFileName()).getEncryptedName();
@@ -189,13 +194,8 @@ public class FileOperations {
                     member.add(MemberSelector.email(recieverEmail));
 
                     FileInputStream sharedFileCredentials = ConfigController.SharedFileCredentials.Save(sharedFile);
-                    try {
-                        DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json").uploadAndFinish(sharedFileCredentials);
-                    } catch (UploadErrorException e) {
-                        NOTIFICATION_OPERATIONS.insert("Seçili dosya " + recieverEmail + " ile zaten paylaşılmış durumda!");
-                        Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
-                        return;
-                    }
+                    
+                    DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json").uploadAndFinish(sharedFileCredentials);
                     DropboxClient.client.sharing().addFileMember("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json", member);
                     Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
                     

@@ -7,7 +7,7 @@ import org.uludag.bmb.factory.query.QueryFactory;
 
 public class UserInformationOperations extends DatabaseOperations {
     public void insert(String email, String publicKey) {
-        executeCloudQuery(QueryFactory.UserInformation("insert"), email, email, publicKey);
+        executeCloudQuery(QueryFactory.UserInformation("insert"), email, publicKey, email, email, publicKey);
     }
 
     public List<UserInformation> getAll() {

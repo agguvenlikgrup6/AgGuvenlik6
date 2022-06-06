@@ -34,6 +34,8 @@ public class SyncControl {
     private final int CYCLE_DELAY = 3;
 
     public SyncControl() {
+        downloadedFileControl();
+        createCacheDirectories();
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -43,8 +45,6 @@ public class SyncControl {
                 recievedFileControl();
             }
         }, START_DELAY, CYCLE_DELAY, TimeUnit.SECONDS);
-        downloadedFileControl();
-        createCacheDirectories();
     }
 
     private static final NotificationOperations notificationOperations = Constants.notificationOperations;
@@ -181,7 +181,7 @@ public class SyncControl {
                         DropboxClient.sharing().relinquishFileMembership(sharedFileMetadata.getId());
                         notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası "
                                 + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
-                    } 
+                    }
                 }
             }
         } catch (Exception e) {

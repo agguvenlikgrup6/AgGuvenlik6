@@ -150,7 +150,7 @@ public class StartupSceneController extends SceneController {
             }
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

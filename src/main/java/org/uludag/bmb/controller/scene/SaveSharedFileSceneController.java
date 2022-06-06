@@ -62,7 +62,7 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
                         for (Metadata folderEntry : folderEntries) {
                             if(folderEntry instanceof FileMetadata){
                                 FileMetadata fileEntry = (FileMetadata) folderEntry;
-                                if(fileEntry.getName() == selectedRecievedFile.getDecryptedName() && cloudPathTXT.getText() == fileEntry.getPathDisplay()) {
+                                if(fileEntry.getName().equals(selectedRecievedFile.getDecryptedName()) && cloudPathTXT.getText().equals(fileEntry.getPathDisplay())) {
                                     notificationOperations.insert("Seçilen dizin içerisinde aynı isme sahip başka bir dosya bulunmakta. Lütfen başka bir dizin seçiniz!");
                                     return;
                                 }

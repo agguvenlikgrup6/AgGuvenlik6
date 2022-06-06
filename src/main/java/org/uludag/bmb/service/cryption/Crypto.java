@@ -168,7 +168,7 @@ public class Crypto {
         public static KeyPair CreateRSAKeyPair() {
             try {
                 KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-                kpg.initialize(2048);
+                kpg.initialize(4096);
                 return kpg.generateKeyPair();
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
