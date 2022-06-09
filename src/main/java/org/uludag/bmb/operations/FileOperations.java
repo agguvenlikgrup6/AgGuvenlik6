@@ -232,8 +232,8 @@ public class FileOperations {
             DropboxClient.files().upload("/sharing/" + newUserEMail + "+" + fileRecord.getEncryptedName() + ".json").uploadAndFinish(sharedJSON);
             sharedJSON.close();
             DropboxClient.client.sharing().addFileMember("/sharing/" + newUserEMail + "+" + fileRecord.getEncryptedName() + ".json", member);
-            
-            Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + fileRecord.getEncryptedName() + ".json"));
+
+            // Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + fileRecord.getEncryptedName() + ".json"));
 
             fileRecordOperations.updateSharedAccount(newUserEMail, selectedFile.getFilePath(), selectedFile.getFileName());
 

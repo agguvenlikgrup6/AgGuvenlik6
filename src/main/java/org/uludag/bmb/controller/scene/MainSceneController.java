@@ -360,7 +360,6 @@ public class MainSceneController extends SceneController implements Initializabl
             fileAccessorsListView.getItems().clear();
             fileAccessorsListView.getItems().addAll(selectedFile.getSharedAccounts());
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
