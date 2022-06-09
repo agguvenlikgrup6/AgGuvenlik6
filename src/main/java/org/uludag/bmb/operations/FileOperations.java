@@ -189,9 +189,10 @@ public class FileOperations {
                                     for (UserFileMembershipInfo member : fileMembers) {
                                         if (member.getAccessType().equals(AccessLevel.VIEWER)) {
                                             String recieverEmail = member.getUser().getEmail();
+                                            String filePathHash = sharedFileMetadata.getName().split("\\+")[1];
                                             FileInputStream newJSONFile = createJSONFile(updatedRecord, selectedFile, member.getUser().getEmail());
-                                            DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + oldEncryptedName + ".json").withMode(WriteMode.OVERWRITE).withAutorename(false).uploadAndFinish(newJSONFile);
-                                            DropboxClient.files().moveV2("/sharing/" + recieverEmail + "+" + oldEncryptedName + ".json", "/sharing/" + recieverEmail + "+" + newEncryptedName + ".json");
+                                            DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + filePathHash + "+" + oldEncryptedName + ".json").withMode(WriteMode.OVERWRITE).withAutorename(false).uploadAndFinish(newJSONFile);
+                                            DropboxClient.files().moveV2("/sharing/" + recieverEmail + "+" + filePathHash + "+" + oldEncryptedName + ".json", "/sharing/" + recieverEmail + "+" + filePathHash + "+" + newEncryptedName + ".json");
                                             newJSONFile.close();
                                         }
                                     }
@@ -228,12 +229,13 @@ public class FileOperations {
             member.add(MemberSelector.email(newUserEMail));
             FileRecord fileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
             FileInputStream sharedJSON = createJSONFile(fileRecord, selectedFile, newUserEMail);
-
-            DropboxClient.files().upload("/sharing/" + newUserEMail + "+" + fileRecord.getEncryptedName() + ".json").uploadAndFinish(sharedJSON);
+            String filePathHash = getHash(fileRecord.getPath(), fileRecord.getName());
+            DropboxClient.files().upload("/sharing/" + newUserEMail + "+" + filePathHash + "+" + fileRecord.getEncryptedName() + ".json").uploadAndFinish(sharedJSON);
             sharedJSON.close();
-            DropboxClient.client.sharing().addFileMember("/sharing/" + newUserEMail + "+" + fileRecord.getEncryptedName() + ".json", member);
+            DropboxClient.client.sharing().addFileMember("/sharing/" + newUserEMail + "+" + filePathHash + "+" + fileRecord.getEncryptedName() + ".json", member);
 
-            // Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + fileRecord.getEncryptedName() + ".json"));
+            // Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory +
+            // fileRecord.getEncryptedName() + ".json"));
 
             fileRecordOperations.updateSharedAccount(newUserEMail, selectedFile.getFilePath(), selectedFile.getFileName());
 

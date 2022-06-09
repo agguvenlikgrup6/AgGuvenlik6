@@ -161,9 +161,9 @@ public class SyncControl {
                 if (sharedFileMetadata.getName().contains("json")) {
 
                     String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + sharedFileMetadata.getName();
-                    String encryptedName = sharedFileMetadata.getName().split("\\+")[1].split("\\.")[0];
-
-                    RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(encryptedName);
+                    String encryptedName = sharedFileMetadata.getName().split("\\+")[2].split("\\.")[0];
+                    String filePathHash = sharedFileMetadata.getName().split("\\+")[1];
+                    RecievedFile recievedFile = recievedFileOperations.getByPathHash(filePathHash);
 
                     FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
                     DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);

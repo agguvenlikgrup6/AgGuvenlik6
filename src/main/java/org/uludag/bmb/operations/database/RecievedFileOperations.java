@@ -11,8 +11,7 @@ import javafx.collections.ObservableList;
 
 public class RecievedFileOperations extends QueryExecutor {
     public RecievedFile getByEncryptedName(String encryptedName) {
-        List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getByEncryptedName"),
-                encryptedName);
+        List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getByEncryptedName"), encryptedName);
         if (recievedFiles.size() != 0) {
             return recievedFiles.get(0);
         } else {
@@ -21,10 +20,8 @@ public class RecievedFileOperations extends QueryExecutor {
     }
 
     public void insert(RecievedFile recievedFile) {
-        executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getSenderEmail(),
-                recievedFile.getEncryptedName(),
-                recievedFile.getDecryptedName(), recievedFile.getFileKey(), recievedFile.getModificationDate(),
-                recievedFile.getHash(), recievedFile.getFileSize(), recievedFile.getPathHash());
+        executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getSenderEmail(), recievedFile.getEncryptedName(), recievedFile.getDecryptedName(), recievedFile.getFileKey(), recievedFile.getModificationDate(), recievedFile.getHash(), recievedFile.getFileSize(),
+                recievedFile.getPathHash());
     }
 
     public ObservableList<CustomRecievedFileListView> getAll() {
@@ -32,8 +29,7 @@ public class RecievedFileOperations extends QueryExecutor {
         ObservableList<CustomRecievedFileListView> tableData = FXCollections.observableArrayList();
 
         for (RecievedFile f : recievedFiles) {
-            tableData.add(
-                    new CustomRecievedFileListView(f.getSenderEmail(), f.getDecryptedName(), f.getEncryptedName()));
+            tableData.add(new CustomRecievedFileListView(f.getSenderEmail(), f.getDecryptedName(), f.getEncryptedName()));
         }
 
         return tableData;
@@ -47,8 +43,18 @@ public class RecievedFileOperations extends QueryExecutor {
         executeLocalQuery(QueryFactory.RecievedFile("deleteByPathHash"), pathHash);
     }
 
+    public RecievedFile getByPathHash(String filePathHash) {
+        List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getByPathHash"), filePathHash);
+        if (recievedFiles != null) {
+            if (recievedFiles.get(0) != null) {
+                return recievedFiles.get(0);
+            }
+        }
+        return null;
+    }
+
     // public void deleteAll(){
-    //     executeCloudQuery(QueryFactory.RecievedFile(queryName), params)
+    // executeCloudQuery(QueryFactory.RecievedFile(queryName), params)
     // }
 
 }

@@ -10,25 +10,27 @@ public class RecievedQuery extends Query implements QueryFactory {
     }
 
     private final static String getByEncryptedName = "SELECT * FROM " + TABLES.recievedFiles + " WHERE encryptedName=?";
-    private final static String insert = "INSERT INTO " + TABLES.recievedFiles
-            + " (senderEmail, encryptedName, decryptedName, fileKey, modificationDate, hash, fileSize, pathHash) VALUES(?,?,?,?,?,?,?,?)";
+    private final static String insert = "INSERT INTO " + TABLES.recievedFiles + " (senderEmail, encryptedName, decryptedName, fileKey, modificationDate, hash, fileSize, pathHash) VALUES(?,?,?,?,?,?,?,?)";
     private final static String getAll = "SELECT * FROM " + TABLES.recievedFiles;
     private final static String deleteByEncryptedName = "DELETE FROM " + TABLES.recievedFiles + " WHERE encryptedName=?";
     private final static String deleteByPathHash = "DELETE FROM " + TABLES.recievedFiles + " WHERE pathHash=?";
+    private final static String getByPathHash = "SELECT * FROM " + TABLES.recievedFiles + " WHERE pathHash=?";
 
     @Override
     public String getQuery() {
         switch (queryName) {
-            case "getByEncryptedName":
-                return getByEncryptedName;
-            case "insert":
-                return insert;
-            case "getAll":
-                return getAll;
-            case "deleteByEncryptedName":
-                return deleteByEncryptedName;
-            case "deleteByPathHash":
-                return deleteByPathHash;
+        case "getByEncryptedName":
+            return getByEncryptedName;
+        case "insert":
+            return insert;
+        case "getAll":
+            return getAll;
+        case "deleteByEncryptedName":
+            return deleteByEncryptedName;
+        case "deleteByPathHash":
+            return deleteByPathHash;
+        case "getByPathHash":
+            return getByPathHash;
         }
         return null;
     }
