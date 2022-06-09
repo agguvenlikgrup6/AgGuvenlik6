@@ -159,20 +159,29 @@ public class SyncControl {
             List<SharedFileMetadata> entries = DropboxClient.sharing().listReceivedFiles().getEntries();
             for (SharedFileMetadata sharedFileMetadata : entries) {
                 if (sharedFileMetadata.getName().contains("json")) {
+
                     String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + sharedFileMetadata.getName();
                     String encryptedName = sharedFileMetadata.getName().split("\\+")[1].split("\\.")[0];
+
                     RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(encryptedName);
+
                     FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
                     DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);
+
                     SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
                     credentialsFile.close();
+
                     RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
                     if (recievedFile == null) {
                         recievedFileOperations.insert(newRecievedFile);
                         notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
                     } else {
-                        recievedFileOperations.deleteByPathHash(newRecievedFile.getPathHash());
-                        recievedFileOperations.insert(newRecievedFile);
+                        if (encryptedName.equals(recievedFile.getEncryptedName())) {
+                            return;
+                        } else {
+                            recievedFileOperations.deleteByPathHash(newRecievedFile.getPathHash());
+                            recievedFileOperations.insert(newRecievedFile);
+                        }
                     }
                     Files.delete(Paths.get(cacheFileAbsolutePath));
                 }

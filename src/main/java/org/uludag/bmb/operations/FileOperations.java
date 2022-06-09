@@ -175,8 +175,7 @@ public class FileOperations {
                             fileRecordOperations.updateChangeStatus(outdatedRecord.getPath(), outdatedRecord.getName(), false);
 
                             fileRecordOperations.updateBusyStatus(0, selectedFile.getFilePath(), selectedFile.getFileName());
-                            
-                            {
+
                             FileRecord updatedRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
                             String oldEncryptedName = outdatedRecord.getEncryptedName();
                             List<Metadata> allJSONFiles = DropboxClient.files().listFolder("/sharing").getEntries();
@@ -185,7 +184,7 @@ public class FileOperations {
                                 // eski şifreli isme sahip ilişkili json dosyaları
                                 if (sharedFileMetadata.getName().contains(oldEncryptedName)) {
                                     List<UserFileMembershipInfo> fileMembers = DropboxClient.sharing().listFileMembers(sharedFileMetadata.getId()).getUsers();
-                                    
+
                                     // DropboxClient.files().deleteV2(sharedFileMetadata.getPathDisplay());
                                     for (UserFileMembershipInfo member : fileMembers) {
                                         if (member.getAccessType().equals(AccessLevel.VIEWER)) {
@@ -198,7 +197,6 @@ public class FileOperations {
                                     }
                                 }
                             }
-                        }
 
                             NOTIFICATION_OPERATIONS.insert(outdatedRecord.getPath() + outdatedRecord.getName() + " dosyasının içeriği bulutta güncellendi!");
                         } catch (DbxException | IOException e) {
@@ -234,6 +232,7 @@ public class FileOperations {
             DropboxClient.files().upload("/sharing/" + newUserEMail + "+" + fileRecord.getEncryptedName() + ".json").uploadAndFinish(sharedJSON);
             sharedJSON.close();
             DropboxClient.client.sharing().addFileMember("/sharing/" + newUserEMail + "+" + fileRecord.getEncryptedName() + ".json", member);
+            
             Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + fileRecord.getEncryptedName() + ".json"));
 
             fileRecordOperations.updateSharedAccount(newUserEMail, selectedFile.getFilePath(), selectedFile.getFileName());
@@ -261,7 +260,7 @@ public class FileOperations {
 
         String encryptedFileName = fileRecordOperations.getByPathAndName(shareFile.getFilePath(), shareFile.getFileName()).getEncryptedName();
         String senderEmail = Constants.ACCOUNT.userEmail;
-        String fileHash = getHash(file.getPath());
+        String fileHash = getHash(file.getPath() + file.getName());
         SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName, encrypted_p1, encrypted_p2, file.getModificationDate(), file.getHash(), file.getFileSize(), fileHash);
 
         return ConfigController.SharedFileCredentials.Save(sharedFile);
