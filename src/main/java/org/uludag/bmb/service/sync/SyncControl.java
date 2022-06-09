@@ -162,31 +162,21 @@ public class SyncControl {
             for (SharedFileMetadata sharedFileMetadata : entries) {
                 if (sharedFileMetadata.getName().contains("json")) {
                     String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + sharedFileMetadata.getName();
-                    // eğer dosya halihazırda yerelde kayıtlı değil ise indirir
                     String encryptedName = sharedFileMetadata.getName().split("\\+")[1].split("\\.")[0];
-                    // dosya kayıt edilmiş mi kontrolü
                     RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(encryptedName);
+                    FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
+                    DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);
+                    SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
+                    credentialsFile.close();
+                    RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
                     if (recievedFile == null) {
-                        // paylaşılan json dosyası indirilir
-                        // ./cache/recievedFiles/bmbgrup6@gmail.com+SAJkmsdfmdskJsajd.json isimli dosya
-                        // olarak
-                        FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
-                        DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);
-                        SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
-                        credentialsFile.close();
-                        // dosya isminin şifresi ve anahtarı çözülür
-                        RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
                         recievedFileOperations.insert(newRecievedFile);
-                        // kaydı tamamlanan dosyaya ihtiyaç olmadığı için silinir
-                        Files.delete(Paths.get(cacheFileAbsolutePath));
-                        // dosya kabul edildiği için dosya paylaşımından ayrılınır.
-                        // paylaşılan dosyanın 2 sahibi olduğundan ve bu işlem sonrasında sahip sayısı
-                        // 1'e düşeceğinden (yalnızca dosya sahibinin kendisi kalır) dosya sahibinin
-                        // client'ı
-                        // tarafından dosya otomatik olarak silinecektir (.json dosyası). Şifreli dosya
-                        // kabul edildikten sonra ise şifreli dosyadan da çıkılacak ve silinecektir.
                         notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
+                    } else {
+                        recievedFileOperations.deleteByEncryptedName(newRecievedFile.getEncryptedName());
+                        recievedFileOperations.insert(newRecievedFile);
                     }
+                    Files.delete(Paths.get(cacheFileAbsolutePath));
                 }
             }
         } catch (Exception e) {

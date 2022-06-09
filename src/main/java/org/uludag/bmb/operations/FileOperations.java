@@ -166,7 +166,7 @@ public class FileOperations {
                                     for (UserFileMembershipInfo member : fileMembers) {
                                         if (member.getAccessType().equals(AccessLevel.VIEWER)) {
                                             FileInputStream newCredentials = getCredentials(newRecord, item, member.getUser().getEmail());
-                                            var credentialsMetadata = DropboxClient.files().upload("/sharing/" + member.getUser().getEmail() + "+" + encryptedFileData.getEncryptedName()).uploadAndFinish(newCredentials);
+                                            var credentialsMetadata = DropboxClient.files().upload("/sharing/" + member.getUser().getEmail() + "+" + encryptedFileData.getEncryptedName() + ".json").uploadAndFinish(newCredentials);
                                             newCredentials.close();
                                             List<MemberSelector> memberList = new ArrayList<>();
                                             memberList.add(MemberSelector.email(member.getUser().getEmail()));

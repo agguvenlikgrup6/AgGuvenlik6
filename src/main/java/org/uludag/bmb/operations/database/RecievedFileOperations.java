@@ -42,4 +42,5 @@ public class RecievedFileOperations extends QueryExecutor {
     public void deleteByEncryptedName(String encryptedName) {
         executeLocalQuery(QueryFactory.RecievedFile("deleteByEncryptedName"), encryptedName);
     }
+
 }
