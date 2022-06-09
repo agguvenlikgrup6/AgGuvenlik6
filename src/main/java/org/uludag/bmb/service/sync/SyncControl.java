@@ -173,7 +173,7 @@ public class SyncControl {
                         recievedFileOperations.insert(newRecievedFile);
                         notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
                     } else {
-                        recievedFileOperations.deleteByEncryptedName(newRecievedFile.getEncryptedName());
+                        recievedFileOperations.deleteByPathHash(newRecievedFile.getPathHash());
                         recievedFileOperations.insert(newRecievedFile);
                     }
                     Files.delete(Paths.get(cacheFileAbsolutePath));

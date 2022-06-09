@@ -9,9 +9,10 @@ public class SharedFile {
     private String fileSize;
     private String fileKeyPart1;
     private String fileKeyPart2;
+    private String pathHash;
 
     public SharedFile(String recieverEmail, String senderEmail, String encryptedName, String fileKeyPart1,
-            String fileKeyPart2, String modificationDate, String hash, String fileSize) {
+            String fileKeyPart2, String modificationDate, String hash, String fileSize, String pathHash) {
         this.recieverEmail = recieverEmail;
         this.senderEmail = senderEmail;
         this.encryptedName = encryptedName;
@@ -20,6 +21,7 @@ public class SharedFile {
         this.modificationDate = modificationDate;
         this.fileSize = fileSize;
         this.hash = hash;
+        this.pathHash = pathHash;
     }
 
     public String getModificationDate() {
@@ -44,6 +46,15 @@ public class SharedFile {
 
     public void setFileSize(String fileSize) {
         this.fileSize = fileSize;
+    }
+
+
+    public String getPathHash() {
+        return this.pathHash;
+    }
+
+    public void setPathHash(String pathHash) {
+        this.pathHash = pathHash;
     }
 
 

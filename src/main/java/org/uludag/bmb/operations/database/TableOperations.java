@@ -47,7 +47,8 @@ public class TableOperations extends QueryExecutor {
                 "fileKey TEXT NOT NULL," +
                 "modificationDate TEXT NOT NULL," +
                 "hash TEXT NOT NULL, " + 
-                "fileSize TEXT NOT NULL" + 
+                "fileSize TEXT NOT NULL," +
+                "pathHash TEXT NOT NULL" + 
                 ")";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);

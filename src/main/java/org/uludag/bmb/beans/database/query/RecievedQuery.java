@@ -14,6 +14,7 @@ public class RecievedQuery extends Query implements QueryFactory {
             + " (senderEmail, encryptedName, decryptedName, fileKey, modificationDate, hash, fileSize) VALUES(?,?,?,?,?,?,?)";
     private final static String getAll = "SELECT * FROM " + TABLES.recievedFiles;
     private final static String deleteByEncryptedName = "DELETE FROM " + TABLES.recievedFiles + " WHERE encryptedName=?";
+    private final static String deleteByPathHash = "DELETE FROM " + TABLES.recievedFiles + " WHERE pathHash=?";
 
     @Override
     public String getQuery() {
@@ -26,6 +27,8 @@ public class RecievedQuery extends Query implements QueryFactory {
                 return getAll;
             case "deleteByEncryptedName":
                 return deleteByEncryptedName;
+            case "deleteByPathHash":
+                return deleteByPathHash;
         }
         return null;
     }

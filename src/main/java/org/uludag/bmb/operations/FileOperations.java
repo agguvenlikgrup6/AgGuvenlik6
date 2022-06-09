@@ -125,6 +125,22 @@ public class FileOperations {
         }
     }
 
+    public static String getHash(String text){
+        byte[] inputBytes;
+        try {
+            inputBytes = text.getBytes();
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update(inputBytes);
+            byte[] digestedBytes = messageDigest.digest();
+
+            String digestString = Base64.getUrlEncoder().encodeToString(digestedBytes);
+            return digestString;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static void changeSyncStatus(CustomTableView item, boolean newStatus) {
         new Thread(new Runnable() {
             @Override
@@ -238,7 +254,8 @@ public class FileOperations {
         String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart, recieverPublicKey);
         String encryptedFileName = fileRecordOperations.getByPathAndName(shareFile.getFilePath(), shareFile.getFileName()).getEncryptedName();
         String senderEmail = Constants.ACCOUNT.userEmail;
-        SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName, secondEncryptedAES1, secondEncryptedAES2, file.getModificationDate(), file.getHash(), file.getFileSize());
+        String fileHash = getHash(file.getPath());
+        SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName, secondEncryptedAES1, secondEncryptedAES2, file.getModificationDate(), file.getHash(), file.getFileSize(), fileHash);
 
         FileInputStream sharedFileCredentials = ConfigController.SharedFileCredentials.Save(sharedFile);
 

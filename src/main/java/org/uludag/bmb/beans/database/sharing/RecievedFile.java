@@ -9,9 +9,10 @@ public class RecievedFile {
     private String fileSize;
     private String decryptedName;
     private int id;
+    private String pathHash;
 
     public RecievedFile(String senderEmail, String encryptedName, String decryptedName, String fileKey,
-            String modificationDate, String hash, String fileSize) {
+            String modificationDate, String hash, String fileSize, String pathHash) {
         this.senderEmail = senderEmail;
         this.encryptedName = encryptedName;
         this.decryptedName = decryptedName;
@@ -19,6 +20,7 @@ public class RecievedFile {
         this.hash = hash;
         this.fileSize = fileSize;
         this.fileKey = fileKey;
+        this.pathHash = pathHash;
     }
 
     public RecievedFile(int id, String senderEmail, String encryptedName, String decryptedName, String fileKey) {
@@ -37,6 +39,16 @@ public class RecievedFile {
     public String getModificationDate() {
         return this.modificationDate;
     }
+
+
+    public String getPathHash() {
+        return this.pathHash;
+    }
+
+    public void setPathHash(String pathHash) {
+        this.pathHash = pathHash;
+    }
+
 
     public void setModificationDate(String modificationDate) {
         this.modificationDate = modificationDate;

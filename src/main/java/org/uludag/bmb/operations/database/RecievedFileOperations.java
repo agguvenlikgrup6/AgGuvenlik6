@@ -43,4 +43,12 @@ public class RecievedFileOperations extends QueryExecutor {
         executeLocalQuery(QueryFactory.RecievedFile("deleteByEncryptedName"), encryptedName);
     }
 
+    public void deleteByPathHash(String pathHash) {
+        executeCloudQuery(QueryFactory.RecievedFile("deleteByPathHash"), pathHash);
+    }
+
+    // public void deleteAll(){
+    //     executeCloudQuery(QueryFactory.RecievedFile(queryName), params)
+    // }
+
 }

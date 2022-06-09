@@ -190,7 +190,7 @@ public class Crypto {
                         Base64.getUrlDecoder().decode(sharedFile.getEncryptedName().getBytes(StandardCharsets.UTF_8)),
                         secondDecryptedKey);
 
-                return new RecievedFile(senderInformation.getEmail(), sharedFile.getEncryptedName(), decryptedFileName, secondDecryptedKey, sharedFile.getModificationDate(), sharedFile.getHash(), sharedFile.getFileSize());
+                return new RecievedFile(senderInformation.getEmail(), sharedFile.getEncryptedName(), decryptedFileName, secondDecryptedKey, sharedFile.getModificationDate(), sharedFile.getHash(), sharedFile.getFileSize(), sharedFile.getPathHash());
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
