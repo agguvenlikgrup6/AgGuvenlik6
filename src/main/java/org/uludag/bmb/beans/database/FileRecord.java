@@ -12,13 +12,14 @@ public class FileRecord {
     private int downloadStatus;
     private String fileSize;
     private String sharedAccounts;
+    private int busyStatus;
 
     public FileRecord() {
 
     }
 
     public FileRecord(int downloadStatus, String name, String path, String key, String modificationDate, String hash,
-            String encryptedName, int sync, int changeStatus, String fileSize, String sharedAccounts) {
+            String encryptedName, int sync, int changeStatus, String fileSize, String sharedAccounts, int busyStatus) {
         this.downloadStatus = downloadStatus;
         this.name = name;
         this.path = path;
@@ -30,8 +31,17 @@ public class FileRecord {
         this.changeStatus = changeStatus;
         this.fileSize = fileSize;
         this.sharedAccounts = sharedAccounts;
+        this.busyStatus = busyStatus;
     }
 
+
+    public int getBusyStatus() {
+        return this.busyStatus;
+    }
+
+    public void setBusyStatus(int busyStatus) {
+        this.busyStatus = busyStatus;
+    }
 
     public String getFileSize() {
         return this.fileSize;

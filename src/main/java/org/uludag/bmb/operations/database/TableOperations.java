@@ -27,7 +27,8 @@ public class TableOperations extends QueryExecutor {
                 "downloadStatus BOOLEAN NOT NULL CHECK(downloadStatus IN(0,1))," +
                 "changeStatus BOOLEAN NOT NULL CHECK(changeStatus IN(0,1))," +
                 "fileSize TEXT NOT NULL," +
-                "sharedAccounts TEXT NOT NULL" +
+                "sharedAccounts TEXT NOT NULL," +
+                "busyStatus BOOLEAN NOT NULL CHECK(busyStatus IN(0,1))" + 
                 ")";
         try {
             PreparedStatement statement = this.databaseController.getConn().prepareStatement(query);

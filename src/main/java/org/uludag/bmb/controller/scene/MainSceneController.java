@@ -150,9 +150,7 @@ public class MainSceneController extends SceneController implements Initializabl
     public TableColumn<CustomRecievedFileListView, String> recievedFileDecryptedName;
 
     public MainSceneController() throws FileLoadException {
-        super(PropertiesReader.getProperty("mainSceneFxml"),
-                Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")),
-                Integer.parseInt(PropertiesReader.getProperty("mainSceneHeigth")));
+        super(PropertiesReader.getProperty("mainSceneFxml"), Integer.parseInt(PropertiesReader.getProperty("mainSceneWidth")), Integer.parseInt(PropertiesReader.getProperty("mainSceneHeigth")));
         refreshRecievedFileList();
     }
 
@@ -186,7 +184,7 @@ public class MainSceneController extends SceneController implements Initializabl
                     directoriesHierarchyView.getSelectionModel().getSelectedItem().expandedProperty().set(true);
                     selectFolder();
                 } catch (Exception e) {
-                    // ilk açılışta ağaç görünümünde herhangi bir eleman olmayacağından 
+                    // ilk açılışta ağaç görünümünde herhangi bir eleman olmayacağından
                     // exception handle
                 }
             }
@@ -255,8 +253,7 @@ public class MainSceneController extends SceneController implements Initializabl
     private void selectFolder() {
         fileIcon.getStyleClass().clear();
         fileIcon.getStyleClass().addAll("button", "iconFolder");
-        TreeItem<String> selectedFolder = (TreeItem<String>) directoriesHierarchyView.getSelectionModel()
-                .getSelectedItem();
+        TreeItem<String> selectedFolder = (TreeItem<String>) directoriesHierarchyView.getSelectionModel().getSelectedItem();
         try {
             StringBuilder folderPath = new StringBuilder();
             for (; selectedFolder.getParent() != null; selectedFolder = selectedFolder.getParent()) {
@@ -272,15 +269,11 @@ public class MainSceneController extends SceneController implements Initializabl
                     selectedDirectoryPathPane.getItems().clear();
                     List<String> selectedBarPath = Arrays.asList(folderPath.toString().split("/"));
                     if (selectedBarPath.size() == 0) {
-                        selectedDirectoryPathPane.getItems()
-                                .add(new CustomHyperLink(selectedDirectoryPathPane, directoriesHierarchyView,
-                                        fileListView, ""));
+                        selectedDirectoryPathPane.getItems().add(new CustomHyperLink(selectedDirectoryPathPane, directoriesHierarchyView, fileListView, ""));
                         return;
                     }
                     for (String pathPart : Arrays.asList(folderPath.toString().split("/"))) {
-                        selectedDirectoryPathPane.getItems()
-                                .add(new CustomHyperLink(selectedDirectoryPathPane, directoriesHierarchyView,
-                                        fileListView, pathPart));
+                        selectedDirectoryPathPane.getItems().add(new CustomHyperLink(selectedDirectoryPathPane, directoriesHierarchyView, fileListView, pathPart));
                     }
 
                 }
@@ -332,31 +325,30 @@ public class MainSceneController extends SceneController implements Initializabl
             fileIcon.getStyleClass().clear();
             String fileExtension = selectedFile.getFileName().split(Pattern.quote("."))[1];
             switch (fileExtension) {
-                case "png":
-                case "svg":
-                case "jpeg":
-                case "jpg":
-                    fileIcon.getStyleClass().addAll("button", "iconMedia");
-                    break;
-                case "pdf":
-                    fileIcon.getStyleClass().addAll("button", "iconPdf");
-                    break;
-                case "xml":
-                case "json":
-                case "java":
-                    fileIcon.getStyleClass().addAll("button", "iconCode");
-                    break;
-                case "txt":
-                case "docx":
-                case "doc":
-                    fileIcon.getStyleClass().addAll("button", "iconText");
-                    break;
-                default:
-                    fileIcon.getStyleClass().addAll("button", "iconDefault");
-                    break;
+            case "png":
+            case "svg":
+            case "jpeg":
+            case "jpg":
+                fileIcon.getStyleClass().addAll("button", "iconMedia");
+                break;
+            case "pdf":
+                fileIcon.getStyleClass().addAll("button", "iconPdf");
+                break;
+            case "xml":
+            case "json":
+            case "java":
+                fileIcon.getStyleClass().addAll("button", "iconCode");
+                break;
+            case "txt":
+            case "docx":
+            case "doc":
+                fileIcon.getStyleClass().addAll("button", "iconText");
+                break;
+            default:
+                fileIcon.getStyleClass().addAll("button", "iconDefault");
+                break;
             }
-            FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(),
-                    selectedFile.getFileName());
+            FileRecord selectedFileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
             detailFileName.setText(selectedFileRecord.getName());
             detailFileSize.setText(selectedFileRecord.getFileSize());
             detailFilePath.setText(selectedFileRecord.getPath());

@@ -150,54 +150,57 @@ public class FileOperations {
                         fileRecordOperations.updateSyncStatus(selectedFile.getFilePath(), selectedFile.getFileName(), true);
                     } else {
                         try {
-                            FileRecord record = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
-                            EncryptedFileData newCrypto = Crypto.encryptFile(new File(localSyncPath + record.getPath() + record.getName()));
-                            String absoluteFilePath = localSyncPath + record.getPath() + record.getName();
+                            fileRecordOperations.updateBusyStatus(1, selectedFile.getFilePath(), selectedFile.getFileName());
+                            FileRecord outdatedRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
+                            EncryptedFileData newCrypto = Crypto.encryptFile(new File(localSyncPath + outdatedRecord.getPath() + outdatedRecord.getName()));
+                            String newEncryptedName = newCrypto.getEncryptedName();
+                            String absoluteFilePath = localSyncPath + outdatedRecord.getPath() + outdatedRecord.getName();
                             String newlocalFileModificationDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new File(absoluteFilePath).lastModified());
                             String newFileSize = String.valueOf(Files.size(Paths.get(absoluteFilePath)) / 1024) + " KB";
-                            String newHash = getHash(record.getPath(), record.getName());
+                            String newHash = getHash(outdatedRecord.getPath(), outdatedRecord.getName());
 
                             // eski şifreli isme sahip olan dosyanın içeriği yeni şifreli bilgi ile
                             // güncellenir
-                            DropboxClient.files().uploadBuilder(record.getPath() + record.getEncryptedName()).withMode(WriteMode.OVERWRITE).withAutorename(false).uploadAndFinish(newCrypto.getEncryptedFile());
+                            DropboxClient.files().uploadBuilder(outdatedRecord.getPath() + outdatedRecord.getEncryptedName()).withMode(WriteMode.OVERWRITE).withAutorename(false).uploadAndFinish(newCrypto.getEncryptedFile());
                             // dosyanın ismi yeni şifreli isim ile güncellenir
-                            DropboxClient.files().moveV2(record.getPath() + record.getEncryptedName(), record.getPath() + newCrypto.getEncryptedName());
+                            DropboxClient.files().moveV2(outdatedRecord.getPath() + outdatedRecord.getEncryptedName(), outdatedRecord.getPath() + newEncryptedName);
 
                             // yerel dosya kaydı yeni veriler ile güncellenir
-                            fileRecordOperations.updateKey(record.getPath(), newCrypto.getAesKey(), record.getEncryptedName());
-                            fileRecordOperations.updateModificationDate(record.getPath(), newlocalFileModificationDate, record.getEncryptedName());
-                            fileRecordOperations.updateFileSize(record.getPath(), newFileSize, record.getEncryptedName());
-                            fileRecordOperations.updateHash(record.getPath(), newHash, record.getEncryptedName());
-                            fileRecordOperations.updateEncryptedName(record.getPath(), newCrypto.getEncryptedName(), record.getEncryptedName());
+                            fileRecordOperations.updateEncryptedName(outdatedRecord.getPath(), newEncryptedName, outdatedRecord.getEncryptedName());
+                            fileRecordOperations.updateKey(outdatedRecord.getPath(), newCrypto.getAesKey(), outdatedRecord.getEncryptedName());
+                            fileRecordOperations.updateModificationDate(outdatedRecord.getPath(), newlocalFileModificationDate, outdatedRecord.getEncryptedName());
+                            fileRecordOperations.updateFileSize(outdatedRecord.getPath(), newFileSize, outdatedRecord.getEncryptedName());
+                            fileRecordOperations.updateHash(outdatedRecord.getPath(), newHash, outdatedRecord.getEncryptedName());
                             fileRecordOperations.updateSyncStatus(selectedFile.getFilePath(), selectedFile.getFileName(), true);
-                            fileRecordOperations.updateChangeStatus(record.getPath(), record.getName(), false);
+                            fileRecordOperations.updateChangeStatus(outdatedRecord.getPath(), outdatedRecord.getName(), false);
+
+                            fileRecordOperations.updateBusyStatus(0, selectedFile.getFilePath(), selectedFile.getFileName());
                             
                             {
-                            FileRecord newRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
-                            String oldEncryptedName = record.getEncryptedName();
-                            List<Metadata> sharedFileCredentials = DropboxClient.files().listFolder("/sharing").getEntries();
-                            for (Metadata m : sharedFileCredentials) {
-                                FileMetadata sharedFileMetadata = (FileMetadata) m;
+                            FileRecord updatedRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
+                            String oldEncryptedName = outdatedRecord.getEncryptedName();
+                            List<Metadata> allJSONFiles = DropboxClient.files().listFolder("/sharing").getEntries();
+                            for (Metadata jsonMetadata : allJSONFiles) {
+                                FileMetadata sharedFileMetadata = (FileMetadata) jsonMetadata;
+                                // eski şifreli isme sahip ilişkili json dosyaları
                                 if (sharedFileMetadata.getName().contains(oldEncryptedName)) {
                                     List<UserFileMembershipInfo> fileMembers = DropboxClient.sharing().listFileMembers(sharedFileMetadata.getId()).getUsers();
-                                    DropboxClient.files().deleteV2(sharedFileMetadata.getPathDisplay());
+                                    
+                                    // DropboxClient.files().deleteV2(sharedFileMetadata.getPathDisplay());
                                     for (UserFileMembershipInfo member : fileMembers) {
                                         if (member.getAccessType().equals(AccessLevel.VIEWER)) {
-                                            FileInputStream newCredentials = createJSONFile(newRecord, selectedFile, member.getUser().getEmail());
-                                            var credentialsMetadata = DropboxClient.files().upload("/sharing/" + member.getUser().getEmail() + "+" + newCrypto.getEncryptedName() + ".json").uploadAndFinish(newCredentials);
-                                            newCredentials.close();
-                                            List<MemberSelector> memberList = new ArrayList<>();
-                                            memberList.add(MemberSelector.email(member.getUser().getEmail()));
-                                            DropboxClient.sharing().addFileMember(credentialsMetadata.getPathDisplay(), memberList);
-                                            Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + newRecord.getEncryptedName() + ".json"));
-
+                                            String recieverEmail = member.getUser().getEmail();
+                                            FileInputStream newJSONFile = createJSONFile(updatedRecord, selectedFile, member.getUser().getEmail());
+                                            DropboxClient.files().uploadBuilder("/sharing/" + recieverEmail + "+" + oldEncryptedName + ".json").withMode(WriteMode.OVERWRITE).withAutorename(false).uploadAndFinish(newJSONFile);
+                                            DropboxClient.files().moveV2("/sharing/" + recieverEmail + "+" + oldEncryptedName + ".json", "/sharing/" + recieverEmail + "+" + newEncryptedName + ".json");
+                                            newJSONFile.close();
                                         }
                                     }
                                 }
                             }
                         }
 
-                            NOTIFICATION_OPERATIONS.insert(record.getPath() + record.getName() + " dosyasının içeriği bulutta güncellendi!");
+                            NOTIFICATION_OPERATIONS.insert(outdatedRecord.getPath() + outdatedRecord.getName() + " dosyasının içeriği bulutta güncellendi!");
                         } catch (DbxException | IOException e) {
                             e.printStackTrace();
                         }

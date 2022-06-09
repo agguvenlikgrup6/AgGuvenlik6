@@ -67,7 +67,7 @@ public class SyncControl {
                     check = true;
                 }
             }
-            if (!check) {
+            if (!check && local.get(i).getBusyStatus() == 0) {
                 FileOperations.deleteFromLocal(local.get(i).getPath(), local.get(i).getName());
                 fileRecordOperations.delete(local.get(i).getName(), local.get(i).getPath());
             }

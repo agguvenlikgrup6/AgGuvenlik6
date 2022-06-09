@@ -48,7 +48,7 @@ public class FileRecordOperations extends QueryExecutor {
         executeLocalQuery(QueryFactory.Records("insert"), record.getName(), record.getPath(), record.getKey(),
                 record.getModificationDate(), record.getHash(), record.getEncryptedName(), record.getSync(),
                 record.getChangeStatus(),
-                record.getDownloadStatus(), record.getFileSize(), record.getSharedAccounts());
+                record.getDownloadStatus(), record.getFileSize(), record.getSharedAccounts(), record.getBusyStatus());
     }
 
     public FileRecord getbyPathAndEncryptedName(String filePath, String fileEncryptedName) {
@@ -111,5 +111,9 @@ public class FileRecordOperations extends QueryExecutor {
 
     public void cleanSharedAccounts(String newSharedAccounts, String filePath, String fileName) {
         executeLocalQuery(QueryFactory.Records("cleanSharedAccounts"), newSharedAccounts, filePath, fileName);
+    }
+
+    public void updateBusyStatus(int newBusyStatus, String filePath, String fileName) {
+        executeLocalQuery(QueryFactory.Records("updateBusyStatus"), newBusyStatus, filePath, fileName);
     }
 }
