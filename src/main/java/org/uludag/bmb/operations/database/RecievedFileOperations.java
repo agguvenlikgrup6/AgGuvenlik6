@@ -24,7 +24,7 @@ public class RecievedFileOperations extends QueryExecutor {
         executeLocalQuery(QueryFactory.RecievedFile("insert"), recievedFile.getSenderEmail(),
                 recievedFile.getEncryptedName(),
                 recievedFile.getDecryptedName(), recievedFile.getFileKey(), recievedFile.getModificationDate(),
-                recievedFile.getHash(), recievedFile.getFileSize());
+                recievedFile.getHash(), recievedFile.getFileSize(), recievedFile.getPathHash());
     }
 
     public ObservableList<CustomRecievedFileListView> getAll() {
