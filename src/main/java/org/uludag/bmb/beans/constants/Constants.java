@@ -34,5 +34,6 @@ public class Constants {
         public static final String dataDirectory = config.getDataDirectory();
         public static final String cacheSharedFileDirectory = config.getCacheSharedFileDirectory();
         public static final String cacheRecievedFileDirectory = config.getCacheRecievedFileDirectory();
+        public static final String supervisorEmail = config.getSupervisorEmail();
     }
 }

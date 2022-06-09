@@ -157,7 +157,7 @@ public class SyncControl {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            
         }
     }
 
@@ -176,10 +176,12 @@ public class SyncControl {
                         // paylaşılan json dosyası indirilir
                         // ./cache/recievedFiles/bmbgrup6@gmail.com+SAJkmsdfmdskJsajd.json isimli dosya
                         // olarak
+                        FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
                         DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl())
-                                .download(new FileOutputStream(new File(cacheFileAbsolutePath)));
+                                .download(credentialsFile);
                         SharedFile sharedFile = ConfigController.SharedFileCredentials
                                 .Load(sharedFileMetadata.getName());
+                        credentialsFile.close();
                         // dosya isminin şifresi ve anahtarı çözülür
                         RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
                         recievedFileOperations.insert(newRecievedFile);

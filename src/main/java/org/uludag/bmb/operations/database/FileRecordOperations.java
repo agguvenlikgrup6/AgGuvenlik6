@@ -13,7 +13,7 @@ import org.uludag.bmb.factory.query.QueryFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class FileRecordOperations extends DatabaseOperations {
+public class FileRecordOperations extends QueryExecutor {
     public void delete(String fileName, String filePath) {
         executeLocalQuery(QueryFactory.Records("delete"), filePath, fileName);
     }
@@ -94,12 +94,12 @@ public class FileRecordOperations extends DatabaseOperations {
         executeLocalQuery(QueryFactory.Records("updateHash"), newHash, encryptedName, filePath);
     }
 
-    public void updateSharedAccounts(List<String> userEmailList, String filePath, String fileName) {
+    public void updateSharedAccount(String userEmail, String filePath, String fileName){
         String query = "UPDATE " + TABLES.fileRecords
                 + " SET sharedAccounts=sharedAccounts || ? WHERE path=? AND name=?";
         try {
             PreparedStatement statement = databaseController.getConn().prepareStatement(query);
-            statement.setString(1, String.join(";", userEmailList) + ";");
+            statement.setString(1, userEmail + ";");
             statement.setString(2, filePath);
             statement.setString(3, fileName);
 

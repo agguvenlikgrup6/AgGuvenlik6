@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.uludag.bmb.beans.constants.Constants.TABLES;
 
-public class TableOperations extends DatabaseOperations {
+public class TableOperations extends QueryExecutor {
 
     public void createLocalTables() {
         createNotificationTable();

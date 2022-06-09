@@ -1,11 +1,15 @@
 package org.uludag.bmb.controller.scene;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
 import org.uludag.bmb.operations.dropbox.DropboxClient;
@@ -82,6 +86,15 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
                         notificationOperations.insert(recievedFile.getDecryptedName() + " dosyası başarı ile "
                                 + cloudPathTXT.getText() + " dizinine kaydedildi!");
                         mainSceneController.recievedFilesList.getItems().remove(selectedRecievedFile);
+                        // windows file locking issues, linux not effected
+                        // String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + recievedFile.getSenderEmail() + "+" + recievedFile.getEncryptedName() + ".json"; 
+                        // if(Files.exists(Paths.get(cacheFileAbsolutePath))){
+                        //     try {
+                        //         Files.delete(Paths.get(cacheFileAbsolutePath));
+                        //     } catch (IOException e) {
+                        //         e.printStackTrace();
+                        //     }
+                        // }
                     }
                 }
 

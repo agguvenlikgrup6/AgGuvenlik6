@@ -141,7 +141,7 @@ public class StartupSceneController extends SceneController {
 
                 ConfigController.Settings.SaveSettings(new LocalConfig(chosenPath.getText(),
                         Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()),
-                        eMail, dataDir, cacheSharedFileDir, cacheRecievedFileDir));
+                        eMail, dataDir, cacheSharedFileDir, cacheRecievedFileDir, ""));
 
                 userInformationOperations.insert(eMail,
                         Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));

@@ -37,8 +37,7 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                 notificationOperations.insert(getCloudPath(file) + file.getName() + " dosyasının içeriği değişti!");
             } else {
                 fileRecordOperations.updateSyncStatus(cloudRecord.getPath(), cloudRecord.getName(), false);
-                notificationOperations.insert(getCloudPath(file) + file.getName()
-                        + " dosyasının içeriği değişti, dosya senkronizasyonu kapatıldı!");
+                notificationOperations.insert(getCloudPath(file) + file.getName() + " dosyasının içeriği değişti, dosya senkronizasyonu kapatıldı!");
             }
             fileRecordOperations.updateChangeStatus(cloudRecord.getPath(), cloudRecord.getName(), true);
         }
@@ -46,8 +45,7 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
 
     private String getCloudPath(File file) {
         int len = ConfigController.Settings.LoadSettings().getLocalDropboxPath().length();
-        String cloudPath = file.getAbsolutePath().substring(len,
-                file.getAbsolutePath().length() - file.getName().length());
+        String cloudPath = file.getAbsolutePath().substring(len, file.getAbsolutePath().length() - file.getName().length());
         String os = System.getProperty("os.name").toLowerCase();
         if (cloudPath.contains("\\")) {
             if (os.indexOf("mac") >= 0 || os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
@@ -69,22 +67,15 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
             if (SyncServer.getSyncStatus()) {
                 EncryptedFileData efd = Crypto.encryptFile(file);
                 try {
-                    FileMetadata metaData = DropboxClient.client.files()
-                            .uploadBuilder(cloudPath + efd.getEncryptedName())
-                            .uploadAndFinish(efd.getEncryptedFile());
-                    String path = metaData.getPathDisplay().substring(0,
-                            metaData.getPathDisplay().length() - efd.getEncryptedName().length());
+                    FileMetadata metaData = DropboxClient.client.files().uploadBuilder(cloudPath + efd.getEncryptedName()).uploadAndFinish(efd.getEncryptedFile());
+                    String path = metaData.getPathDisplay().substring(0, metaData.getPathDisplay().length() - efd.getEncryptedName().length());
                     String fileHash = FileOperations.getHash(cloudPath, file.getName());
-                    fileRecordOperations.insert(new FileRecord(1, file.getName(),
-                            metaData.getPathDisplay().substring(0,
-                                    metaData.getPathDisplay().length() - efd.getEncryptedName().length()),
-                            efd.getAesKey(),
-                            new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()),
-                            fileHash,
-                            efd.getEncryptedName(), 1, 0,
-                            String.valueOf(Files.size(Paths.get(file.getAbsolutePath())) / 1024) + " KB",
-                            "bmb4016grup6supervisor@gmail.com;"));
+                    FileRecord f = new FileRecord(1, file.getName(), metaData.getPathDisplay().substring(0, metaData.getPathDisplay().length() - efd.getEncryptedName().length()), efd.getAesKey(), new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()), fileHash,
+                    efd.getEncryptedName(), 1, 0, String.valueOf(Files.size(Paths.get(file.getAbsolutePath())) / 1024) + " KB", "");
+                    fileRecordOperations.insert(f);
                     notificationOperations.insert(path + file.getName() + " dosyası başarı ile buluta yüklendi!");
+                    
+                    FileOperations.shareFile(f, Constants.ACCOUNT.supervisorEmail);
 
                 } catch (DbxException | IOException e) {
                     e.printStackTrace();

@@ -6,7 +6,7 @@ import org.uludag.bmb.beans.database.sharing.SharedFile;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.factory.query.QueryFactory;
 
-public class SharedFileOperations extends DatabaseOperations {
+public class SharedFileOperations extends QueryExecutor {
     public void insert(SharedFile sharedFile) {
         executeCloudQuery(QueryFactory.SharedFile("insert"), sharedFile.getRecieverEmail(), sharedFile.getSenderEmail(),
                 sharedFile.getEncryptedName(), sharedFile.getFileKeyPart1(), sharedFile.getFileKeyPart2(),

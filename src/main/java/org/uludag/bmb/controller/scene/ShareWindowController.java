@@ -61,7 +61,7 @@ public class ShareWindowController extends PopupSceneController implements Initi
 
     @FXML
     void shareWithMails(ActionEvent event) {
-        FileOperations.shareFile(mainSceneController.fileListView.getSelectionModel().getSelectedItems(), shareAccountList.getItems());
+        FileOperations.shareFileBatch(mainSceneController.fileListView.getSelectionModel().getSelectedItems(), shareAccountList.getItems());
         Node source = (Node) event.getSource();
         Stage stage = (Stage) source.getScene().getWindow();
         stage.close();

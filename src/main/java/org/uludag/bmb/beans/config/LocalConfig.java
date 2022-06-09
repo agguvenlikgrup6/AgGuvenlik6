@@ -8,14 +8,16 @@ public class LocalConfig {
     private String dataDirectory;
     private String cacheRecievedFileDirectory;
     private String cacheSharedFileDirectory;
+    private String supervisorEmail;
 
-    public LocalConfig(String path, String privateRsaKey, String userEmail, String dataDirectory, String cacheSharedFileDirectory, String cacheRecievedFileDirectory) {
+    public LocalConfig(String path, String privateRsaKey, String userEmail, String dataDirectory, String cacheSharedFileDirectory, String cacheRecievedFileDirectory, String supervisorEmail) {
         this.localDropboxPath = path;
         this.privateRsaKey = privateRsaKey;
         this.userEmail = userEmail;
         this.dataDirectory = dataDirectory;
         this.cacheSharedFileDirectory = cacheSharedFileDirectory;
         this.cacheRecievedFileDirectory = cacheRecievedFileDirectory;
+        this.supervisorEmail = supervisorEmail;
     }
 
     public LocalConfig(){
@@ -45,4 +47,8 @@ public class LocalConfig {
     public String getUserEmail(){
         return this.userEmail;
     }
+
+    public String getSupervisorEmail() {
+        return this.supervisorEmail;
+    }    
 }

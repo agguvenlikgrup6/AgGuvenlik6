@@ -5,7 +5,7 @@ import java.util.List;
 import org.uludag.bmb.beans.database.sharing.UserInformation;
 import org.uludag.bmb.factory.query.QueryFactory;
 
-public class UserInformationOperations extends DatabaseOperations {
+public class UserInformationOperations extends QueryExecutor {
     public void insert(String email, String publicKey) {
         executeCloudQuery(QueryFactory.UserInformation("insert"), email, publicKey, email, email, publicKey);
     }

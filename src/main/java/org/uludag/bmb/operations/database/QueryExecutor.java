@@ -9,10 +9,10 @@ import org.uludag.bmb.controller.database.DatabaseController;
 import org.uludag.bmb.factory.query.QueryFactory;
 
 @SuppressWarnings("unchecked")
-public class DatabaseOperations {
+public class QueryExecutor {
     protected DatabaseController databaseController;
 
-    public DatabaseOperations() {
+    public QueryExecutor() {
         this.databaseController = new DatabaseController();
     }
 

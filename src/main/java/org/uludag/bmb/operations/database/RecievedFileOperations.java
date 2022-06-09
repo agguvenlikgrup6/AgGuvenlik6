@@ -9,7 +9,7 @@ import org.uludag.bmb.factory.query.QueryFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class RecievedFileOperations extends DatabaseOperations {
+public class RecievedFileOperations extends QueryExecutor {
     public RecievedFile getByEncryptedName(String encryptedName) {
         List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getByEncryptedName"),
                 encryptedName);
