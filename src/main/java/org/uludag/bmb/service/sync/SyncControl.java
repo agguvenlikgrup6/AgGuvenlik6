@@ -64,8 +64,7 @@ public class SyncControl {
         for (int i = 0; i < local.size(); i++) {
             boolean check = false;
             for (FileRecord fileRecord : cloud) {
-                if (local.get(i).getEncryptedName().equals(fileRecord.getEncryptedName()) &&
-                        local.get(i).getPath().equals(fileRecord.getPath())) {
+                if (local.get(i).getEncryptedName().equals(fileRecord.getEncryptedName()) && local.get(i).getPath().equals(fileRecord.getPath())) {
                     check = true;
                 }
             }
@@ -81,15 +80,13 @@ public class SyncControl {
         ArrayList<FileRecord> fileRecords = new ArrayList<FileRecord>();
         ListFolderResult result;
         try {
-            result = DropboxClient.client.files().listFolderBuilder("").withIncludeDeleted(false).withRecursive(true)
-                    .start();
+            result = DropboxClient.client.files().listFolderBuilder("").withIncludeDeleted(false).withRecursive(true).start();
             List<Metadata> entries = result.getEntries();
 
             for (Metadata entry : entries) {
                 if (entry instanceof FileMetadata) {
                     String encryptedName = entry.getName();
-                    String filePath = entry.getPathDisplay().substring(0,
-                            entry.getPathDisplay().length() - entry.getName().length());
+                    String filePath = entry.getPathDisplay().substring(0, entry.getPathDisplay().length() - entry.getName().length());
                     fileRecords.add(new FileRecord(encryptedName, filePath));
                 }
             }
@@ -110,13 +107,11 @@ public class SyncControl {
             File file = new File(fullPath);
             if (!file.exists()) {
                 if (record.getDownloadStatus() == 1) {
-                    notificationOperations.insert(
-                            record.getPath() + record.getName() + " dosyası uygulama kapalıyken silinmiş!");
+                    notificationOperations.insert(record.getPath() + record.getName() + " dosyası uygulama kapalıyken silinmiş!");
                     fileRecordOperations.updateDownloadStatus(record.getPath(), record.getName(), false);
                 }
                 if (record.getSync() == 1) {
-                    notificationOperations
-                            .insert(record.getPath() + record.getName() + " dosyasının senkronizasyonu kapatıldı");
+                    notificationOperations.insert(record.getPath() + record.getName() + " dosyasının senkronizasyonu kapatıldı");
                     fileRecordOperations.updateSyncStatus(record.getPath(), record.getName(), false);
                 }
             } else {
@@ -146,9 +141,9 @@ public class SyncControl {
                     Date clientModified = fileMetadata.getClientModified();
                     Date currentDate = new Date();
                     var difference = (currentDate.getTime() - clientModified.getTime()) / 1000 % 60;
-                    if(difference < 5){
+                    if (difference < 5) {
                         // do nothing
-                    }else {
+                    } else {
                         SharedFileMembers a = DropboxClient.sharing().listFileMembers(fileMetadata.getId());
                         if (a.getUsers().size() == 1 && a.getUsers().get(0).getAccessType() == AccessLevel.OWNER) {
                             DropboxClient.files().deleteV2(fileMetadata.getPathDisplay());
@@ -157,7 +152,7 @@ public class SyncControl {
                 }
             }
         } catch (Exception e) {
-            
+
         }
     }
 
@@ -166,8 +161,7 @@ public class SyncControl {
             List<SharedFileMetadata> entries = DropboxClient.sharing().listReceivedFiles().getEntries();
             for (SharedFileMetadata sharedFileMetadata : entries) {
                 if (sharedFileMetadata.getName().contains("json")) {
-                    String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory
-                            + sharedFileMetadata.getName();
+                    String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + sharedFileMetadata.getName();
                     // eğer dosya halihazırda yerelde kayıtlı değil ise indirir
                     String encryptedName = sharedFileMetadata.getName().split("\\+")[1].split("\\.")[0];
                     // dosya kayıt edilmiş mi kontrolü
@@ -177,10 +171,8 @@ public class SyncControl {
                         // ./cache/recievedFiles/bmbgrup6@gmail.com+SAJkmsdfmdskJsajd.json isimli dosya
                         // olarak
                         FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
-                        DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl())
-                                .download(credentialsFile);
-                        SharedFile sharedFile = ConfigController.SharedFileCredentials
-                                .Load(sharedFileMetadata.getName());
+                        DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);
+                        SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
                         credentialsFile.close();
                         // dosya isminin şifresi ve anahtarı çözülür
                         RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
@@ -193,10 +185,8 @@ public class SyncControl {
                         // client'ı
                         // tarafından dosya otomatik olarak silinecektir (.json dosyası). Şifreli dosya
                         // kabul edildikten sonra ise şifreli dosyadan da çıkılacak ve silinecektir.
-                        DropboxClient.sharing().relinquishFileMembership(sharedFileMetadata.getId());
-                        notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası "
-                                + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
-                    } 
+                        notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
+                    }
                 }
             }
         } catch (Exception e) {

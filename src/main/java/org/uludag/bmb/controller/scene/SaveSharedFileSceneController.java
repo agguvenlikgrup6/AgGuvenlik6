@@ -61,12 +61,12 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
                 entries = DropboxClient.client.sharing().listReceivedFiles().getEntries();
                 for (SharedFileMetadata entry : entries) {
                     if (entry.getName().equals(selectedRecievedFile.getEncryptedName())) {
-                        ListFolderResult result =  DropboxClient.files().listFolderBuilder(cloudPathTXT.getText()).start();
+                        ListFolderResult result = DropboxClient.files().listFolderBuilder(cloudPathTXT.getText()).start();
                         List<Metadata> folderEntries = result.getEntries();
                         for (Metadata folderEntry : folderEntries) {
-                            if(folderEntry instanceof FileMetadata){
+                            if (folderEntry instanceof FileMetadata) {
                                 FileMetadata fileEntry = (FileMetadata) folderEntry;
-                                if(fileEntry.getName().equals(selectedRecievedFile.getDecryptedName()) && cloudPathTXT.getText().equals(fileEntry.getPathDisplay())) {
+                                if (fileEntry.getName().equals(selectedRecievedFile.getDecryptedName()) && cloudPathTXT.getText().equals(fileEntry.getPathDisplay())) {
                                     notificationOperations.insert("Seçilen dizin içerisinde aynı isme sahip başka bir dosya bulunmakta. Lütfen başka bir dizin seçiniz!");
                                     return;
                                 }
@@ -75,26 +75,15 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
 
                         DropboxClient.files().saveUrl(cloudPathTXT.getText() + entry.getName(), entry.getPreviewUrl());
                         RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(entry.getName());
-                        fileRecordOperations.insert(new FileRecord(0, recievedFile.getDecryptedName(),
-                                cloudPathTXT.getText(),
-                                recievedFile.getFileKey(), recievedFile.getModificationDate(), recievedFile.getHash(),
-                                recievedFile.getEncryptedName(), 0, 0, recievedFile.getFileSize(),
-                                "bmb4016grup6supervisor@gmail.com"));
+                        fileRecordOperations.insert(new FileRecord(0, recievedFile.getDecryptedName(), cloudPathTXT.getText(), recievedFile.getFileKey(), recievedFile.getModificationDate(), recievedFile.getHash(), recievedFile.getEncryptedName(), 0, 0, recievedFile.getFileSize(), "", 1));
 
                         DropboxClient.sharing().relinquishFileMembership(entry.getId());
+
                         recievedFileOperations.deleteByEncryptedName(recievedFile.getEncryptedName());
-                        notificationOperations.insert(recievedFile.getDecryptedName() + " dosyası başarı ile "
-                                + cloudPathTXT.getText() + " dizinine kaydedildi!");
+                        notificationOperations.insert(recievedFile.getDecryptedName() + " dosyası başarı ile " + cloudPathTXT.getText() + " dizinine kaydedildi!");
                         mainSceneController.recievedFilesList.getItems().remove(selectedRecievedFile);
-                        // windows file locking issues, linux not effected
-                        // String cacheFileAbsolutePath = Constants.ACCOUNT.cacheRecievedFileDirectory + recievedFile.getSenderEmail() + "+" + recievedFile.getEncryptedName() + ".json"; 
-                        // if(Files.exists(Paths.get(cacheFileAbsolutePath))){
-                        //     try {
-                        //         Files.delete(Paths.get(cacheFileAbsolutePath));
-                        //     } catch (IOException e) {
-                        //         e.printStackTrace();
-                        //     }
-                        // }
+                    } else if (entry.getName().equals(Constants.ACCOUNT.userEmail + "+" + selectedRecievedFile.getEncryptedName())) {
+                        DropboxClient.sharing().relinquishFileMembership(Constants.ACCOUNT.userEmail + "+" + selectedRecievedFile.getEncryptedName());
                     }
                 }
 
@@ -114,8 +103,7 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
         ArrayList<String> path = new ArrayList<String>();
         ArrayList<String> pathNaked = new ArrayList<String>();
 
-        TreeItem<String> selectedFolder = (TreeItem<String>) selectShareFolderTreeView.getSelectionModel()
-                .getSelectedItem();
+        TreeItem<String> selectedFolder = (TreeItem<String>) selectShareFolderTreeView.getSelectionModel().getSelectedItem();
         var item = selectedFolder;
 
         if (item != null) {
