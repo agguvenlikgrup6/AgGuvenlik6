@@ -78,7 +78,9 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
                         fileRecordOperations.insert(new FileRecord(0, recievedFile.getDecryptedName(), cloudPathTXT.getText(), recievedFile.getFileKey(), recievedFile.getModificationDate(), recievedFile.getHash(), recievedFile.getEncryptedName(), 0, 0, recievedFile.getFileSize(), ""));
 
                         DropboxClient.sharing().relinquishFileMembership(entry.getId());
-                        DropboxClient.sharing().relinquishFileMembership(Constants.ACCOUNT.userEmail + "+" + selectedRecievedFile.getEncryptedName());
+                        var k = DropboxClient.files().getMetadata("/sharing/" + Constants.ACCOUNT.userEmail + "+" + selectedRecievedFile.getEncryptedName());
+                        FileMetadata a = (FileMetadata) k;                        
+                        DropboxClient.sharing().relinquishFileMembership(a.getId());
                         
                         recievedFileOperations.deleteByEncryptedName(recievedFile.getEncryptedName());
                         notificationOperations.insert(recievedFile.getDecryptedName() + " dosyası başarı ile " + cloudPathTXT.getText() + " dizinine kaydedildi!");
