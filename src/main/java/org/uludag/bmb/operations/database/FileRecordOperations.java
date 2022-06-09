@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.uludag.bmb.beans.constants.Constants.TABLES;
 import org.uludag.bmb.beans.database.FileRecord;
-import org.uludag.bmb.beans.dataproperty.CustomTableView;
+import org.uludag.bmb.beans.dataproperty.CustomTableData;
 import org.uludag.bmb.factory.query.QueryFactory;
 
 import javafx.collections.FXCollections;
@@ -32,12 +32,12 @@ public class FileRecordOperations extends QueryExecutor {
         return records;
     }
 
-    public ObservableList<CustomTableView> getByPath(String filePath) {
+    public ObservableList<CustomTableData> getByPath(String filePath) {
         List<FileRecord> records = executeLocalQuery(QueryFactory.Records("getByPath"), filePath);
-        ObservableList<CustomTableView> tableData = FXCollections.observableArrayList();
+        ObservableList<CustomTableData> tableData = FXCollections.observableArrayList();
 
         for (FileRecord f : records) {
-            tableData.add(new CustomTableView(f.getDownloadStatus(), f.getName(), f.getModificationDate(), f.getPath(),
+            tableData.add(new CustomTableData(f.getDownloadStatus(), f.getName(), f.getModificationDate(), f.getPath(),
                     f.getSync(), f.getChangeStatus(), f.getFileSize(),
                     Arrays.asList(f.getSharedAccounts().split(";")), f.getSharedAccounts()));
         }

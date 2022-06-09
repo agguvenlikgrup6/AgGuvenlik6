@@ -15,7 +15,7 @@ import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.dataproperty.CustomHyperLink;
 import org.uludag.bmb.beans.dataproperty.CustomNotificationListCell;
 import org.uludag.bmb.beans.dataproperty.CustomRecievedFileListView;
-import org.uludag.bmb.beans.dataproperty.CustomTableView;
+import org.uludag.bmb.beans.dataproperty.CustomTableData;
 import org.uludag.bmb.operations.FileOperations;
 import org.uludag.bmb.operations.scenedatasource.UITrees;
 
@@ -75,28 +75,28 @@ public class MainSceneController extends SceneController implements Initializabl
     public SplitPane selectedDirectoryPathPane;
 
     @FXML
-    public TableView<CustomTableView> fileListView;
+    public TableView<CustomTableData> fileListView;
 
     @FXML
     public Pane fileDetailPane;
 
     @FXML
-    public TableColumn<CustomTableView, CheckBox> syncStatusColumn;
+    public TableColumn<CustomTableData, CheckBox> syncStatusColumn;
 
     @FXML
-    public TableColumn<CustomTableView, String> filePathColumn;
+    public TableColumn<CustomTableData, String> filePathColumn;
 
     @FXML
-    public TableColumn<CustomTableView, String> fileNameColumn;
+    public TableColumn<CustomTableData, String> fileNameColumn;
 
     @FXML
-    public TableColumn<CustomTableView, Date> modificationDateColumn;
+    public TableColumn<CustomTableData, Date> modificationDateColumn;
 
     @FXML
-    public TableColumn<CustomTableView, CheckBox> fileChangeStatusColumn;
+    public TableColumn<CustomTableData, CheckBox> fileChangeStatusColumn;
 
     @FXML
-    public TableColumn<CustomTableView, CheckBox> fileDownloadStatusColumn;
+    public TableColumn<CustomTableData, CheckBox> fileDownloadStatusColumn;
 
     @FXML
     public ListView<String> notificationListView;
@@ -205,15 +205,15 @@ public class MainSceneController extends SceneController implements Initializabl
 
     @FXML
     void deleteSelectedFiles(ActionEvent event) {
-        for (CustomTableView file : fileListView.getSelectionModel().getSelectedItems()) {
+        for (CustomTableData file : fileListView.getSelectionModel().getSelectedItems()) {
             FileOperations.deleteFile(file);
         }
     }
 
     @FXML
     void changeSyncStatusOn(ActionEvent event) {
-        List<CustomTableView> selectedItems = fileListView.getSelectionModel().getSelectedItems();
-        for (CustomTableView item : selectedItems) {
+        List<CustomTableData> selectedItems = fileListView.getSelectionModel().getSelectedItems();
+        for (CustomTableData item : selectedItems) {
             item.syncStatus().get().selectedProperty().set(true);
             FileOperations.changeSyncStatus(item, true);
         }
@@ -221,8 +221,8 @@ public class MainSceneController extends SceneController implements Initializabl
 
     @FXML
     void changeSyncStatusOff(ActionEvent event) {
-        List<CustomTableView> selectedItems = fileListView.getSelectionModel().getSelectedItems();
-        for (CustomTableView item : selectedItems) {
+        List<CustomTableData> selectedItems = fileListView.getSelectionModel().getSelectedItems();
+        for (CustomTableData item : selectedItems) {
             item.syncStatus().get().selectedProperty().set(false);
             FileOperations.changeSyncStatus(item, false);
         }
@@ -262,7 +262,7 @@ public class MainSceneController extends SceneController implements Initializabl
             for (; selectedFolder.getParent() != null; selectedFolder = selectedFolder.getParent()) {
                 folderPath.insert(0, selectedFolder.getValue() + "/");
             }
-            ObservableList<CustomTableView> files = fileRecordOperations.getByPath(folderPath.toString());
+            ObservableList<CustomTableData> files = fileRecordOperations.getByPath(folderPath.toString());
             fileListView.setItems(files);
             fileListView.refresh();
 
@@ -328,7 +328,7 @@ public class MainSceneController extends SceneController implements Initializabl
     @FXML
     void showSelectedFileDetails(MouseEvent event) {
         try {
-            CustomTableView selectedFile = fileListView.getSelectionModel().getSelectedItem();
+            CustomTableData selectedFile = fileListView.getSelectionModel().getSelectedItem();
             fileIcon.getStyleClass().clear();
             String fileExtension = selectedFile.getFileName().split(Pattern.quote("."))[1];
             switch (fileExtension) {

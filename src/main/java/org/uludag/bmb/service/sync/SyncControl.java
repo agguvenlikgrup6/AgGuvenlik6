@@ -11,14 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.dropbox.core.DbxException;
-import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.ListFolderResult;
-import com.dropbox.core.v2.files.Metadata;
-import com.dropbox.core.v2.sharing.AccessLevel;
-import com.dropbox.core.v2.sharing.SharedFileMembers;
-import com.dropbox.core.v2.sharing.SharedFileMetadata;
-
 import org.uludag.bmb.beans.constants.Constants;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.database.sharing.RecievedFile;
@@ -30,6 +22,13 @@ import org.uludag.bmb.operations.database.NotificationOperations;
 import org.uludag.bmb.operations.database.RecievedFileOperations;
 import org.uludag.bmb.operations.dropbox.DropboxClient;
 import org.uludag.bmb.service.cryption.Crypto;
+
+import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.sharing.SharedFileMembers;
+import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
 public class SyncControl {
     private final int START_DELAY = 5;
@@ -133,19 +132,18 @@ public class SyncControl {
 
     public void sentFileControl() {
         try {
-            ListFolderResult result = DropboxClient.files().listFolderBuilder("/sharing/").start();
-            List<Metadata> entries = result.getEntries();
-            for (Metadata entry : entries) {
-                if (entry instanceof FileMetadata) {
-                    FileMetadata fileMetadata = (FileMetadata) entry;
-                    Date clientModified = fileMetadata.getClientModified();
+            List<Metadata> sharedJSONFiles = DropboxClient.files().listFolderBuilder("/sharing/").start().getEntries();
+            for (Metadata jsonFileMD : sharedJSONFiles) {
+                if (jsonFileMD instanceof FileMetadata) {
+                    FileMetadata fileMetadata = (FileMetadata) jsonFileMD;
+                    Date uploadDate = fileMetadata.getClientModified();
                     Date currentDate = new Date();
-                    var difference = (currentDate.getTime() - clientModified.getTime()) / 1000 % 60;
-                    if (difference < 5) {
+                    long difference = (currentDate.getTime() - uploadDate.getTime()) / 1000 % 60;
+                    if (difference < 10.0) {
                         // do nothing
                     } else {
-                        SharedFileMembers a = DropboxClient.sharing().listFileMembers(fileMetadata.getId());
-                        if (a.getUsers().size() == 1 && a.getUsers().get(0).getAccessType() == AccessLevel.OWNER) {
+                        SharedFileMembers fileMembers = DropboxClient.sharing().listFileMembers(fileMetadata.getId());
+                        if (fileMembers.getUsers().size() == 1) {
                             DropboxClient.files().deleteV2(fileMetadata.getPathDisplay());
                         }
                     }

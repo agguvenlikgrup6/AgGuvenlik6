@@ -22,7 +22,7 @@ import org.uludag.bmb.beans.constants.Constants.ACCOUNT;
 import org.uludag.bmb.beans.crypto.EncryptedFileData;
 import org.uludag.bmb.beans.database.FileRecord;
 import org.uludag.bmb.beans.database.sharing.SharedFile;
-import org.uludag.bmb.beans.dataproperty.CustomTableView;
+import org.uludag.bmb.beans.dataproperty.CustomTableData;
 import org.uludag.bmb.controller.config.ConfigController;
 import org.uludag.bmb.operations.database.FileRecordOperations;
 import org.uludag.bmb.operations.database.NotificationOperations;
@@ -44,14 +44,14 @@ public class FileOperations {
     private static final FileRecordOperations fileRecordOperations = Constants.fileRecordOperations;
     private static final NotificationOperations NOTIFICATION_OPERATIONS = Constants.notificationOperations;
 
-    public static final void downloadFile(String filePath, String fileName) {
+    public static final void downloadFile(String cloudPath, String fileName) {
         new Thread(() -> {
             try {
-                FileRecord fileRecord = fileRecordOperations.getByPathAndName(filePath, fileName);
+                FileRecord fileRecord = fileRecordOperations.getByPathAndName(cloudPath, fileName);
 
-                String fileDirectory = localSyncPath + filePath;
-                String absoluteFilePath = localSyncPath + filePath + fileName;
-                String absoluteCloudPath = filePath + fileRecord.getEncryptedName();
+                String fileDirectory = localSyncPath + cloudPath;
+                String absoluteFilePath = localSyncPath + cloudPath + fileName;
+                String absoluteCloudPath = cloudPath + fileRecord.getEncryptedName();
 
                 if (!Files.exists(Paths.get(absoluteFilePath))) {
                     if (!Files.exists(Paths.get(fileDirectory))) {
@@ -71,9 +71,9 @@ public class FileOperations {
                     downloadedFile = new FileOutputStream(new File(absoluteFilePath));
                     downloadedFile.write(fileBytes);
                     downloadedFile.close();
-                    fileRecordOperations.updateDownloadStatus(filePath, fileName, true);
-                    fileRecordOperations.updateSyncStatus(filePath, fileName, true);
-                    NOTIFICATION_OPERATIONS.insert(filePath + fileName + " dosyası başarı ile indirildi!");
+                    fileRecordOperations.updateDownloadStatus(cloudPath, fileName, true);
+                    fileRecordOperations.updateSyncStatus(cloudPath, fileName, true);
+                    NOTIFICATION_OPERATIONS.insert(cloudPath + fileName + " dosyası başarı ile indirildi!");
                 }
             } catch (DbxException | IOException e) {
                 e.printStackTrace();
@@ -109,10 +109,10 @@ public class FileOperations {
         }
     }
 
-    public static String getHash(String path, String fileName) {
+    public static String getHash(String cloudPath, String fileName) {
         byte[] inputBytes;
         try {
-            inputBytes = Files.readAllBytes((Path) Paths.get(localSyncPath + path + fileName));
+            inputBytes = Files.readAllBytes((Path) Paths.get(localSyncPath + cloudPath + fileName));
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             messageDigest.update(inputBytes);
             byte[] digestedBytes = messageDigest.digest();
@@ -125,7 +125,7 @@ public class FileOperations {
         }
     }
 
-    public static String getHash(String text){
+    public static String getHash(String text) {
         byte[] inputBytes;
         try {
             inputBytes = text.getBytes();
@@ -141,37 +141,39 @@ public class FileOperations {
         }
     }
 
-    public static void changeSyncStatus(CustomTableView item, boolean newStatus) {
+    public static void changeSyncStatus(CustomTableData selectedFile, boolean newSyncStatus) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (newStatus == true) {
-                    if (!item.hasFileChanged()) {
-                        fileRecordOperations.updateSyncStatus(item.getFilePath(), item.getFileName(), true);
+                if (newSyncStatus == true) {
+                    if (!selectedFile.hasFileChanged()) {
+                        fileRecordOperations.updateSyncStatus(selectedFile.getFilePath(), selectedFile.getFileName(), true);
                     } else {
                         try {
-                            FileRecord record = fileRecordOperations.getByPathAndName(item.getFilePath(), item.getFileName());
-                            EncryptedFileData encryptedFileData = Crypto.encryptFile(new File(localSyncPath + record.getPath() + record.getName()));
+                            FileRecord record = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
+                            EncryptedFileData newCrypto = Crypto.encryptFile(new File(localSyncPath + record.getPath() + record.getName()));
                             String absoluteFilePath = localSyncPath + record.getPath() + record.getName();
                             String newlocalFileModificationDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new File(absoluteFilePath).lastModified());
                             String newFileSize = String.valueOf(Files.size(Paths.get(absoluteFilePath)) / 1024) + " KB";
                             String newHash = getHash(record.getPath(), record.getName());
 
-                            DropboxClient.files().uploadBuilder(record.getPath() + record.getEncryptedName()).withMode(WriteMode.OVERWRITE).withAutorename(false).uploadAndFinish(encryptedFileData.getEncryptedFile());
+                            // eski şifreli isme sahip olan dosyanın içeriği yeni şifreli bilgi ile
+                            // güncellenir
+                            DropboxClient.files().uploadBuilder(record.getPath() + record.getEncryptedName()).withMode(WriteMode.OVERWRITE).withAutorename(false).uploadAndFinish(newCrypto.getEncryptedFile());
+                            // dosyanın ismi yeni şifreli isim ile güncellenir
+                            DropboxClient.files().moveV2(record.getPath() + record.getEncryptedName(), record.getPath() + newCrypto.getEncryptedName());
 
-                            fileRecordOperations.updateKey(record.getPath(), encryptedFileData.getAesKey(), record.getEncryptedName());
+                            // yerel dosya kaydı yeni veriler ile güncellenir
+                            fileRecordOperations.updateKey(record.getPath(), newCrypto.getAesKey(), record.getEncryptedName());
                             fileRecordOperations.updateModificationDate(record.getPath(), newlocalFileModificationDate, record.getEncryptedName());
                             fileRecordOperations.updateFileSize(record.getPath(), newFileSize, record.getEncryptedName());
                             fileRecordOperations.updateHash(record.getPath(), newHash, record.getEncryptedName());
-
-                            DropboxClient.files().moveV2(record.getPath() + record.getEncryptedName(), record.getPath() + encryptedFileData.getEncryptedName());
-                            fileRecordOperations.updateEncryptedName(record.getPath(), encryptedFileData.getEncryptedName(), record.getEncryptedName());
-
-                            fileRecordOperations.updateSyncStatus(item.getFilePath(), item.getFileName(), true);
+                            fileRecordOperations.updateEncryptedName(record.getPath(), newCrypto.getEncryptedName(), record.getEncryptedName());
+                            fileRecordOperations.updateSyncStatus(selectedFile.getFilePath(), selectedFile.getFileName(), true);
                             fileRecordOperations.updateChangeStatus(record.getPath(), record.getName(), false);
-                            fileRecordOperations.cleanSharedAccounts("bmb4016grup6supervisor@gmail.com;", item.getFilePath(), item.getFileName());
-
-                            FileRecord newRecord = fileRecordOperations.getByPathAndName(item.getFilePath(), item.getFileName());
+                            
+                            {
+                            FileRecord newRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
                             String oldEncryptedName = record.getEncryptedName();
                             List<Metadata> sharedFileCredentials = DropboxClient.files().listFolder("/sharing").getEntries();
                             for (Metadata m : sharedFileCredentials) {
@@ -181,8 +183,8 @@ public class FileOperations {
                                     DropboxClient.files().deleteV2(sharedFileMetadata.getPathDisplay());
                                     for (UserFileMembershipInfo member : fileMembers) {
                                         if (member.getAccessType().equals(AccessLevel.VIEWER)) {
-                                            FileInputStream newCredentials = getCredentials(newRecord, item, member.getUser().getEmail());
-                                            var credentialsMetadata = DropboxClient.files().upload("/sharing/" + member.getUser().getEmail() + "+" + encryptedFileData.getEncryptedName() + ".json").uploadAndFinish(newCredentials);
+                                            FileInputStream newCredentials = createJSONFile(newRecord, selectedFile, member.getUser().getEmail());
+                                            var credentialsMetadata = DropboxClient.files().upload("/sharing/" + member.getUser().getEmail() + "+" + newCrypto.getEncryptedName() + ".json").uploadAndFinish(newCredentials);
                                             newCredentials.close();
                                             List<MemberSelector> memberList = new ArrayList<>();
                                             memberList.add(MemberSelector.email(member.getUser().getEmail()));
@@ -193,6 +195,7 @@ public class FileOperations {
                                     }
                                 }
                             }
+                        }
 
                             NOTIFICATION_OPERATIONS.insert(record.getPath() + record.getName() + " dosyasının içeriği bulutta güncellendi!");
                         } catch (DbxException | IOException e) {
@@ -200,41 +203,40 @@ public class FileOperations {
                         }
                     }
                 } else {
-                    fileRecordOperations.updateSyncStatus(item.getFilePath(), item.getFileName(), false);
+                    fileRecordOperations.updateSyncStatus(selectedFile.getFilePath(), selectedFile.getFileName(), false);
                 }
             }
         }).start();
     }
 
     public static void shareFile(FileRecord fileRecord, String userEmail) {
-        shareFile(new CustomTableView(fileRecord.getDownloadStatus(), fileRecord.getName(), fileRecord.getModificationDate(), fileRecord.getPath(), fileRecord.getSync(), fileRecord.getChangeStatus(), fileRecord.getFileSize(), Arrays.asList(fileRecord.getSharedAccounts().split(";")),
+        shareFile(new CustomTableData(fileRecord.getDownloadStatus(), fileRecord.getName(), fileRecord.getModificationDate(), fileRecord.getPath(), fileRecord.getSync(), fileRecord.getChangeStatus(), fileRecord.getFileSize(), Arrays.asList(fileRecord.getSharedAccounts().split(";")),
                 fileRecord.getSharedAccounts()), userEmail);
     }
 
-    public static void shareFile(CustomTableView shareFile, String recieverEmail) {
+    public static void shareFile(CustomTableData selectedFile, String newUserEMail) {
         try {
-            for (String fileViewer : shareFile.getSharedAccounts()) {
-                if (fileViewer.equals(recieverEmail)) {
-                    NOTIFICATION_OPERATIONS.insert("HATA! " + shareFile.getFileName() + " dosyası " + recieverEmail + " ile zaten paylaşılmış durumda!");
+            for (String sharedEmail : selectedFile.getSharedAccounts()) {
+                if (sharedEmail.equals(newUserEMail)) {
+                    NOTIFICATION_OPERATIONS.insert("HATA! " + selectedFile.getFileName() + " dosyası " + newUserEMail + " ile zaten paylaşılmış durumda!");
                     return;
                 }
             }
 
             List<MemberSelector> member = new ArrayList<>();
-            member.add(MemberSelector.email(recieverEmail));
-            FileRecord file = fileRecordOperations.getByPathAndName(shareFile.getFilePath(), shareFile.getFileName());
-            FileInputStream sharedFileCredentials = getCredentials(file, shareFile, recieverEmail);
+            member.add(MemberSelector.email(newUserEMail));
+            FileRecord fileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
+            FileInputStream sharedJSON = createJSONFile(fileRecord, selectedFile, newUserEMail);
 
-            DropboxClient.files().upload("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json").uploadAndFinish(sharedFileCredentials);
-            sharedFileCredentials.close();
+            DropboxClient.files().upload("/sharing/" + newUserEMail + "+" + fileRecord.getEncryptedName() + ".json").uploadAndFinish(sharedJSON);
+            sharedJSON.close();
+            DropboxClient.client.sharing().addFileMember("/sharing/" + newUserEMail + "+" + fileRecord.getEncryptedName() + ".json", member);
+            Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + fileRecord.getEncryptedName() + ".json"));
 
-            DropboxClient.client.sharing().addFileMember("/sharing/" + recieverEmail + "+" + file.getEncryptedName() + ".json", member);
-            Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + file.getEncryptedName() + ".json"));
+            fileRecordOperations.updateSharedAccount(newUserEMail, selectedFile.getFilePath(), selectedFile.getFileName());
 
-            fileRecordOperations.updateSharedAccount(recieverEmail, shareFile.getFilePath(), shareFile.getFileName());
-
-            DropboxClient.client.sharing().addFileMember(file.getPath() + file.getEncryptedName(), member);
-            NOTIFICATION_OPERATIONS.insert(shareFile.getFilePath() + shareFile.getFileName() + " dosyası " + recieverEmail + " ile paylaşıldı!");
+            DropboxClient.client.sharing().addFileMember(fileRecord.getPath() + fileRecord.getEncryptedName(), member);
+            NOTIFICATION_OPERATIONS.insert(selectedFile.getFilePath() + selectedFile.getFileName() + " dosyası " + newUserEMail + " ile paylaşıldı!");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -242,31 +244,30 @@ public class FileOperations {
         }
     }
 
-    private static FileInputStream getCredentials(FileRecord file, CustomTableView shareFile, String recieverEmail) {
-        String myPrivateKey = Constants.ACCOUNT.privateRSAKey;
+    private static FileInputStream createJSONFile(FileRecord file, CustomTableData shareFile, String recieverEmail) {
+        String priavateRsaKey = Constants.ACCOUNT.privateRSAKey;
         String recieverPublicKey = Constants.userInformationOperations.getByEmail(recieverEmail).getPublicKey();
+        String aesKey = file.getKey();
 
-        String fileAESKey = file.getKey();
-        String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(fileAESKey, myPrivateKey);
-        String AESfirstPart = encryptedAES.substring(0, 200);
-        String AESsecondPart = encryptedAES.substring(200, encryptedAES.length());
-        String secondEncryptedAES1 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESfirstPart, recieverPublicKey);
-        String secondEncryptedAES2 = Crypto.KEY_EXCHANGE.encryptWithPublic(AESsecondPart, recieverPublicKey);
+        String encryptedAES = Crypto.KEY_EXCHANGE.encryptWithPrivate(aesKey, priavateRsaKey);
+        String encryptedAES_p1 = encryptedAES.substring(0, 200);
+        String encryptedAES_p2 = encryptedAES.substring(200, encryptedAES.length());
+
+        String encrypted_p1 = Crypto.KEY_EXCHANGE.encryptWithPublic(encryptedAES_p1, recieverPublicKey);
+        String encrypted_p2 = Crypto.KEY_EXCHANGE.encryptWithPublic(encryptedAES_p2, recieverPublicKey);
+
         String encryptedFileName = fileRecordOperations.getByPathAndName(shareFile.getFilePath(), shareFile.getFileName()).getEncryptedName();
         String senderEmail = Constants.ACCOUNT.userEmail;
         String fileHash = getHash(file.getPath());
-        SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName, secondEncryptedAES1, secondEncryptedAES2, file.getModificationDate(), file.getHash(), file.getFileSize(), fileHash);
+        SharedFile sharedFile = new SharedFile(recieverEmail, senderEmail, encryptedFileName, encrypted_p1, encrypted_p2, file.getModificationDate(), file.getHash(), file.getFileSize(), fileHash);
 
-        FileInputStream sharedFileCredentials = ConfigController.SharedFileCredentials.Save(sharedFile);
-
-        return sharedFileCredentials;
+        return ConfigController.SharedFileCredentials.Save(sharedFile);
     }
 
-    public static void shareFileBatch(ObservableList<CustomTableView> fileList, List<String> userEmailList) {
+    public static void shareFileBatch(ObservableList<CustomTableData> fileList, List<String> userEmailList) {
         try {
-
             for (String recieverEmail : userEmailList) {
-                for (CustomTableView shareFile : fileList) {
+                for (CustomTableData shareFile : fileList) {
                     shareFile(shareFile, recieverEmail);
                 }
             }
@@ -275,7 +276,7 @@ public class FileOperations {
         }
     }
 
-    public static void deleteFile(CustomTableView file) {
+    public static void deleteFile(CustomTableData file) {
         if (file.getFileSyncStatus()) {
             new Thread(new Runnable() {
                 @Override

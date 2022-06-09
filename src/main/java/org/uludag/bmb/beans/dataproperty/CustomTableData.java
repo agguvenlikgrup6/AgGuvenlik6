@@ -8,7 +8,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.CheckBox;
 
-public class CustomTableView {
+public class CustomTableData {
     private final StringProperty fileName;
     private final StringProperty lastEditDate;
     private final StringProperty filePath;
@@ -19,7 +19,7 @@ public class CustomTableView {
     private final ObjectProperty<List<String>> sharedAccounts;
     private final StringProperty viewers;
 
-    public CustomTableView(int downloadStatus, String fileName, String lastEditDate, String filePath, int syncStatus,
+    public CustomTableData(int downloadStatus, String fileName, String lastEditDate, String filePath, int syncStatus,
             int changeStatus, String fileSize, List<String> sharedAccounts, String viewers) {
         this.downloadStatus = new SimpleObjectProperty<>(this, "downloadStatus", new CustomCheckBox(downloadStatus));
         this.syncStatus = new SimpleObjectProperty<>(this, "syncStatus", new CustomCheckBox(syncStatus));

@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 
 import org.uludag.bmb.beans.database.sharing.UserInformation;
 import org.uludag.bmb.beans.dataproperty.CustomComboBoxListener;
-import org.uludag.bmb.beans.dataproperty.CustomTableView;
+import org.uludag.bmb.beans.dataproperty.CustomTableData;
 import org.uludag.bmb.operations.FileOperations;
 
 import javafx.event.ActionEvent;
@@ -49,7 +49,7 @@ public class ShareWindowController extends PopupSceneController implements Initi
             accountField.getItems().addAll(user.getEmail());
         }
         new CustomComboBoxListener<>(accountField);
-        for (CustomTableView file : mainSceneController.fileListView.getSelectionModel().getSelectedItems()) {
+        for (CustomTableData file : mainSceneController.fileListView.getSelectionModel().getSelectedItems()) {
             shareFileList.getItems().add(file.getFileName());
         }
     }

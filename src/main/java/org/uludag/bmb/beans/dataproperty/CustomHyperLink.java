@@ -18,7 +18,7 @@ public class CustomHyperLink extends Hyperlink {
     private int index;
 
     public CustomHyperLink(SplitPane pathBar, TreeView<String> directoriesHierarchyView,
-            TableView<CustomTableView> cloudTableView, String text) {
+            TableView<CustomTableData> cloudTableView, String text) {
         if (text.equals("")) {
             text = "Dropbox";
         }
@@ -43,7 +43,7 @@ public class CustomHyperLink extends Hyperlink {
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ObservableList<CustomTableView> files;
+                ObservableList<CustomTableData> files;
                 if (path.toString().equals("")) {
                     files = fileRecordOperations.getByPath("/");
                     directoriesHierarchyView.getSelectionModel().select(0);
