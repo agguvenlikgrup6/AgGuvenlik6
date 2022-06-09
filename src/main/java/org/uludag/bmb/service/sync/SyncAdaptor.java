@@ -71,7 +71,7 @@ public class SyncAdaptor extends FileAlterationListenerAdaptor {
                     String path = metaData.getPathDisplay().substring(0, metaData.getPathDisplay().length() - efd.getEncryptedName().length());
                     String fileHash = FileOperations.getHash(cloudPath, file.getName());
                     FileRecord f = new FileRecord(1, file.getName(), metaData.getPathDisplay().substring(0, metaData.getPathDisplay().length() - efd.getEncryptedName().length()), efd.getAesKey(), new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(file.lastModified()), fileHash,
-                    efd.getEncryptedName(), 1, 0, String.valueOf(Files.size(Paths.get(file.getAbsolutePath())) / 1024) + " KB", "", 0);
+                    efd.getEncryptedName(), 1, 0, String.valueOf(Files.size(Paths.get(file.getAbsolutePath())) / 1024) + " KB", "");
                     fileRecordOperations.insert(f);
                     notificationOperations.insert(path + file.getName() + " dosyası başarı ile buluta yüklendi!");
                     

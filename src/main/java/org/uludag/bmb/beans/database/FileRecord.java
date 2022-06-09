@@ -12,14 +12,13 @@ public class FileRecord {
     private int downloadStatus;
     private String fileSize;
     private String sharedAccounts;
-    private int isRecieved;
 
     public FileRecord() {
 
     }
 
     public FileRecord(int downloadStatus, String name, String path, String key, String modificationDate, String hash,
-            String encryptedName, int sync, int changeStatus, String fileSize, String sharedAccounts, int isRecieved) {
+            String encryptedName, int sync, int changeStatus, String fileSize, String sharedAccounts) {
         this.downloadStatus = downloadStatus;
         this.name = name;
         this.path = path;
@@ -31,16 +30,6 @@ public class FileRecord {
         this.changeStatus = changeStatus;
         this.fileSize = fileSize;
         this.sharedAccounts = sharedAccounts;
-        this.isRecieved = isRecieved;
-    }
-
-
-    public int getIsRecieved() {
-        return this.isRecieved;
-    }
-
-    public void setIsRecieved(int isRecieved) {
-        this.isRecieved = isRecieved;
     }
 
 
