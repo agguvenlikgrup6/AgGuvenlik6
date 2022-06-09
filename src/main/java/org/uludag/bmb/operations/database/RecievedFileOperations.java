@@ -45,12 +45,11 @@ public class RecievedFileOperations extends QueryExecutor {
 
     public RecievedFile getByPathHash(String filePathHash) {
         List<RecievedFile> recievedFiles = executeLocalQuery(QueryFactory.RecievedFile("getByPathHash"), filePathHash);
-        if (recievedFiles != null) {
-            if (recievedFiles.get(0) != null) {
-                return recievedFiles.get(0);
-            }
+        if (recievedFiles.size() != 0) {
+            return recievedFiles.get(0);
+        }else {
+            return null;
         }
-        return null;
     }
 
     // public void deleteAll(){

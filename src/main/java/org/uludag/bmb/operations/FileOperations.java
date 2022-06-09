@@ -229,7 +229,7 @@ public class FileOperations {
             member.add(MemberSelector.email(newUserEMail));
             FileRecord fileRecord = fileRecordOperations.getByPathAndName(selectedFile.getFilePath(), selectedFile.getFileName());
             FileInputStream sharedJSON = createJSONFile(fileRecord, selectedFile, newUserEMail);
-            String filePathHash = getHash(fileRecord.getPath(), fileRecord.getName());
+            String filePathHash = getHash(fileRecord.getPath() + fileRecord.getName());
             DropboxClient.files().upload("/sharing/" + newUserEMail + "+" + filePathHash + "+" + fileRecord.getEncryptedName() + ".json").uploadAndFinish(sharedJSON);
             sharedJSON.close();
             DropboxClient.client.sharing().addFileMember("/sharing/" + newUserEMail + "+" + filePathHash + "+" + fileRecord.getEncryptedName() + ".json", member);

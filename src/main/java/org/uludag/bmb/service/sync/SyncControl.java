@@ -165,20 +165,24 @@ public class SyncControl {
                     String filePathHash = sharedFileMetadata.getName().split("\\+")[1];
                     RecievedFile recievedFile = recievedFileOperations.getByPathHash(filePathHash);
 
-                    FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
-                    DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);
-
-                    SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
-                    credentialsFile.close();
-
-                    RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
                     if (recievedFile == null) {
+                        FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
+                        DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);
+                        SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
+                        credentialsFile.close();
+                        RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
+
                         recievedFileOperations.insert(newRecievedFile);
                         notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
                     } else {
                         if (encryptedName.equals(recievedFile.getEncryptedName())) {
                             return;
                         } else {
+                            FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
+                            DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);
+                            SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
+                            credentialsFile.close();
+                            RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
                             recievedFileOperations.deleteByPathHash(newRecievedFile.getPathHash());
                             recievedFileOperations.insert(newRecievedFile);
                         }
@@ -187,6 +191,7 @@ public class SyncControl {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
