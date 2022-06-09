@@ -32,7 +32,7 @@ import com.dropbox.core.v2.sharing.SharedFileMetadata;
 
 public class SyncControl {
     private final int START_DELAY = 5;
-    private final int CYCLE_DELAY = 3;
+    private final int CYCLE_DELAY = 1;
 
     public SyncControl() {
         try {
@@ -167,13 +167,15 @@ public class SyncControl {
 
                     if (recievedFile == null) {
                         FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
-                        DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);
-                        SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
-                        credentialsFile.close();
-                        RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
+                        if (DropboxClient.sharing().getFileMetadata(sharedFileMetadata.getId()) != null) {
+                            DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);
+                            SharedFile sharedFile = ConfigController.SharedFileCredentials.Load(sharedFileMetadata.getName());
+                            credentialsFile.close();
+                            RecievedFile newRecievedFile = Crypto.SHARE.recieveSharedFile(sharedFile);
 
-                        recievedFileOperations.insert(newRecievedFile);
-                        notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
+                            recievedFileOperations.insert(newRecievedFile);
+                            notificationOperations.insert(newRecievedFile.getDecryptedName() + " dosyası " + sharedFile.getSenderEmail() + " tarafından sizinle paylaşıldı!");
+                        }
                     } else {
                         if (encryptedName.equals(recievedFile.getEncryptedName())) {
                             return;

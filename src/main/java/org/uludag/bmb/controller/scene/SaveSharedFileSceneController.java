@@ -72,19 +72,21 @@ public class SaveSharedFileSceneController extends PopupSceneController implemen
                                 }
                             }
                         }
+                        RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(entry.getName());
 
                         DropboxClient.files().saveUrl(cloudPathTXT.getText() + entry.getName(), entry.getPreviewUrl());
-                        RecievedFile recievedFile = recievedFileOperations.getByEncryptedName(entry.getName());
                         fileRecordOperations.insert(new FileRecord(0, recievedFile.getDecryptedName(), cloudPathTXT.getText(), recievedFile.getFileKey(), recievedFile.getModificationDate(), recievedFile.getHash(), recievedFile.getEncryptedName(), 0, 0, recievedFile.getFileSize(), "", 0));
-
                         DropboxClient.sharing().relinquishFileMembership(entry.getId());
-                        var k = DropboxClient.files().getMetadata("/sharing/" + Constants.ACCOUNT.userEmail + "+" + selectedRecievedFile.getEncryptedName());
-                        FileMetadata a = (FileMetadata) k;                        
-                        DropboxClient.sharing().relinquishFileMembership(a.getId());
-                        
+
                         recievedFileOperations.deleteByEncryptedName(recievedFile.getEncryptedName());
                         notificationOperations.insert(recievedFile.getDecryptedName() + " dosyası başarı ile " + cloudPathTXT.getText() + " dizinine kaydedildi!");
                         mainSceneController.recievedFilesList.getItems().remove(selectedRecievedFile);
+                    } else {
+                        if (entry.getName().contains(Constants.ACCOUNT.userEmail)) {
+                            if (entry.getName().contains(selectedRecievedFile.getEncryptedName())) {
+                                DropboxClient.sharing().relinquishFileMembership(entry.getId());
+                            }
+                        }
                     }
                 }
 

@@ -29,7 +29,12 @@ public class CustomTableData {
         this.filePath = new SimpleStringProperty(this, "filepath", filePath);
         this.fileSize = new SimpleStringProperty(this, "fileSize", fileSize);
         this.sharedAccounts = new SimpleObjectProperty<>(this, "sharedAccounts", sharedAccounts);
-        int viewerCount = viewers.split(";").length + 1;
+        int viewerCount = 0;
+        if(viewers.equals("")){
+            viewerCount = 1;
+        } else {
+            viewerCount = viewers.split(";").length + 1;
+        }
         viewers = String.valueOf(viewerCount) + " kullanıcı";
         this.viewers = new SimpleStringProperty(this, "viewers", viewers);
     }
