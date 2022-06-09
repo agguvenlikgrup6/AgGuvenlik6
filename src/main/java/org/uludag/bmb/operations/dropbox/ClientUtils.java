@@ -24,7 +24,7 @@ public class ClientUtils {
 
     public ClientUtils() throws FileLoadException {
         requestConfig = new DbxRequestConfig(PropertiesReader.getProperty("clientIdentifier"));
-        appInfo = new DbxAppInfo("bxvnh4y5x2ar0jz");
+        appInfo = new DbxAppInfo("vn2jsigv3utvchf");
         sessionKey = this.generateSessionKey();
         redirectUri = PropertiesReader.getProperty("redirectUri");
     }

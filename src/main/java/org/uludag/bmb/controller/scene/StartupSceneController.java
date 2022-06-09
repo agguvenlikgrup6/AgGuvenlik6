@@ -43,6 +43,9 @@ public class StartupSceneController extends SceneController {
     @FXML
     private ProgressIndicator dbState;
 
+    @FXML
+    private TextField supervisorEmail;
+
     public StartupSceneController() throws FileLoadException {
         super(PropertiesReader.getProperty("startupSceneFxml"),
                 Integer.parseInt(PropertiesReader.getProperty("startupSceneWidth")),
@@ -92,6 +95,7 @@ public class StartupSceneController extends SceneController {
     void finishStartup(MouseEvent event) {
         try {
             var path = chosenPath.getText();
+            var superEmail = supervisorEmail.getText();
 
             if (!new File(path).exists()) {
                 Alert alert = new Alert(AlertType.ERROR);
@@ -141,7 +145,7 @@ public class StartupSceneController extends SceneController {
 
                 ConfigController.Settings.SaveSettings(new LocalConfig(chosenPath.getText(),
                         Base64.getUrlEncoder().encodeToString(keyPair.getPrivate().getEncoded()),
-                        eMail, dataDir, cacheSharedFileDir, cacheRecievedFileDir, ""));
+                        eMail, dataDir, cacheSharedFileDir, cacheRecievedFileDir, superEmail));
 
                 userInformationOperations.insert(eMail,
                         Base64.getUrlEncoder().encodeToString(keyPair.getPublic().getEncoded()));

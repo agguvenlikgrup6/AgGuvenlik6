@@ -60,6 +60,8 @@
             <Button id="btnDone" layoutX="158.0" layoutY="294.0" mnemonicParsing="false" onMouseClicked="#finishStartup" text="TAMAM" />
             <TextField fx:id="chosenPath" editable="false" layoutX="105.0" layoutY="160.0" prefHeight="26.0" prefWidth="214.0" />
             <ProgressIndicator fx:id="dbState" layoutX="271.0" layoutY="107.0" prefHeight="48.0" prefWidth="41.0" />
+            <TextField fx:id="supervisorEmail" layoutX="146.0" layoutY="200.0" prefHeight="26.0" prefWidth="174.0" promptText="Please enter supervisor email" text="bmb4016grup6client1@protonmail.com" />
+            <Label layoutX="13.0" layoutY="205.0" prefHeight="16.0" prefWidth="116.0" text="Supervisor Email:" />
          </children>
     </AnchorPane>
   </children>
