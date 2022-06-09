@@ -166,11 +166,11 @@ public class FileOperations {
                             DropboxClient.files().moveV2(outdatedRecord.getPath() + outdatedRecord.getEncryptedName(), outdatedRecord.getPath() + newEncryptedName);
 
                             // yerel dosya kaydı yeni veriler ile güncellenir
-                            fileRecordOperations.updateEncryptedName(outdatedRecord.getPath(), newEncryptedName, outdatedRecord.getEncryptedName());
                             fileRecordOperations.updateKey(outdatedRecord.getPath(), newCrypto.getAesKey(), outdatedRecord.getEncryptedName());
                             fileRecordOperations.updateModificationDate(outdatedRecord.getPath(), newlocalFileModificationDate, outdatedRecord.getEncryptedName());
                             fileRecordOperations.updateFileSize(outdatedRecord.getPath(), newFileSize, outdatedRecord.getEncryptedName());
                             fileRecordOperations.updateHash(outdatedRecord.getPath(), newHash, outdatedRecord.getEncryptedName());
+                            fileRecordOperations.updateEncryptedName(outdatedRecord.getPath(), newEncryptedName, outdatedRecord.getEncryptedName());
                             fileRecordOperations.updateSyncStatus(selectedFile.getFilePath(), selectedFile.getFileName(), true);
                             fileRecordOperations.updateChangeStatus(outdatedRecord.getPath(), outdatedRecord.getName(), false);
 
