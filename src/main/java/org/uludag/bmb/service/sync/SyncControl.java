@@ -178,7 +178,7 @@ public class SyncControl {
                         }
                     } else {
                         if (encryptedName.equals(recievedFile.getEncryptedName())) {
-                            return;
+                            continue;
                         } else {
                             FileOutputStream credentialsFile = new FileOutputStream(new File(cacheFileAbsolutePath));
                             DropboxClient.sharing().getSharedLinkFileBuilder(sharedFileMetadata.getPreviewUrl()).download(credentialsFile);

@@ -218,12 +218,6 @@ public class FileOperations {
 
     public static void shareFile(CustomTableData selectedFile, String newUserEMail) {
         try {
-            for (String sharedEmail : selectedFile.getSharedAccounts()) {
-                if (sharedEmail.equals(newUserEMail)) {
-                    NOTIFICATION_OPERATIONS.insert("HATA! " + selectedFile.getFileName() + " dosyası " + newUserEMail + " ile zaten paylaşılmış durumda!");
-                    return;
-                }
-            }
 
             List<MemberSelector> member = new ArrayList<>();
             member.add(MemberSelector.email(newUserEMail));
@@ -234,11 +228,18 @@ public class FileOperations {
             sharedJSON.close();
             DropboxClient.client.sharing().addFileMember("/sharing/" + newUserEMail + "+" + filePathHash + "+" + fileRecord.getEncryptedName() + ".json", member);
 
-            Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + filePathHash + "+" + fileRecord.getEncryptedName() + ".json"));
-
-            fileRecordOperations.updateSharedAccount(newUserEMail, selectedFile.getFilePath(), selectedFile.getFileName());
-
+            Files.delete(Paths.get(Constants.ACCOUNT.cacheSharedFileDirectory + fileRecord.getEncryptedName() + ".json"));
             DropboxClient.client.sharing().addFileMember(fileRecord.getPath() + fileRecord.getEncryptedName(), member);
+            boolean flag = false;
+            for (String sharedEmail : selectedFile.getSharedAccounts()) {
+                if (sharedEmail.equals(newUserEMail)) {
+                    flag = true;
+                }
+            }
+            if (!flag) {
+                fileRecordOperations.updateSharedAccount(newUserEMail, selectedFile.getFilePath(), selectedFile.getFileName());
+            }
+
             NOTIFICATION_OPERATIONS.insert(selectedFile.getFilePath() + selectedFile.getFileName() + " dosyası " + newUserEMail + " ile paylaşıldı!");
 
         } catch (Exception e) {
